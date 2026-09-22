@@ -1,0 +1,18 @@
+:root {
+    --color-primario: #B85C38;
+    --color-secundario: #D4A017;
+    --color-acento: #8C2F1B;
+    --color-verde: #5C6E49;
+    --color-crema: #F5EFE6;
+    --color-texto: #3B2A22;
+}
+
+body {
+    background-color: var(--color-crema);
+    font-family: 'Nunito', sans-serif;
+    color: var(--color-texto);
+}
+
+h1, h2, h3, .fw-title {
+    font-family: 'Merriweather', serif;
+}

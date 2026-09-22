@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo} + ' - El Rinconcito Ayacuchano'">El Rinconcito Ayacuchano</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600&amp;display=swap" rel="stylesheet">
+    <link th:href="@{/css/estilos.css}" rel="stylesheet">
+</head>
+<body>
+
+<header th:replace="~{fragments/header :: header}"></header>
+
+<main>
+
+    <section class="text-center text-light py-5" style="background-color:#8C2F1B;">
+        <div class="container py-3">
+            <h1 class="fw-title">Nuestra historia</h1>
+            <p class="lead mb-0">Tradición ayacuchana, música y sabor de campo desde hace más de dos décadas</p>
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <div class="row align-items-center g-5">
+            <div class="col-md-6">
+                <img src="https://picsum.photos/seed/rinconcito1/600/400" class="img-fluid rounded shadow" alt="El Rinconcito Ayacuchano">
+            </div>
+            <div class="col-md-6">
+                <h2 class="fw-title" style="color:#8C2F1B;">Una tradición familiar</h2>
+                <p>El Rinconcito Ayacuchano Campestre nació de la pasión de la familia Sarmiento por la cultura ayacuchana. Isaac Sarmiento Martínez, conocido como <strong>"Wallpa Waccay"</strong>, reconocido por su labor difundiendo el folklore andino, y su esposa <strong>Amanda Mitacc</strong>, dieron vida a este espacio donde la comida, la música y las costumbres de Ayacucho se viven cada fin de semana.</p>
+                <p>Ubicados en Carapongo, Lima Este, ofrecemos un ambiente campestre pensado para compartir en familia, con capacidad para grandes celebraciones y el sabor auténtico de la sierra peruana.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5" style="background-color:#F5EFE6;">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-md-6 order-md-2">
+                    <img src="https://picsum.photos/seed/rinconcito2/600/400" class="img-fluid rounded shadow" alt="Reconstrucción del local">
+                </div>
+                <div class="col-md-6 order-md-1">
+                    <h2 class="fw-title" style="color:#8C2F1B;">Resurgimos del huaico</h2>
+                    <p>En 2017, un huaico arrasó con nuestro local. Pero como toda historia ayacuchana, la nuestra también es de resiliencia: reconstruimos el Rinconcito desde cero y hoy seguimos recibiendo a cientos de familias cada fin de semana, más fuertes que antes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5 text-center">
+        <h2 class="fw-title mb-4" style="color:#8C2F1B;">Lo que nos hace únicos</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <i class="bi bi-music-note-beamed" style="font-size:2.5rem;color:#D4A017;"></i>
+                <h4 class="fw-title mt-2">Almuerzo Show</h4>
+                <p>Orquestas en vivo cada sábado, domingo y feriado.</p>
+            </div>
+            <div class="col-md-4">
+                <i class="bi bi-fire" style="font-size:2.5rem;color:#D4A017;"></i>
+                <h4 class="fw-title mt-2">Pachamanca dominical</h4>
+                <p>Cocinada bajo tierra, como manda la tradición andina.</p>
+            </div>
+            <div class="col-md-4">
+                <i class="bi bi-tree" style="font-size:2.5rem;color:#D4A017;"></i>
+                <h4 class="fw-title mt-2">Ambiente campestre</h4>
+                <p>Espacio al aire libre, juegos y estacionamiento propio.</p>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

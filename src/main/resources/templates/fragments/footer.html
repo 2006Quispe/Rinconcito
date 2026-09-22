@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer th:fragment="footer" class="text-light py-4 mt-5" style="background-color:#3B2A22;">
+    <div class="container text-center">
+        <p class="mb-1 fw-bold">El Rinconcito Ayacuchano Campestre</p>
+        <p class="mb-1">Av. Carapongo Km 15, Mz A Lote 6 y 7, Chosica</p>
+        <p class="mb-0">&copy; <span th:text="${#temporals.year(#temporals.createNow())}"></span> Todos los derechos reservados</p>
+    </div>
+</footer>
+</body>
+</html>
