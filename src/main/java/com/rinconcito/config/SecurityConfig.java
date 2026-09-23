@@ -19,10 +19,26 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/", "/nosotros", "/carta", "/eventos", "/reservas", "/pedidos",
+                                  "/registro", "/login", "/css/**", "/js/**", "/img/**").permitAll()
+                .requestMatchers("/perfil/**").hasRole("CLIENTE")
                 .anyRequest().permitAll()
             )
             .csrf(csrf -> csrf.disable())
-            .formLogin(form -> form.disable());
+            .formLogin(form -> form
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .usernameParameter("correo")
+                .passwordParameter("contrasena")
+                .defaultSuccessUrl("/", false)
+                .failureUrl("/login?error")
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .permitAll()
+            );
 
         return http.build();
     }

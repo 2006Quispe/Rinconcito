@@ -8,8 +8,9 @@ import com.rinconcito.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import com.rinconcito.dto.RegistroFormDTO;
 import java.util.UUID;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -27,7 +28,40 @@ public class UsuarioService {
         return usuarioRepository.findByDni(dni)
                 .orElseGet(() -> crearInvitado(dni, nombres, apellidos, telefono));
     }
+    
+    public Usuario registrar(RegistroFormDTO dto) {
 
+        if (usuarioRepository.existsByCorreo(dto.getCorreo())) {
+            throw new IllegalStateException("Ese correo ya está registrado.");
+        }
+
+        Optional<Usuario> existente = usuarioRepository.findByDni(dto.getDni());
+
+        Usuario usuario;
+        if (existente.isPresent()) {
+            // Ya existe una cuenta placeholder creada por una reserva/pedido de invitado: la actualizamos
+            usuario = existente.get();
+            usuario.setNombres(dto.getNombres());
+            usuario.setApellidos(dto.getApellidos());
+            usuario.setTelefono(dto.getTelefono());
+        } else {
+            Rol rolCliente = rolRepository.findByNombre("CLIENTE")
+                    .orElseThrow(() -> new IllegalStateException("No existe el rol CLIENTE en la base de datos"));
+            usuario = new Usuario();
+            usuario.setRol(rolCliente);
+            usuario.setNombres(dto.getNombres());
+            usuario.setApellidos(dto.getApellidos());
+            usuario.setDni(dto.getDni());
+            usuario.setTelefono(dto.getTelefono());
+            usuario.setEstado(EstadoUsuario.ACTIVO);
+        }
+
+        usuario.setCorreo(dto.getCorreo());
+        usuario.setContrasena(passwordEncoder.encode(dto.getContrasena()));
+
+        return usuarioRepository.save(usuario);
+    }
+    
     private Usuario crearInvitado(String dni, String nombres, String apellidos, String telefono) {
         Rol rolCliente = rolRepository.findByNombre("CLIENTE")
                 .orElseThrow(() -> new IllegalStateException("No existe el rol CLIENTE en la base de datos"));
