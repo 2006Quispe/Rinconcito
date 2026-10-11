@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${titulo != null
+            ? titulo + ' - El Rinconcito Ayacuchano'
+            : 'Pagar pedido - El Rinconcito Ayacuchano'}">
+        Pagar pedido
+    </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap"
+          rel="stylesheet">
+
+    <link th:href="@{/css/estilos.css}"
+          rel="stylesheet">
+
+    <link th:href="@{/css/pago-pedido.css(v=3)}"
+          rel="stylesheet">
+</head>
+
+<body>
+
+<header th:replace="~{fragments/header :: header}">
+</header>
+
+<main class="pagina-pago">
+
+    <section class="container pago-contenido">
+
+        <!-- MENSAJES -->
+
+        <div th:if="${exito}"
+             class="mensaje mensaje-exito">
+
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${exito}"></span>
+        </div>
+
+        <div th:if="${error}"
+             class="mensaje mensaje-error">
+
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <div th:if="${info}"
+             class="mensaje mensaje-info">
+
+            <i class="bi bi-info-circle-fill"></i>
+            <span th:text="${info}"></span>
+        </div>
+
+        <!-- PEDIDO NO ENCONTRADO -->
+
+        <section th:if="${pedido == null}"
+                 class="panel pedido-no-encontrado">
+
+            <div class="estado-icono">
+                <i class="bi bi-receipt"></i>
+            </div>
+
+            <h1>No se encontró el pedido</h1>
+
+            <p>
+                Verifica el código del pedido o regresa a la carta.
+            </p>
+
+            <a th:href="@{/carta}"
+               class="boton-principal">
+
+                <i class="bi bi-arrow-left"></i>
+                Volver a la carta
+            </a>
+
+        </section>
+
+        <!-- PEDIDO ENCONTRADO -->
+
+        <div th:if="${pedido != null}">
+
+            <div class="encabezado-pagina">
+
+                <div>
+                    <span>Finaliza tu compra</span>
+                    <h1>Pago del pedido</h1>
+                </div>
+
+                <div class="codigo-pedido">
+
+                    <span>Código del pedido</span>
+
+                    <strong th:text="${pedido.codigoPedido}">
+                        PED-2026-000001
+                    </strong>
+
+                </div>
+
+            </div>
+
+            <div class="row g-4">
+
+                <!-- COLUMNA DE PAGO -->
+
+                <div class="col-lg-7">
+
+                    <section class="panel"
+                             th:if="${pedido.estado.name()
+                                == 'PENDIENTE_PAGO'}">
+
+                        <div class="titulo-panel">
+
+                            <div class="titulo-icono">
+                                <i class="bi bi-wallet2"></i>
+                            </div>
+
+                            <div>
+                                <span>Paso 1</span>
+                                <h2>Selecciona el medio de pago</h2>
+                            </div>
+
+                        </div>
+
+                        <form th:action="@{/pedidos/pago}"
+                              method="post"
+                              enctype="multipart/form-data">
+
+                            <input th:if="${_csrf != null}"
+                                   type="hidden"
+                                   th:name="${_csrf.parameterName}"
+                                   th:value="${_csrf.token}">
+
+                            <input type="hidden"
+                                   name="codigo"
+                                   th:value="${pedido.codigoPedido}">
+
+                            <!-- RADIOS OCULTOS -->
+
+                            <input class="radio-metodo"
+                                   type="radio"
+                                   id="metodoYape"
+                                   name="metodoPago"
+                                   value="YAPE"
+                                   required>
+
+                            <input class="radio-metodo"
+                                   type="radio"
+                                   id="metodoPlin"
+                                   name="metodoPago"
+                                   value="PLIN"
+                                   required>
+
+                            <input class="radio-metodo"
+                                   type="radio"
+                                   id="metodoTransferencia"
+                                   name="metodoPago"
+                                   value="TRANSFERENCIA"
+                                   required>
+
+                            <!-- OPCIONES DE PAGO -->
+
+                            <div class="selector-metodos">
+
+                                <label class="opcion-metodo"
+                                       for="metodoYape">
+
+                                    <span class="opcion-contenido">
+
+                                        <span class="metodo-logo logo-yape">
+                                            Y
+                                        </span>
+
+                                        <span class="opcion-texto">
+                                            <strong>Yape</strong>
+                                            <small>Pago mediante celular</small>
+                                        </span>
+
+                                        <i class="bi bi-check-circle-fill seleccion-check"></i>
+
+                                    </span>
+
+                                </label>
+
+                                <label class="opcion-metodo"
+                                       for="metodoPlin">
+
+                                    <span class="opcion-contenido">
+
+                                        <span class="metodo-logo logo-plin">
+                                            P
+                                        </span>
+
+                                        <span class="opcion-texto">
+                                            <strong>Plin</strong>
+                                            <small>Pago mediante celular</small>
+                                        </span>
+
+                                        <i class="bi bi-check-circle-fill seleccion-check"></i>
+
+                                    </span>
+
+                                </label>
+
+                                <label class="opcion-metodo"
+                                       for="metodoTransferencia">
+
+                                    <span class="opcion-contenido">
+
+                                        <span class="metodo-logo logo-banco">
+                                            <i class="bi bi-bank"></i>
+                                        </span>
+
+                                        <span class="opcion-texto">
+                                            <strong>Transferencia</strong>
+                                            <small>Cuenta bancaria o CCI</small>
+                                        </span>
+
+                                        <i class="bi bi-check-circle-fill seleccion-check"></i>
+
+                                    </span>
+
+                                </label>
+
+                            </div>
+
+                            <!-- DATOS DE YAPE -->
+
+                            <section class="datos-metodo datos-yape">
+
+                                <div class="datos-metodo-cabecera">
+
+                                    <div>
+
+                                        <span class="metodo-logo logo-yape">
+                                            Y
+                                        </span>
+
+                                        <div>
+                                            <span>Medio seleccionado</span>
+                                            <h3>Pagar con Yape</h3>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="datos-metodo-contenido">
+
+                                    <div class="datos-cuenta">
+
+                                        <div class="dato-cuenta">
+
+                                            <span>Número de Yape</span>
+
+                                            <strong th:text="${configPago != null
+                                                    and configPago.numeroYape != null
+                                                    and !configPago.numeroYape.isBlank()
+                                                    ? configPago.numeroYape
+                                                    : 'No configurado'}">
+                                                No configurado
+                                            </strong>
+
+                                        </div>
+
+                                        <div class="dato-cuenta">
+
+                                            <span>Titular</span>
+
+                                            <strong th:text="${configPago != null
+                                                    and configPago.titularYape != null
+                                                    and !configPago.titularYape.isBlank()
+                                                    ? configPago.titularYape
+                                                    : 'No configurado'}">
+                                                No configurado
+                                            </strong>
+
+                                        </div>
+
+                                        <div class="monto-pagar">
+
+                                            <span>Monto a pagar</span>
+
+                                            <strong th:text="'S/ '
+                                                + ${pedido.total}">
+                                                S/ 0
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                    <!-- QR YAPE CORREGIDO -->
+
+                                    <div class="qr-pago"
+                                         th:if="${configPago != null
+                                            and configPago.qrYape != null
+                                            and !configPago.qrYape.isBlank()}">
+
+                                        <img th:src="@{/configuracion/qr/yape(
+                                                v=${configPago.qrYape}
+                                             )}"
+                                             alt="Código QR de Yape">
+
+                                        <span>
+                                            Escanea el código QR
+                                        </span>
+
+                                    </div>
+
+                                    <div class="qr-pago"
+                                         th:unless="${configPago != null
+                                            and configPago.qrYape != null
+                                            and !configPago.qrYape.isBlank()}">
+
+                                        <i class="bi bi-qr-code"
+                                           style="font-size:55px;"></i>
+
+                                        <span>
+                                            QR no configurado
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </section>
+
+                            <!-- DATOS DE PLIN -->
+
+                            <section class="datos-metodo datos-plin">
+
+                                <div class="datos-metodo-cabecera">
+
+                                    <div>
+
+                                        <span class="metodo-logo logo-plin">
+                                            P
+                                        </span>
+
+                                        <div>
+                                            <span>Medio seleccionado</span>
+                                            <h3>Pagar con Plin</h3>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="datos-metodo-contenido">
+
+                                    <div class="datos-cuenta">
+
+                                        <div class="dato-cuenta">
+
+                                            <span>Número de Plin</span>
+
+                                            <strong th:text="${configPago != null
+                                                    and configPago.numeroPlin != null
+                                                    and !configPago.numeroPlin.isBlank()
+                                                    ? configPago.numeroPlin
+                                                    : 'No configurado'}">
+                                                No configurado
+                                            </strong>
+
+                                        </div>
+
+                                        <div class="dato-cuenta">
+
+                                            <span>Titular</span>
+
+                                            <strong th:text="${configPago != null
+                                                    and configPago.titularPlin != null
+                                                    and !configPago.titularPlin.isBlank()
+                                                    ? configPago.titularPlin
+                                                    : 'No configurado'}">
+                                                No configurado
+                                            </strong>
+
+                                        </div>
+
+                                        <div class="monto-pagar">
+
+                                            <span>Monto a pagar</span>
+
+                                            <strong th:text="'S/ '
+                                                + ${pedido.total}">
+                                                S/ 0
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                    <!-- QR PLIN CORREGIDO -->
+
+                                    <div class="qr-pago"
+                                         th:if="${configPago != null
+                                            and configPago.qrPlin != null
+                                            and !configPago.qrPlin.isBlank()}">
+
+                                        <img th:src="@{/configuracion/qr/plin(
+                                                v=${configPago.qrPlin}
+                                             )}"
+                                             alt="Código QR de Plin">
+
+                                        <span>
+                                            Escanea el código QR
+                                        </span>
+
+                                    </div>
+
+                                    <div class="qr-pago"
+                                         th:unless="${configPago != null
+                                            and configPago.qrPlin != null
+                                            and !configPago.qrPlin.isBlank()}">
+
+                                        <i class="bi bi-qr-code"
+                                           style="font-size:55px;"></i>
+
+                                        <span>
+                                            QR no configurado
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </section>
+
+                            <!-- TRANSFERENCIA -->
+
+                            <section class="datos-metodo datos-transferencia">
+
+                                <div class="datos-metodo-cabecera">
+
+                                    <div>
+
+                                        <span class="metodo-logo logo-banco">
+                                            <i class="bi bi-bank"></i>
+                                        </span>
+
+                                        <div>
+                                            <span>Medio seleccionado</span>
+                                            <h3>Transferencia bancaria</h3>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="transferencia-grid">
+
+                                    <div class="dato-cuenta">
+
+                                        <span>Banco</span>
+
+                                        <strong th:text="${configPago != null
+                                                and configPago.bancoTransferencia != null
+                                                and !configPago.bancoTransferencia.isBlank()
+                                                ? configPago.bancoTransferencia
+                                                : 'No configurado'}">
+                                            No configurado
+                                        </strong>
+
+                                    </div>
+
+                                    <div class="dato-cuenta">
+
+                                        <span>Titular</span>
+
+                                        <strong th:text="${configPago != null
+                                                and configPago.titularTransferencia != null
+                                                and !configPago.titularTransferencia.isBlank()
+                                                ? configPago.titularTransferencia
+                                                : 'No configurado'}">
+                                            No configurado
+                                        </strong>
+
+                                    </div>
+
+                                    <div class="dato-cuenta">
+
+                                        <span>Número de cuenta</span>
+
+                                        <strong th:text="${configPago != null
+                                                and configPago.numeroCuentaTransferencia != null
+                                                and !configPago.numeroCuentaTransferencia.isBlank()
+                                                ? configPago.numeroCuentaTransferencia
+                                                : 'No configurado'}">
+                                            No configurado
+                                        </strong>
+
+                                    </div>
+
+                                    <div class="dato-cuenta">
+
+                                        <span>CCI</span>
+
+                                        <strong th:text="${configPago != null
+                                                and configPago.cciTransferencia != null
+                                                and !configPago.cciTransferencia.isBlank()
+                                                ? configPago.cciTransferencia
+                                                : 'No configurado'}">
+                                            No configurado
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="monto-pagar transferencia-monto">
+
+                                    <span>Monto a pagar</span>
+
+                                    <strong th:text="'S/ '
+                                        + ${pedido.total}">
+                                        S/ 0
+                                    </strong>
+
+                                </div>
+
+                            </section>
+
+                            <!-- SUBIR COMPROBANTE -->
+
+                            <section class="evidencia-pago">
+
+                                <div class="titulo-panel">
+
+                                    <div class="titulo-icono">
+                                        <i class="bi bi-cloud-arrow-up"></i>
+                                    </div>
+
+                                    <div>
+                                        <span>Paso 2</span>
+                                        <h2>Sube tu comprobante</h2>
+                                    </div>
+
+                                </div>
+
+                                <div class="campo-formulario">
+
+                                    <label for="captura">
+
+                                        Captura del pago
+                                        <span>*</span>
+                                    </label>
+
+                                    <label class="zona-archivo"
+                                           for="captura">
+
+                                        <i class="bi bi-cloud-arrow-up"></i>
+
+                                        <strong>
+                                            Seleccionar comprobante
+                                        </strong>
+
+                                        <span>
+                                            JPG, JPEG, PNG o WEBP.
+                                            Máximo 5 MB.
+                                        </span>
+
+                                        <input id="captura"
+                                               type="file"
+                                               name="captura"
+                                               accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                                               required>
+
+                                    </label>
+
+                                </div>
+
+                                <div class="campo-formulario">
+
+                                    <label for="numeroOperacion">
+
+                                        Número de operación
+                                        <em>(opcional)</em>
+                                    </label>
+
+                                    <input id="numeroOperacion"
+                                           type="text"
+                                           name="numeroOperacion"
+                                           maxlength="50"
+                                           placeholder="Ejemplo: 45896321">
+
+                                </div>
+
+                                <button type="submit"
+                                        class="boton-enviar">
+
+                                    <i class="bi bi-send-check"></i>
+                                    Enviar comprobante
+                                </button>
+
+                                <div class="aviso-validacion">
+
+                                    <i class="bi bi-shield-check"></i>
+
+                                    <span>
+                                        Caja revisará el comprobante antes
+                                        de confirmar tu pedido.
+                                    </span>
+
+                                </div>
+
+                            </section>
+
+                        </form>
+
+                    </section>
+
+                    <!-- PAGO RECHAZADO -->
+
+                    <section class="panel estado-panel"
+                             th:if="${pedido.estado.name() == 'PENDIENTE_PAGO'
+                                and pago != null
+                                and pago.estado.name() == 'RECHAZADO'}">
+
+                        <div class="estado-icono"
+                             style="color:#b45309;
+                                    background:#fff7ed;">
+
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        </div>
+
+                        <h2>Comprobante rechazado</h2>
+
+                        <p>
+                            El comprobante anterior fue rechazado.
+                            Puedes seleccionar un método de pago y
+                            enviar una nueva captura.
+                        </p>
+
+                        <p th:if="${pago.observacionValidacion != null
+                                and !pago.observacionValidacion.isBlank()}">
+
+                            Motivo:
+
+                            <strong th:text="${pago.observacionValidacion}">
+                            </strong>
+                        </p>
+
+                    </section>
+
+                    <!-- PAGO EN REVISIÓN -->
+
+                    <section class="panel estado-panel"
+                             th:if="${pedido.estado.name()
+                                == 'PENDIENTE_VALIDACION'}">
+
+                        <div class="estado-icono estado-revision">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+
+                        <h2>Comprobante en revisión</h2>
+
+                        <p>
+                            Tu comprobante fue enviado correctamente.
+                            Caja verificará el pago.
+                        </p>
+
+                        <a th:href="@{/pedidos/consultar(
+                                codigo=${pedido.codigoPedido}
+                            )}"
+                           class="boton-principal">
+
+                            Consultar estado
+                        </a>
+
+                    </section>
+
+                    <!-- PEDIDO CONFIRMADO -->
+
+                    <section class="panel estado-panel"
+                             th:if="${pedido.estado.name()
+                                == 'CONFIRMADO'}">
+
+                        <div class="estado-icono estado-confirmado">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+
+                        <h2>Pedido confirmado</h2>
+
+                        <p>
+                            Caja verificó correctamente tu pago.
+                        </p>
+
+                        <a th:href="@{/pedidos/consultar(
+                                codigo=${pedido.codigoPedido}
+                            )}"
+                           class="boton-principal">
+
+                            Ver pedido
+                        </a>
+
+                    </section>
+
+                </div>
+
+                <!-- RESUMEN DEL PEDIDO -->
+
+                <div class="col-lg-5">
+
+                    <aside class="panel resumen-pedido">
+
+                        <div class="titulo-panel">
+
+                            <div class="titulo-icono">
+                                <i class="bi bi-receipt"></i>
+                            </div>
+
+                            <div>
+                                <span>Resumen</span>
+                                <h2>Tu pedido</h2>
+                            </div>
+
+                        </div>
+
+                        <div class="estado-resumen">
+
+                            <span>Estado</span>
+
+                            <strong th:text="${pedido.estado}">
+                                PENDIENTE_PAGO
+                            </strong>
+
+                        </div>
+
+                        <div class="lista-productos"
+                             th:if="${detalles != null
+                                and !detalles.isEmpty()}">
+
+                            <article th:each="detalle : ${detalles}"
+                                     class="producto-resumen">
+
+                                <div>
+
+                                    <strong th:text="${detalle.producto.nombre}">
+                                        Producto
+                                    </strong>
+
+                                    <span th:text="'Cantidad: '
+                                        + ${detalle.cantidad}
+                                        + ' × S/ '
+                                        + ${detalle.precioUnitario}">
+                                        Cantidad: 1 × S/ 0
+                                    </span>
+
+                                </div>
+
+                                <strong th:text="'S/ '
+                                    + ${detalle.subtotal}">
+                                    S/ 0
+                                </strong>
+
+                            </article>
+
+                        </div>
+
+                        <div class="resumen-linea">
+
+                            <span>Subtotal</span>
+
+                            <strong th:text="'S/ '
+                                + ${pedido.subtotal}">
+                                S/ 0
+                            </strong>
+
+                        </div>
+
+                        <!-- MODALIDAD -->
+
+                        <div class="resumen-linea">
+
+                            <span>Modalidad</span>
+
+                            <strong th:text="${pedido.tipoPedido.name()
+                                    == 'RECOJO_LOCAL'
+                                    ? 'Recojo en local'
+                                    : 'Delivery'}">
+                                Delivery
+                            </strong>
+
+                        </div>
+
+                        <!-- COSTO DE DELIVERY -->
+
+                        <div class="resumen-linea"
+                             th:if="${pedido.tipoPedido.name()
+                                == 'DELIVERY'}">
+
+                            <span>Delivery</span>
+
+                            <strong th:text="${pedido.costoDelivery != null
+                                    and pedido.costoDelivery > 0
+                                    ? 'S/ ' + pedido.costoDelivery
+                                    : 'Por coordinar'}">
+                                Por coordinar
+                            </strong>
+
+                        </div>
+
+                        <div class="resumen-total">
+
+                            <span>Total de productos</span>
+
+                            <strong th:text="'S/ '
+                                + ${pedido.total}">
+                                S/ 0
+                            </strong>
+
+                        </div>
+
+                        <!-- AVISO DELIVERY -->
+
+                        <div class="delivery-aviso"
+                             th:if="${pedido.tipoPedido.name()
+                                == 'DELIVERY'}">
+
+                            <i class="bi bi-truck"></i>
+
+                            <span>
+                                El delivery se coordina mediante
+                                InDrive u otro servicio externo.
+                            </span>
+
+                        </div>
+
+                        <!-- AVISO RECOJO -->
+
+                        <div class="delivery-aviso"
+                             th:if="${pedido.tipoPedido.name()
+                                == 'RECOJO_LOCAL'}">
+
+                            <i class="bi bi-shop"></i>
+
+                            <span>
+                                Recogerás el pedido directamente
+                                en el restaurante.
+                            </span>
+
+                        </div>
+
+                    </aside>
+
+                    <nav class="enlaces-pago">
+
+                        <a th:href="@{/pedidos/consultar(
+                                codigo=${pedido.codigoPedido}
+                            )}">
+
+                            <i class="bi bi-search"></i>
+                            Consultar pedido
+                        </a>
+
+                        <a th:href="@{/carta}">
+
+                            <i class="bi bi-arrow-left"></i>
+                            Volver a la carta
+                        </a>
+
+                    </nav>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}">
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+</html>

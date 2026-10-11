@@ -9,13 +9,13 @@ public class ReservaFormDTO {
     private String nombres;
     private String apellidos;
     private String telefono;
+    private String correo;
     private LocalDate fecha;
     private LocalTime horaInicio;
     private Integer numeroPersonas;
+    private Integer idPiso;
     private String ocasionEspecial;
     private String comentarios;
-
-    // Getters y setters
 
     public String getDni() {
         return dni;
@@ -49,6 +49,14 @@ public class ReservaFormDTO {
         this.telefono = telefono;
     }
 
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
     public LocalDate getFecha() {
         return fecha;
     }
@@ -71,6 +79,14 @@ public class ReservaFormDTO {
 
     public void setNumeroPersonas(Integer numeroPersonas) {
         this.numeroPersonas = numeroPersonas;
+    }
+
+    public Integer getIdPiso() {
+        return idPiso;
+    }
+
+    public void setIdPiso(Integer idPiso) {
+        this.idPiso = idPiso;
     }
 
     public String getOcasionEspecial() {

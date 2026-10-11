@@ -14,4 +14,11 @@ public class LoginController {
         model.addAttribute("error", error != null);
         return "paginas/login";
     }
+
+    @GetMapping("/personal/login")
+    public String personalLogin(@RequestParam(required = false) String error, Model model) {
+        model.addAttribute("titulo", "Acceso del personal");
+        model.addAttribute("error", error != null);
+        return "paginas/personal-login";
+    }
 }

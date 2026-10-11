@@ -14,18 +14,35 @@
 <header th:replace="~{fragments/header :: header}"></header>
 
 <main>
-
-    <section class="text-center text-light py-5" style="background-color:#8C2F1B;">
-        <div class="container py-3">
-            <h1 class="fw-title">Nuestra Carta</h1>
-            <p class="lead mb-0">Sabores ayacuchanos preparados con tradición</p>
-        </div>
-    </section>
-
-    <section class="container py-5">
+    <section class="container py-4">
+        <form class="row g-2 align-items-end mb-4" method="get" th:action="@{/carta}">
+            <div class="col-md-5">
+                <label class="form-label" for="q">Buscar por nombre</label>
+                <input type="search" class="form-control" id="q" name="q" th:value="${q}"
+                       placeholder="Ej. pachamanca, cuy, chicha…">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label" for="categoria">Categoría</label>
+                <select class="form-select" id="categoria" name="categoria">
+                    <option value="">Todas las categorías</option>
+                    <option th:each="cat : ${categorias}"
+                            th:value="${cat.idCategoria}"
+                            th:text="${cat.nombre}"
+                            th:selected="${categoriaSeleccionada != null and categoriaSeleccionada == cat.idCategoria}">
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn flex-fill" style="background-color:#5C6E49;color:white;">
+                    <i class="bi bi-search"></i> Filtrar
+                </button>
+                <a th:href="@{/carta}" class="btn btn-outline-secondary flex-fill">Ver todos</a>
+            </div>
+        </form>
 
         <div th:if="${menu.isEmpty()}" class="text-center py-5">
-            <p class="lead">Todavía no hay platos cargados en la carta.</p>
+            <p class="lead">No se encontraron platos con esos criterios.</p>
+            <a th:href="@{/carta}" class="btn" style="background-color:#D4A017;color:#3B2A22;">Ver toda la carta</a>
         </div>
 
         <div th:each="entrada : ${menu}" class="mb-5">
@@ -38,11 +55,49 @@
 
             <div class="row g-4">
                 <div class="col-md-4" th:each="producto : ${entrada.value}">
-                    <div class="card h-100 shadow-sm">
+                    <div class="card h-100 shadow-sm producto-card"
+                         th:classappend="${!producto.disponible} ? ' producto-agotado'">
+                        <div class="ratio ratio-16x9 bg-light">
+                            <img th:if="${producto.imagen != null and !#strings.isEmpty(producto.imagen)}"
+                                 th:src="${producto.imagen}"
+                                 th:alt="${producto.nombre}"
+                                 class="card-img-top object-fit-cover"
+                                 style="object-fit:cover;"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="d-flex align-items-center justify-content-center text-muted"
+                                 th:style="${producto.imagen != null and !#strings.isEmpty(producto.imagen)} ? 'display:none;' : ''">
+                                <i class="bi bi-image" style="font-size:2.5rem;color:#B85C38;"></i>
+                            </div>
+                        </div>
                         <div class="card-body">
-                            <h5 class="card-title fw-title" th:text="${producto.nombre}">Producto</h5>
+                            <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+                                <h5 class="card-title fw-title mb-0" th:text="${producto.nombre}">Producto</h5>
+                                <span th:if="${!producto.disponible}" class="badge bg-danger">AGOTADO</span>
+                            </div>
+                            <p class="small text-muted mb-2">
+                                <i class="bi bi-tag"></i>
+                                <span th:text="${producto.categoria.nombre}">Categoría</span>
+                            </p>
                             <p class="card-text" th:text="${producto.descripcion}">Descripción</p>
-                            <p class="fw-bold" style="color:#B85C38;" th:text="'S/ ' + ${producto.precio}">S/ 0</p>
+                            <p class="fw-bold mb-2" style="color:#B85C38;"
+                               th:text="'S/ ' + ${producto.precio}">S/ 0</p>
+                            <p class="small mb-0"
+                               th:classappend="${producto.disponible} ? ' text-success' : ' text-danger'"
+                               th:text="${producto.disponible} ? 'Disponible' : 'No disponible (agotado)'">
+                                Disponible
+                            </p>
+                            <form th:if="${producto.disponible}" th:action="@{/carrito/agregar}" method="post" class="mt-3">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                <input type="hidden" name="idProducto" th:value="${producto.idProducto}"/>
+                                <input type="hidden" name="cantidad" value="1"/>
+                                <input type="hidden" name="redirect" value="/carta"/>
+                                <button type="submit" class="btn btn-sm w-100" style="background-color:#D4A017;color:#3B2A22;">
+                                    <i class="bi bi-cart-plus"></i> Agregar al carrito
+                                </button>
+                            </form>
+                            <button th:unless="${producto.disponible}" type="button" class="btn btn-sm mt-3 w-100" disabled>
+                                AGOTADO
+                            </button>
                         </div>
                     </div>
                 </div>

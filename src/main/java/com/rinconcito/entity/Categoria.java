@@ -11,10 +11,10 @@ public class Categoria {
     @Column(name = "id_categoria")
     private Integer idCategoria;
 
-    @Column(name = "nombre", nullable = false, length = 30)
+    @Column(name = "nombre", nullable = false, unique = true, length = 60)
     private String nombre;
 
-    @Column(name = "descripcion", length = 150)
+    @Column(name = "descripcion", length = 200)
     private String descripcion;
 
     @Enumerated(EnumType.STRING)
@@ -27,8 +27,6 @@ public class Categoria {
 
     public Categoria() {
     }
-
-    // Getters y setters
 
     public Integer getIdCategoria() {
         return idCategoria;

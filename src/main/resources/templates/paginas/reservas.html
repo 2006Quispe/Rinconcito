@@ -7,7 +7,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600&amp;display=swap" rel="stylesheet">
     <link th:href="@{/css/estilos.css}" rel="stylesheet">
 </head>
 <body>
@@ -19,51 +19,59 @@
     <section class="text-center text-light py-5" style="background-color:#8C2F1B;">
         <div class="container py-3">
             <h1 class="fw-title">Reserva tu mesa</h1>
-            <p class="lead mb-0">Asegura tu lugar para el Almuerzo Show</p>
+            <p class="lead mb-0">Elige fecha, hora y piso; nosotros asignamos la mesa</p>
         </div>
     </section>
 
     <section class="container py-5" style="max-width:700px;">
 
-        <!-- Mensaje de éxito -->
         <div th:if="${exito}" class="alert alert-success">
-            <h5 class="alert-heading">¡Reserva confirmada!</h5>
+            <h5 class="alert-heading" th:if="${reserva.estado.name() == 'CONFIRMADA'}">¡Reserva confirmada!</h5>
+            <h5 class="alert-heading" th:if="${reserva.estado.name() == 'PENDIENTE_PAGO'}">Reserva registrada — requiere pago</h5>
+            <h5 class="alert-heading" th:unless="${reserva.estado.name() == 'CONFIRMADA' or reserva.estado.name() == 'PENDIENTE_PAGO'}">Reserva registrada</h5>
 
-            <p class="mb-0">
-                Mesa <strong th:text="${reserva.mesa.numero}"></strong>
-                (piso <span th:text="${reserva.mesa.piso.nombre}"></span>)
-                para <strong th:text="${reserva.numeroPersonas}"></strong> personas,
-                el <strong th:text="${#temporals.format(reserva.fechaReserva, 'dd/MM/yyyy')}"></strong>
-                a las <strong th:text="${#temporals.format(reserva.horaInicio, 'HH:mm')}"></strong>.
+            <p class="mb-1">Código: <strong th:text="${reserva.codigoReserva}">RES-2026-000001</strong></p>
+            <p class="mb-1">Piso: <strong th:text="${reserva.pisoSolicitado.nombre}">Piso 1</strong></p>
+            <p class="mb-1">
+                Fecha y hora:
+                <strong th:text="${#temporals.format(reserva.fechaReserva, 'dd/MM/yyyy')}"></strong>
+                a las
+                <strong th:text="${#temporals.format(reserva.horaInicio, 'HH:mm')}"></strong>
+                (hasta <span th:text="${#temporals.format(reserva.horaFin, 'HH:mm')}"></span>)
             </p>
-
-            <!-- Información del pago -->
-            <p th:if="${pago != null}" class="mb-0 mt-2">
-                <i class="bi bi-credit-card"></i>
-                Entrada cobrada:
-                <strong th:text="'S/ ' + ${pago.monto}"></strong>
-                (operación <span th:text="${pago.numeroOperacion}"></span>)
+            <p class="mb-1">Personas: <strong th:text="${reserva.numeroPersonas}"></strong></p>
+            <p class="mb-1">Estado: <strong th:text="${reserva.estado}"></strong></p>
+            <p th:if="${reserva.requierePago}" class="mb-0 mt-2">
+                <i class="bi bi-cash-coin"></i>
+                Monto a pagar:
+                <strong th:text="'S/ ' + ${reserva.montoReserva}"></strong>
+                <span class="d-block small text-muted mt-1">
+                    Guarda tu código interno. No lo uses como número de operación en Yape/Plin.
+                </span>
+                <a th:if="${reserva.estado.name() == 'PENDIENTE_PAGO'}"
+                   class="btn btn-sm mt-2"
+                   style="background-color:#D4A017;color:#3B2A22;"
+                   th:href="@{/reservas/pago(codigo=${reserva.codigoReserva})}">
+                    Ir a pagar ahora
+                </a>
             </p>
-
+            <p th:unless="${reserva.requierePago}" class="mb-0 mt-2 text-muted small">
+                Mesa asignada automáticamente en el piso elegido.
+            </p>
         </div>
 
-        <!-- Error -->
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-        <!-- Formulario -->
+        <div th:if="${clienteLogueado}" class="alert alert-info py-2 small">
+            Estás reservando con tu cuenta. Puedes ajustar teléfono o correo si lo necesitas.
+        </div>
+
         <form th:if="${exito == null}"
               th:action="@{/reservas}"
               th:object="${reservaForm}"
               method="post">
 
-            <div class="mb-3">
-                <label class="form-label">DNI</label>
-                <input type="text"
-                       class="form-control"
-                       th:field="*{dni}"
-                       maxlength="8"
-                       required>
-            </div>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
             <div class="row">
                 <div class="col-md-6 mb-3">
@@ -71,25 +79,44 @@
                     <input type="text"
                            class="form-control"
                            th:field="*{nombres}"
+                           th:readonly="${clienteLogueado}"
                            required>
                 </div>
-
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Apellidos</label>
                     <input type="text"
                            class="form-control"
                            th:field="*{apellidos}"
+                           th:readonly="${clienteLogueado}"
+                           required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">DNI</label>
+                    <input type="text"
+                           class="form-control"
+                           th:field="*{dni}"
+                           maxlength="8"
+                           th:readonly="${clienteLogueado}"
+                           required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Teléfono</label>
+                    <input type="text"
+                           class="form-control"
+                           th:field="*{telefono}"
+                           maxlength="9"
                            required>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Teléfono</label>
-                <input type="text"
+                <label class="form-label">Correo <span class="text-muted">(opcional)</span></label>
+                <input type="email"
                        class="form-control"
-                       th:field="*{telefono}"
-                       maxlength="9"
-                       required>
+                       th:field="*{correo}">
             </div>
 
             <div class="row">
@@ -101,15 +128,13 @@
                            th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
                            required>
                 </div>
-
                 <div class="col-md-4 mb-3">
-                    <label class="form-label">Hora de inicio</label>
+                    <label class="form-label">Hora</label>
                     <input type="time"
                            class="form-control"
                            th:field="*{horaInicio}"
                            required>
                 </div>
-
                 <div class="col-md-4 mb-3">
                     <label class="form-label">N° de personas</label>
                     <input type="number"
@@ -121,23 +146,41 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Ocasión especial (opcional)</label>
-                <input type="text"
-                       class="form-control"
-                       th:field="*{ocasionEspecial}">
+                <label class="form-label">Piso deseado</label>
+                <select class="form-select" th:field="*{idPiso}" required>
+                    <option value="">Selecciona un piso...</option>
+                    <option th:each="piso : ${pisos}"
+                            th:value="${piso.idPiso}"
+                            th:text="${piso.nombre}">Piso 1</option>
+                </select>
+                <div class="form-text">No eliges número de mesa: el sistema asigna la más adecuada.</div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Comentarios (opcional)</label>
+                <label class="form-label">Ocasión especial <span class="text-muted">(opcional)</span></label>
+                <input type="text"
+                       class="form-control"
+                       th:field="*{ocasionEspecial}"
+                       maxlength="120">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Comentarios <span class="text-muted">(opcional)</span></label>
                 <textarea class="form-control"
                           th:field="*{comentarios}"
-                          rows="3"></textarea>
+                          rows="3"
+                          maxlength="300"></textarea>
             </div>
+
+            <p class="small text-muted mb-3">
+                Horario: lunes cerrado · mar–sáb 11:00–18:00 · domingo 11:00–22:00.
+                Cada reserva dura 2 horas.
+            </p>
 
             <button type="submit"
                     class="btn btn-lg w-100"
                     style="background-color:#D4A017;color:#3B2A22;">
-                Confirmar reserva
+                Enviar reserva
             </button>
 
         </form>

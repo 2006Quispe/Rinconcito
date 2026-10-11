@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo} + ' - Rinconcito Ayacuchano Campestre'">
+        Carrito - Rinconcito Ayacuchano Campestre
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap"
+          rel="stylesheet">
+    <link th:href="@{/css/estilos.css}"
+          rel="stylesheet">
+    <link th:href="@{/css/carrito.css}"
+          rel="stylesheet">
+</head>
+
+<body class="pagina-carrito">
+
+<header th:replace="~{fragments/header :: header}"></header>
+
+<main>
+
+    <section class="container carrito-contenedor">
+
+        <!-- MENSAJE DE ÉXITO -->
+        <div th:if="${exito}"
+             class="alert alert-success alert-dismissible fade show"
+             role="alert">
+
+            <i class="bi bi-check-circle-fill me-2"></i>
+
+            <span th:text="${exito}">
+                Operación realizada correctamente.
+            </span>
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Cerrar">
+            </button>
+        </div>
+
+        <!-- MENSAJE DE ERROR -->
+        <div th:if="${error}"
+             class="alert alert-danger alert-dismissible fade show"
+             role="alert">
+
+            <i class="bi bi-exclamation-circle-fill me-2"></i>
+
+            <span th:text="${error}">
+                Ocurrió un error.
+            </span>
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Cerrar">
+            </button>
+        </div>
+
+        <!-- CARRITO VACÍO -->
+        <div th:if="${items == null or items.isEmpty()}"
+             class="carrito-vacio">
+
+            <div class="carrito-vacio-icono">
+                <i class="bi bi-cart-x"></i>
+            </div>
+
+            <h1>Tu carrito está vacío</h1>
+
+            <p>
+                Todavía no agregaste ningún plato. Revisa nuestra carta
+                y descubre los sabores del Rinconcito Ayacuchano.
+            </p>
+
+            <a th:href="@{/carta}"
+               class="btn-carrito-principal">
+
+                <i class="bi bi-journal-richtext"></i>
+                Ver nuestra carta
+            </a>
+        </div>
+
+        <!-- CARRITO CON PRODUCTOS -->
+        <div th:if="${items != null and !items.isEmpty()}"
+             class="row g-4 align-items-start">
+
+            <!-- PRODUCTOS -->
+            <div class="col-lg-8">
+
+                <div class="carrito-titulo-seccion">
+
+                    <div>
+                        <span>PRODUCTOS SELECCIONADOS</span>
+                        <h1>Detalle de tu pedido</h1>
+                    </div>
+
+                    <a th:href="@{/carta}"
+                       class="carrito-seguir-comprando">
+
+                        <i class="bi bi-arrow-left"></i>
+                        Seguir comprando
+                    </a>
+                </div>
+
+                <!-- PRODUCTO -->
+                <article class="carrito-producto"
+                         th:each="item : ${items}"
+                         th:attr="data-producto-id=${item.idProducto},
+                                  data-precio=${item.precioUnitario}">
+
+                    <!-- IMAGEN -->
+                    <div class="carrito-producto-imagen">
+
+                        <img th:if="${item.imagen != null and !#strings.isEmpty(item.imagen)}"
+                             th:src="${item.imagen}"
+                             th:alt="${item.nombre}"
+                             onerror="
+                                 this.style.display='none';
+                                 this.nextElementSibling.style.display='flex';
+                             ">
+
+                        <div class="carrito-imagen-vacia"
+                             th:style="${item.imagen != null and !#strings.isEmpty(item.imagen)}
+                                ? 'display:none;'
+                                : 'display:flex;'">
+
+                            <i class="bi bi-image"></i>
+                        </div>
+                    </div>
+
+                    <!-- INFORMACIÓN -->
+                    <div class="carrito-producto-informacion">
+
+                        <div class="carrito-producto-superior">
+
+                            <div class="carrito-producto-nombre">
+
+                                <span class="carrito-producto-etiqueta">
+                                    Plato seleccionado
+                                </span>
+
+                                <h2 th:text="${item.nombre}">
+                                    Nombre del producto
+                                </h2>
+                            </div>
+
+                            <!-- ELIMINAR PRODUCTO -->
+                            <form th:action="@{/carrito/eliminar}"
+                                  method="post"
+                                  class="form-eliminar-producto"
+                                  onsubmit="return confirm('¿Deseas eliminar este producto?');">
+
+                                <input type="hidden"
+                                       th:name="${_csrf.parameterName}"
+                                       th:value="${_csrf.token}">
+
+                                <input type="hidden"
+                                       name="idProducto"
+                                       th:value="${item.idProducto}">
+
+                                <button type="submit"
+                                        class="btn-eliminar-producto"
+                                        title="Eliminar producto"
+                                        aria-label="Eliminar producto">
+
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="carrito-producto-datos">
+
+                            <!-- PRECIO -->
+                            <div class="carrito-dato">
+
+                                <span>Precio unitario</span>
+
+                                <strong class="precio-unitario"
+                                        th:text="'S/ ' + ${item.precioUnitario}">
+                                    S/ 0
+                                </strong>
+                            </div>
+
+                            <!-- CANTIDAD -->
+                            <form th:action="@{/carrito/actualizar}"
+                                  method="post"
+                                  class="form-cantidad">
+
+                                <input type="hidden"
+                                       th:name="${_csrf.parameterName}"
+                                       th:value="${_csrf.token}">
+
+                                <input type="hidden"
+                                       name="idProducto"
+                                       th:value="${item.idProducto}">
+
+                                <span class="cantidad-titulo">
+                                    Cantidad
+                                </span>
+
+                                <div class="control-cantidad">
+
+                                    <button type="button"
+                                            class="btn-cantidad btn-restar"
+                                            aria-label="Disminuir cantidad">
+
+                                        <i class="bi bi-dash-lg"></i>
+                                    </button>
+
+                                    <input type="number"
+                                           name="cantidad"
+                                           class="input-cantidad"
+                                           min="1"
+                                           max="30"
+                                           th:value="${item.cantidad}"
+                                           readonly
+                                           aria-label="Cantidad del producto">
+
+                                    <button type="button"
+                                            class="btn-cantidad btn-sumar"
+                                            aria-label="Aumentar cantidad">
+
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- SUBTOTAL -->
+                            <div class="carrito-producto-subtotal">
+
+                                <span>Subtotal</span>
+
+                                <strong class="subtotal-producto"
+                                        th:text="'S/ ' + ${item.subtotal}">
+                                    S/ 0
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- VACIAR CARRITO -->
+                <div class="carrito-acciones-secundarias">
+
+                    <form th:action="@{/carrito/vaciar}"
+                          method="post"
+                          onsubmit="return confirm('¿Deseas eliminar todos los productos del carrito?');">
+
+                        <input type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}">
+
+                        <button type="submit"
+                                class="btn-vaciar-carrito">
+
+                            <i class="bi bi-trash3"></i>
+                            Vaciar carrito
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- RESUMEN -->
+            <div class="col-lg-4">
+
+                <aside class="carrito-resumen">
+
+                    <div class="carrito-resumen-encabezado">
+                        <span>RESUMEN</span>
+                        <h2>Tu pedido</h2>
+                    </div>
+
+                    <div class="carrito-resumen-fila">
+
+                        <span>Productos</span>
+
+                        <strong id="cantidadTotalProductos"
+                                th:text="${#aggregates.sum(items.![cantidad])}">
+                            0
+                        </strong>
+                    </div>
+
+                    <div class="carrito-resumen-fila">
+
+                        <span>Subtotal</span>
+
+                        <strong id="subtotalGeneral"
+                                th:text="'S/ ' + ${subtotal}">
+                            S/ 0
+                        </strong>
+                    </div>
+
+                    <div class="carrito-resumen-fila">
+
+                        <span>Servicio de delivery</span>
+
+                        <strong class="texto-por-coordinar">
+                            Por coordinar
+                        </strong>
+                    </div>
+
+                    <div class="carrito-resumen-separador"></div>
+
+                    <div class="carrito-resumen-total">
+
+                        <span>Total de productos</span>
+
+                        <strong id="totalGeneral"
+                                th:text="'S/ ' + ${subtotal}">
+                            S/ 0
+                        </strong>
+                    </div>
+
+                    <div th:if="${mensajeTraslado}"
+                         class="carrito-aviso-delivery">
+
+                        <i class="bi bi-info-circle-fill"></i>
+
+                        <p th:text="${mensajeTraslado}">
+                            El servicio de delivery se coordina por separado.
+                        </p>
+                    </div>
+
+                    <a th:href="@{/pedidos}"
+                       class="btn-continuar-pedido">
+
+                        Continuar con el pedido
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                    <div class="carrito-pago-seguro">
+
+                        <i class="bi bi-shield-check"></i>
+
+                        <span>
+                            Pago mediante Yape, Plin o transferencia
+                        </span>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const productos =
+            document.querySelectorAll(".carrito-producto");
+
+        const temporizadores = new Map();
+
+        productos.forEach(function (producto) {
+
+            const formulario =
+                producto.querySelector(".form-cantidad");
+
+            const inputCantidad =
+                producto.querySelector(".input-cantidad");
+
+            const botonRestar =
+                producto.querySelector(".btn-restar");
+
+            const botonSumar =
+                producto.querySelector(".btn-sumar");
+
+            if (
+                !formulario ||
+                !inputCantidad ||
+                !botonRestar ||
+                !botonSumar
+            ) {
+                return;
+            }
+
+            const idProducto =
+                producto.dataset.productoId;
+
+            botonRestar.addEventListener(
+                "click",
+                function () {
+                    cambiarCantidad(
+                        producto,
+                        inputCantidad,
+                        -1,
+                        formulario,
+                        idProducto
+                    );
+                }
+            );
+
+            botonSumar.addEventListener(
+                "click",
+                function () {
+                    cambiarCantidad(
+                        producto,
+                        inputCantidad,
+                        1,
+                        formulario,
+                        idProducto
+                    );
+                }
+            );
+
+            actualizarEstadoBotones(
+                inputCantidad,
+                botonRestar,
+                botonSumar
+            );
+        });
+
+        function cambiarCantidad(
+            producto,
+            inputCantidad,
+            cambio,
+            formulario,
+            idProducto
+        ) {
+            const cantidadActual =
+                parseInt(inputCantidad.value, 10) || 1;
+
+            let nuevaCantidad =
+                cantidadActual + cambio;
+
+            if (nuevaCantidad < 1) {
+                nuevaCantidad = 1;
+            }
+
+            if (nuevaCantidad > 30) {
+                nuevaCantidad = 30;
+            }
+
+            if (nuevaCantidad === cantidadActual) {
+                return;
+            }
+
+            inputCantidad.value = nuevaCantidad;
+
+            actualizarSubtotalProducto(
+                producto,
+                nuevaCantidad
+            );
+
+            actualizarResumenGeneral();
+
+            const botonRestar =
+                producto.querySelector(".btn-restar");
+
+            const botonSumar =
+                producto.querySelector(".btn-sumar");
+
+            actualizarEstadoBotones(
+                inputCantidad,
+                botonRestar,
+                botonSumar
+            );
+
+            if (temporizadores.has(idProducto)) {
+                clearTimeout(
+                    temporizadores.get(idProducto)
+                );
+            }
+
+            const temporizador = setTimeout(
+                function () {
+                    guardarCantidad(formulario);
+                },
+                350
+            );
+
+            temporizadores.set(
+                idProducto,
+                temporizador
+            );
+        }
+
+        function actualizarSubtotalProducto(
+            producto,
+            cantidad
+        ) {
+            const precio =
+                parseInt(producto.dataset.precio, 10) || 0;
+
+            const subtotal =
+                precio * cantidad;
+
+            const elementoSubtotal =
+                producto.querySelector(".subtotal-producto");
+
+            if (elementoSubtotal) {
+                elementoSubtotal.textContent =
+                    "S/ " + subtotal;
+            }
+        }
+
+        function actualizarResumenGeneral() {
+
+            let subtotalGeneral = 0;
+            let cantidadTotal = 0;
+
+            document
+                .querySelectorAll(".carrito-producto")
+                .forEach(function (producto) {
+
+                    const precio =
+                        parseInt(
+                            producto.dataset.precio,
+                            10
+                        ) || 0;
+
+                    const inputCantidad =
+                        producto.querySelector(
+                            ".input-cantidad"
+                        );
+
+                    const cantidad =
+                        parseInt(
+                            inputCantidad.value,
+                            10
+                        ) || 0;
+
+                    subtotalGeneral +=
+                        precio * cantidad;
+
+                    cantidadTotal += cantidad;
+                });
+
+            const elementoSubtotal =
+                document.getElementById(
+                    "subtotalGeneral"
+                );
+
+            const elementoTotal =
+                document.getElementById(
+                    "totalGeneral"
+                );
+
+            const elementoCantidad =
+                document.getElementById(
+                    "cantidadTotalProductos"
+                );
+
+            if (elementoSubtotal) {
+                elementoSubtotal.textContent =
+                    "S/ " + subtotalGeneral;
+            }
+
+            if (elementoTotal) {
+                elementoTotal.textContent =
+                    "S/ " + subtotalGeneral;
+            }
+
+            if (elementoCantidad) {
+                elementoCantidad.textContent =
+                    cantidadTotal;
+            }
+        }
+
+        function actualizarEstadoBotones(
+            inputCantidad,
+            botonRestar,
+            botonSumar
+        ) {
+            const cantidad =
+                parseInt(inputCantidad.value, 10) || 1;
+
+            botonRestar.disabled =
+                cantidad <= 1;
+
+            botonSumar.disabled =
+                cantidad >= 30;
+        }
+
+        async function guardarCantidad(formulario) {
+
+            const datosFormulario =
+                new FormData(formulario);
+
+            try {
+                formulario.classList.add(
+                    "actualizando"
+                );
+
+                const respuesta = await fetch(
+                    formulario.action,
+                    {
+                        method: "POST",
+                        body: datosFormulario,
+                        credentials: "same-origin"
+                    }
+                );
+
+                if (!respuesta.ok) {
+                    throw new Error(
+                        "No se pudo actualizar la cantidad."
+                    );
+                }
+
+            } catch (error) {
+                console.error(error);
+
+                alert(
+                    "No se pudo guardar la cantidad. " +
+                    "La página se actualizará."
+                );
+
+                window.location.reload();
+
+            } finally {
+                formulario.classList.remove(
+                    "actualizando"
+                );
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

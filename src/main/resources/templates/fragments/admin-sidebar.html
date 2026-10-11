@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+
+<aside th:fragment="sidebar(seccionActiva)"
+       class="admin-sidebar">
+
+    <div class="admin-marca">
+
+        <div class="admin-marca-icono">
+            <i class="bi bi-shop"></i>
+        </div>
+
+        <div>
+            <strong>Rinconcito</strong>
+            <span>Administración</span>
+        </div>
+
+    </div>
+
+    <nav class="admin-menu">
+
+        <a th:href="@{/admin/dashboard}"
+           th:classappend="${seccionActiva == 'inicio'} ? ' activo'">
+
+            <i class="bi bi-grid-fill"></i>
+            <span>Inicio y resumen</span>
+
+        </a>
+
+        <a th:href="@{/admin/carta}"
+           th:classappend="${seccionActiva == 'carta'} ? ' activo'">
+
+            <i class="bi bi-journal-richtext"></i>
+            <span>Carta y productos</span>
+
+        </a>
+
+        <a th:href="@{/admin/categorias}"
+           th:classappend="${seccionActiva == 'categorias'} ? ' activo'">
+
+            <i class="bi bi-tags"></i>
+            <span>Categorías</span>
+
+        </a>
+
+        <a th:href="@{/admin/eventos}"
+           th:classappend="${seccionActiva == 'eventos'} ? ' activo'">
+
+            <i class="bi bi-music-note-beamed"></i>
+            <span>Eventos</span>
+
+        </a>
+
+        <a th:href="@{/admin/reservas}"
+           th:classappend="${seccionActiva == 'reservas'} ? ' activo'">
+
+            <i class="bi bi-calendar-check"></i>
+            <span>Reservas</span>
+
+        </a>
+
+        <a th:href="@{/admin/pedidos}"
+           th:classappend="${seccionActiva == 'pedidos'} ? ' activo'">
+
+            <i class="bi bi-bag-check"></i>
+            <span>Pedidos</span>
+
+        </a>
+
+        <a th:href="@{/admin/pisos-mesas}"
+           th:classappend="${seccionActiva == 'mesas'} ? ' activo'">
+
+            <i class="bi bi-layout-three-columns"></i>
+            <span>Pisos y mesas</span>
+
+        </a>
+
+        <a th:href="@{/admin/usuarios}"
+           th:classappend="${seccionActiva == 'usuarios'} ? ' activo'">
+
+            <i class="bi bi-people"></i>
+            <span>Personal y usuarios</span>
+
+        </a>
+
+        <a th:href="@{/admin/galeria}"
+           th:classappend="${seccionActiva == 'galeria'} ? ' activo'">
+
+            <i class="bi bi-images"></i>
+            <span>Galería</span>
+
+        </a>
+
+        <a th:href="@{/admin/reportes}"
+           th:classappend="${seccionActiva == 'reportes'} ? ' activo'">
+
+            <i class="bi bi-bar-chart-line"></i>
+            <span>Reportes</span>
+
+        </a>
+
+        <a th:href="@{/admin/configuracion}"
+           th:classappend="${seccionActiva == 'configuracion'} ? ' activo'">
+
+            <i class="bi bi-gear"></i>
+            <span>Configuración</span>
+
+        </a>
+
+    </nav>
+
+    <div class="admin-usuario">
+
+        <div class="admin-usuario-datos">
+
+            <div class="admin-avatar">
+                <i class="bi bi-person-fill"></i>
+            </div>
+
+            <div>
+                <strong>Administrador</strong>
+
+                <span sec:authentication="name">
+                    admin@rinconcito.pe
+                </span>
+            </div>
+
+        </div>
+
+        <form th:action="@{/logout}"
+              method="post">
+
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+            <button type="submit"
+                    class="admin-cerrar-sesion">
+
+                <i class="bi bi-box-arrow-left"></i>
+                Cerrar sesión
+
+            </button>
+
+        </form>
+
+    </div>
+
+</aside>
+
+</body>
+</html>

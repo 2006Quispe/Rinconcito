@@ -16,10 +16,10 @@ public class Direccion {
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 
-    @Column(name = "direccion", nullable = false, length = 100)
+    @Column(name = "direccion", nullable = false, length = 200)
     private String direccion;
 
-    @Column(name = "referencia", length = 150)
+    @Column(name = "referencia", length = 200)
     private String referencia;
 
     @Column(name = "distrito", length = 50)
@@ -36,8 +36,6 @@ public class Direccion {
 
     public Direccion() {
     }
-
-    // Getters y setters
 
     public Integer getIdDireccion() {
         return idDireccion;

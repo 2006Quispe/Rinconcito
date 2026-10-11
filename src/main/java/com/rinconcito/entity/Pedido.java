@@ -12,6 +12,9 @@ public class Pedido {
     @Column(name = "id_pedido")
     private Integer idPedido;
 
+    @Column(name = "codigo_pedido", nullable = false, unique = true, length = 25)
+    private String codigoPedido;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cliente", nullable = false)
     private Usuario cliente;
@@ -34,7 +37,7 @@ public class Pedido {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false)
-    private EstadoPedido estado = EstadoPedido.RECIBIDO;
+    private EstadoPedido estado = EstadoPedido.PENDIENTE_PAGO;
 
     @Column(name = "subtotal", nullable = false)
     private Integer subtotal = 0;
@@ -55,11 +58,16 @@ public class Pedido {
     private LocalDateTime fechaActualizacion;
 
     public enum TipoPedido {
-        DELIVERY, PRESENCIAL
+        DELIVERY,
+        RECOJO_LOCAL,
+        PRESENCIAL
     }
-
     public enum EstadoPedido {
-        RECIBIDO, CONFIRMADO, EN_PREPARACION, LISTO, EN_CAMINO, ENTREGADO, CANCELADO
+        PENDIENTE_PAGO,
+        PENDIENTE_VALIDACION,
+        CONFIRMADO,
+        CANCELADO,
+        FINALIZADO
     }
 
     public Pedido() {
@@ -79,14 +87,20 @@ public class Pedido {
         fechaActualizacion = LocalDateTime.now();
     }
 
-    // Getters y setters
-
     public Integer getIdPedido() {
         return idPedido;
     }
 
     public void setIdPedido(Integer idPedido) {
         this.idPedido = idPedido;
+    }
+
+    public String getCodigoPedido() {
+        return codigoPedido;
+    }
+
+    public void setCodigoPedido(String codigoPedido) {
+        this.codigoPedido = codigoPedido;
     }
 
     public Usuario getCliente() {

@@ -1,11 +1,92 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<footer th:fragment="footer" class="text-light py-4 mt-5" style="background-color:#3B2A22;">
-    <div class="container text-center">
-        <p class="mb-1 fw-bold">El Rinconcito Ayacuchano Campestre</p>
-        <p class="mb-1">Av. Carapongo Km 15, Mz A Lote 6 y 7, Chosica</p>
-        <p class="mb-0">&copy; <span th:text="${#temporals.year(#temporals.createNow())}"></span> Todos los derechos reservados</p>
+<footer th:fragment="footer" class="text-light py-5 mt-5" style="background-color:#3B2A22;">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <h5 class="fw-title mb-3" style="color:#D4A017;"
+                    th:text="${configuracion != null ? configuracion.nombre : 'Rinconcito Ayacuchano Campestre'}">
+                    Rinconcito Ayacuchano Campestre
+                </h5>
+                <p class="mb-1">
+                    <i class="bi bi-geo-alt-fill me-1"></i>
+                    <span th:text="${configuracion != null and configuracion.direccion != null} ? ${configuracion.direccion} : 'Dirección por confirmar'">Dirección</span>
+                </p>
+                <p class="mb-0 text-white-50" th:if="${configuracion != null and configuracion.referencia != null}"
+                   th:text="${configuracion.referencia}"></p>
+            </div>
+
+            <div class="col-md-4">
+                <h5 class="fw-title mb-3" style="color:#D4A017;">Contacto y horarios</h5>
+                <p class="mb-1">
+                    <i class="bi bi-telephone-fill me-1"></i>
+                    Teléfono:
+                    <a class="text-light text-decoration-none"
+                       th:if="${configuracion != null and configuracion.telefono != null}"
+                       th:href="'tel:' + ${configuracion.telefono}"
+                       th:text="${configuracion.telefono}">Teléfono</a>
+                    <span th:if="${configuracion == null or configuracion.telefono == null}">Por confirmar</span>
+                </p>
+                <p class="mb-3">
+                    <i class="bi bi-whatsapp me-1"></i>
+                    WhatsApp:
+                    <a class="text-light text-decoration-none"
+                       th:if="${configuracion != null and configuracion.whatsapp != null}"
+                       th:href="${configuracion.enlaceWhatsapp}"
+                       target="_blank" rel="noopener"
+                       th:text="${configuracion.whatsapp}">WhatsApp</a>
+                    <span th:if="${configuracion == null or configuracion.whatsapp == null}">Por confirmar</span>
+                </p>
+                <p class="mb-2 fw-semibold">Horario de atención</p>
+                <ul class="list-unstyled mb-0" th:if="${resumenHorarios != null and !#lists.isEmpty(resumenHorarios)}">
+                    <li th:each="horario : ${resumenHorarios}" class="mb-1">
+                        <i class="bi bi-clock me-1"></i>
+                        <strong th:text="${horario.dias}">Día</strong>:
+                        <span th:text="${horario.detalle}">Horario</span>
+                    </li>
+                </ul>
+                <p class="mb-0 text-white-50" th:if="${resumenHorarios == null or #lists.isEmpty(resumenHorarios)}">
+                    Horarios por confirmar.
+                </p>
+            </div>
+
+            <div class="col-md-4">
+                <h5 class="fw-title mb-3" style="color:#D4A017;">Síguenos</h5>
+                <p class="mb-2">
+                    <i class="bi bi-map me-1"></i>
+                    <a class="text-light text-decoration-none"
+                       th:if="${configuracion != null and configuracion.urlGoogleMaps != null}"
+                       th:href="${configuracion.urlGoogleMaps}"
+                       target="_blank" rel="noopener">Ver en Google Maps</a>
+                    <span th:if="${configuracion == null or configuracion.urlGoogleMaps == null}">Google Maps por confirmar</span>
+                </p>
+                <p class="mb-2">
+                    <i class="bi bi-facebook me-1"></i>
+                    <a class="text-light text-decoration-none"
+                       th:if="${configuracion != null and configuracion.urlFacebook != null}"
+                       th:href="${configuracion.urlFacebook}"
+                       target="_blank" rel="noopener">Facebook</a>
+                    <span th:if="${configuracion == null or configuracion.urlFacebook == null}">Facebook por confirmar</span>
+                </p>
+                <p class="mb-0">
+                    <i class="bi bi-instagram me-1"></i>
+                    <a class="text-light text-decoration-none"
+                       th:if="${configuracion != null and configuracion.urlInstagram != null}"
+                       th:href="${configuracion.urlInstagram}"
+                       target="_blank" rel="noopener">Instagram</a>
+                    <span th:if="${configuracion == null or configuracion.urlInstagram == null}">Instagram por confirmar</span>
+                </p>
+            </div>
+        </div>
+
+        <hr class="border-secondary my-4">
+        <p class="mb-0 text-center small">
+            &copy; <span th:text="${#temporals.year(#temporals.createNow())}"></span>
+            <span th:text="${configuracion != null ? configuracion.nombre : 'Rinconcito Ayacuchano Campestre'}"></span>.
+            Todos los derechos reservados
+            · <a th:href="@{/personal/login}" class="text-white-50 text-decoration-none">Acceso del personal</a>
+        </p>
     </div>
 </footer>
 </body>

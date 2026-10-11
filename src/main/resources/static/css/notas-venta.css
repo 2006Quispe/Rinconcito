@@ -1,0 +1,476 @@
+/* =========================================================
+   NOTAS DE VENTA
+   Utiliza el panel lateral principal definido en caja.css
+   ========================================================= */
+
+.notas-principal {
+    min-width: 0;
+}
+
+.notas-encabezado {
+    align-items: flex-start;
+}
+
+.notas-volver {
+    display: inline-flex;
+    min-height: 43px;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 1px solid var(--caja-borde);
+    border-radius: 11px;
+    background-color: var(--caja-blanco);
+    color: var(--caja-texto);
+    font-family: "Nunito", sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 6px 18px rgba(59, 42, 34, 0.05);
+    transition:
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.notas-volver:hover {
+    border-color: var(--caja-rojo);
+    color: var(--caja-rojo);
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   TARJETAS DE RESUMEN
+   ========================================================= */
+
+.notas-resumen {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.nota-resumen-card {
+    display: flex;
+    min-width: 0;
+    min-height: 110px;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    border: 1px solid var(--caja-borde);
+    border-radius: 15px;
+    background-color: var(--caja-blanco);
+    box-shadow: 0 7px 20px rgba(59, 42, 34, 0.05);
+}
+
+.nota-resumen-icono {
+    display: grid;
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border-radius: 13px;
+    font-size: 21px;
+}
+
+.resumen-total {
+    background-color: #fff0e4;
+    color: #c26124;
+}
+
+.resumen-emitidas {
+    background-color: var(--caja-verde-claro);
+    color: var(--caja-verde);
+}
+
+.resumen-anuladas {
+    background-color: var(--caja-rojo-claro);
+    color: #c74835;
+}
+
+.resumen-ventas {
+    background-color: #fff4cc;
+    color: #a77400;
+}
+
+.nota-resumen-card span {
+    display: block;
+    overflow: hidden;
+    margin-bottom: 3px;
+    color: var(--caja-texto-suave);
+    font-size: 11px;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.nota-resumen-card strong {
+    display: block;
+    color: var(--caja-texto);
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+
+/* =========================================================
+   PANEL DEL HISTORIAL
+   ========================================================= */
+
+.notas-panel {
+    overflow: hidden;
+    border: 1px solid var(--caja-borde);
+    border-radius: 17px;
+    background-color: var(--caja-blanco);
+    box-shadow: var(--caja-sombra);
+}
+
+.notas-panel-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 23px 25px;
+    border-bottom: 1px solid var(--caja-borde);
+}
+
+.notas-panel-cabecera h2 {
+    margin: 0;
+    color: var(--caja-texto);
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.notas-panel-cabecera p {
+    margin: 5px 0 0;
+    color: var(--caja-texto-suave);
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   BUSCADOR
+   ========================================================= */
+
+.notas-buscador {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.notas-campo-busqueda {
+    position: relative;
+}
+
+.notas-campo-busqueda > i {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    color: #a09289;
+    font-size: 15px;
+    transform: translateY(-50%);
+}
+
+.notas-campo-busqueda input {
+    width: 325px;
+    height: 43px;
+    padding: 0 15px 0 41px;
+    border: 1px solid var(--caja-borde);
+    border-radius: 10px;
+    background-color: var(--caja-blanco);
+    color: var(--caja-texto);
+    font-family: "Nunito", sans-serif;
+    font-size: 13px;
+    outline: none;
+}
+
+.notas-campo-busqueda input:focus {
+    border-color: var(--caja-rojo);
+    box-shadow: 0 0 0 3px rgba(140, 47, 27, 0.08);
+}
+
+.notas-buscador button {
+    height: 43px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 10px;
+    background-color: var(--caja-rojo);
+    color: var(--caja-blanco);
+    font-family: "Nunito", sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.notas-buscador button:hover {
+    background-color: var(--caja-rojo-oscuro);
+}
+
+.notas-limpiar {
+    display: grid;
+    flex: 0 0 43px;
+    width: 43px;
+    height: 43px;
+    place-items: center;
+    border: 1px solid var(--caja-borde);
+    border-radius: 10px;
+    color: var(--caja-texto-suave);
+    text-decoration: none;
+}
+
+.notas-limpiar:hover {
+    border-color: var(--caja-rojo);
+    color: var(--caja-rojo);
+}
+
+
+/* =========================================================
+   TABLA
+   ========================================================= */
+
+.notas-tabla-contenedor {
+    overflow-x: auto;
+}
+
+.notas-tabla {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+}
+
+.notas-tabla thead {
+    background-color: #f7f0e6;
+}
+
+.notas-tabla th {
+    padding: 14px 17px;
+    color: #65534a;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.notas-tabla td {
+    padding: 17px;
+    border-bottom: 1px solid #eee6df;
+    color: var(--caja-texto);
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+.notas-tabla tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.notas-tabla tbody tr:hover {
+    background-color: #fdfaf6;
+}
+
+.notas-tabla tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.nota-numero {
+    color: var(--caja-rojo);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.nota-pedido,
+.nota-fecha,
+.nota-monto {
+    white-space: nowrap;
+}
+
+.nota-cliente strong,
+.nota-cliente span {
+    display: block;
+}
+
+.nota-cliente strong {
+    margin-bottom: 3px;
+    font-size: 12px;
+}
+
+.nota-cliente span {
+    color: var(--caja-texto-suave);
+    font-size: 10px;
+}
+
+.nota-metodo {
+    display: inline-flex;
+    padding: 5px 9px;
+    border-radius: 7px;
+    background-color: var(--caja-azul-claro);
+    color: var(--caja-azul);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.nota-estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 9px;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.nota-emitida {
+    background-color: var(--caja-verde-claro);
+    color: var(--caja-verde);
+}
+
+.nota-anulada {
+    background-color: var(--caja-rojo-claro);
+    color: #bd3d2d;
+}
+
+
+/* =========================================================
+   ACCIONES
+   ========================================================= */
+
+.nota-acciones {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.nota-accion {
+    display: grid;
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border-radius: 8px;
+    font-size: 14px;
+    text-decoration: none;
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.nota-accion:hover {
+    color: var(--caja-blanco);
+    transform: translateY(-2px);
+}
+
+.nota-ver {
+    background-color: #fff0e4;
+    color: #b85620;
+}
+
+.nota-ver:hover {
+    background-color: #b85620;
+}
+
+.nota-descargar {
+    background-color: var(--caja-verde-claro);
+    color: var(--caja-verde);
+}
+
+.nota-descargar:hover {
+    background-color: var(--caja-verde);
+}
+
+.nota-imprimir {
+    background-color: #edf3ff;
+    color: #3d6cac;
+}
+
+.nota-imprimir:hover {
+    background-color: #3d6cac;
+}
+
+
+/* =========================================================
+   ESTADO VACÍO
+   ========================================================= */
+
+.notas-vacio {
+    padding: 65px 20px;
+    text-align: center;
+}
+
+.notas-vacio-icono {
+    display: grid;
+    width: 62px;
+    height: 62px;
+    margin: 0 auto 16px;
+    place-items: center;
+    border-radius: 17px;
+    background-color: #f7f0e6;
+    color: var(--caja-rojo);
+    font-size: 26px;
+}
+
+.notas-vacio h3 {
+    margin: 0 0 7px;
+    color: var(--caja-texto);
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.notas-vacio p {
+    max-width: 480px;
+    margin: auto;
+    color: var(--caja-texto-suave);
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1200px) {
+    .notas-resumen {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .notas-panel-cabecera {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .notas-buscador {
+        width: 100%;
+    }
+
+    .notas-campo-busqueda {
+        flex: 1;
+    }
+
+    .notas-campo-busqueda input {
+        width: 100%;
+    }
+}
+
+@media (max-width: 767px) {
+    .notas-resumen {
+        grid-template-columns: 1fr;
+    }
+
+    .notas-buscador {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .notas-buscador button,
+    .notas-limpiar {
+        width: 100%;
+    }
+
+    .notas-limpiar {
+        flex-basis: 43px;
+    }
+}

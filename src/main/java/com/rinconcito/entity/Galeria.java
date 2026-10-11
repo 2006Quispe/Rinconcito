@@ -12,13 +12,13 @@ public class Galeria {
     @Column(name = "id_imagen")
     private Integer idImagen;
 
-    @Column(name = "titulo", length = 100)
+    @Column(name = "titulo", length = 150)
     private String titulo;
 
     @Column(name = "descripcion", length = 300)
     private String descripcion;
 
-    @Column(name = "ruta_imagen", nullable = false, length = 250)
+    @Column(name = "ruta_imagen", nullable = false, length = 255)
     private String rutaImagen;
 
     @Column(name = "fecha_publicacion", nullable = false, updatable = false)
@@ -41,8 +41,6 @@ public class Galeria {
             fechaPublicacion = LocalDateTime.now();
         }
     }
-
-    // Getters y setters
 
     public Integer getIdImagen() {
         return idImagen;

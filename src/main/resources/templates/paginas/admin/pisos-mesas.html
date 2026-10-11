@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${titulo}
+        + ' - El Rinconcito Ayacuchano'">
+        Pisos y mesas
+    </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+    <link th:href="@{/css/admin.css}"
+          rel="stylesheet">
+
+    <link th:href="@{/css/admin-pisos-mesas.css}"
+          rel="stylesheet">
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+	<aside th:replace="~{fragments/admin-sidebar
+	    :: sidebar('mesas')}">
+	</aside>
+
+    <main class="admin-contenido pisos-mesas-contenido">
+
+        <header class="pisos-mesas-encabezado">
+
+            <div>
+                <p class="pisos-mesas-etiqueta">
+                    ADMINISTRACIÓN
+                </p>
+
+                <h1>Pisos y mesas</h1>
+
+                <p>
+                    Configura la distribución, capacidad y
+                    disponibilidad de las mesas del restaurante.
+                </p>
+            </div>
+
+            <div class="encabezado-acciones">
+
+                <a th:href="@{/admin/pisos/nuevo}"
+                   class="btn-secundario">
+
+                    <i class="bi bi-building-add"></i>
+                    Nuevo piso
+                </a>
+
+                <a th:if="${pisos != null
+                    and !pisos.isEmpty()}"
+                   th:href="@{/admin/mesas/nueva(
+                        piso=${idPisoSeleccionado}
+                   )}"
+                   class="btn-principal">
+
+                    <i class="bi bi-plus-lg"></i>
+                    Nueva mesa
+                </a>
+
+            </div>
+
+        </header>
+
+        <div th:if="${exito}"
+             class="alert alert-success"
+             th:text="${exito}">
+        </div>
+
+        <div th:if="${error}"
+             class="alert alert-danger"
+             th:text="${error}">
+        </div>
+
+        <!-- Pisos -->
+
+        <section class="pisos-seccion">
+
+            <div class="seccion-titulo">
+
+                <div>
+                    <h2>Pisos registrados</h2>
+
+                    <p>
+                        Selecciona un piso para filtrar sus mesas.
+                    </p>
+                </div>
+
+                <a th:href="@{/admin/pisos-mesas}"
+                   class="enlace-ver-todos"
+                   th:classappend="${idPisoSeleccionado == null}
+                       ? ' enlace-activo'
+                       : ''">
+
+                    <i class="bi bi-grid"></i>
+                    Ver todos
+                </a>
+
+            </div>
+
+            <div th:if="${pisos == null or pisos.isEmpty()}"
+                 class="estado-vacio">
+
+                <div class="estado-vacio-icono">
+                    <i class="bi bi-building"></i>
+                </div>
+
+                <h3>No hay pisos registrados</h3>
+
+                <p>
+                    Registra el primer piso para comenzar
+                    a agregar mesas.
+                </p>
+
+                <a th:href="@{/admin/pisos/nuevo}"
+                   class="btn-principal">
+
+                    <i class="bi bi-plus-lg"></i>
+                    Registrar piso
+                </a>
+
+            </div>
+
+            <div class="pisos-grid"
+                 th:if="${pisos != null
+                    and !pisos.isEmpty()}">
+
+                <article th:each="piso : ${pisos}"
+                         class="piso-tarjeta"
+                         th:classappend="${idPisoSeleccionado != null
+                             and idPisoSeleccionado == piso.idPiso}
+                             ? ' piso-tarjeta-activa'
+                             : ''">
+
+                    <div class="piso-tarjeta-superior">
+
+                        <div class="piso-icono">
+                            <i class="bi bi-building"></i>
+                        </div>
+
+                        <span class="estado-piso"
+                              th:classappend="${piso.estado.name()
+                                  == 'ACTIVO'}
+                                  ? ' estado-activo'
+                                  : ' estado-inactivo'"
+                              th:text="${piso.estado.name()
+                                  == 'ACTIVO'}
+                                  ? 'Activo'
+                                  : 'Inactivo'">
+                            Activo
+                        </span>
+
+                    </div>
+
+                    <div class="piso-informacion">
+
+                        <h3 th:text="${piso.nombre}">
+                            Primer piso
+                        </h3>
+
+                        <p th:text="${piso.descripcion != null
+                            and !piso.descripcion.isBlank()}
+                            ? piso.descripcion
+                            : 'Sin descripción registrada.'">
+                            Descripción
+                        </p>
+
+                    </div>
+
+                    <div class="piso-estadisticas">
+
+                        <div>
+                            <strong th:text="${totalMesasPorPiso[
+                                piso.idPiso]}">
+                                0
+                            </strong>
+
+                            <span>Total</span>
+                        </div>
+
+                        <div>
+                            <strong class="texto-disponible"
+                                    th:text="${mesasDisponiblesPorPiso[
+                                        piso.idPiso]}">
+                                0
+                            </strong>
+
+                            <span>Disponibles</span>
+                        </div>
+
+                        <div>
+                            <strong class="texto-ocupada"
+                                    th:text="${mesasOcupadasPorPiso[
+                                        piso.idPiso]}">
+                                0
+                            </strong>
+
+                            <span>Ocupadas</span>
+                        </div>
+
+                        <div>
+                            <strong class="texto-reservada"
+                                    th:text="${mesasReservadasPorPiso[
+                                        piso.idPiso]}">
+                                0
+                            </strong>
+
+                            <span>Reservadas</span>
+                        </div>
+
+                    </div>
+
+                    <div class="piso-acciones">
+
+                        <a th:href="@{/admin/pisos-mesas(
+                                piso=${piso.idPiso}
+                           )}"
+                           class="btn-ver-mesas">
+
+                            <i class="bi bi-grid-3x3-gap"></i>
+                            Ver mesas
+                        </a>
+
+                        <a th:href="@{/admin/pisos/{id}/editar(
+                                id=${piso.idPiso}
+                           )}"
+                           class="btn-icono"
+                           title="Editar piso">
+
+                            <i class="bi bi-pencil"></i>
+                        </a>
+
+                        <form th:action="@{/admin/pisos/{id}/estado(
+                                id=${piso.idPiso}
+                              )}"
+                              method="post">
+
+                            <input type="hidden"
+                                   th:name="${_csrf.parameterName}"
+                                   th:value="${_csrf.token}">
+
+                            <button type="submit"
+                                    class="btn-icono"
+                                    th:classappend="${piso.estado.name()
+                                        == 'ACTIVO'}
+                                        ? ' btn-desactivar'
+                                        : ' btn-activar'"
+                                    th:title="${piso.estado.name()
+                                        == 'ACTIVO'}
+                                        ? 'Desactivar piso'
+                                        : 'Activar piso'"
+                                    onclick="return confirm(
+                                        '¿Deseas cambiar el estado de este piso?'
+                                    );">
+
+                                <i th:class="${piso.estado.name()
+                                    == 'ACTIVO'}
+                                    ? 'bi bi-pause-circle'
+                                    : 'bi bi-play-circle'">
+                                </i>
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+        <!-- Mesas -->
+
+        <section class="mesas-seccion">
+
+            <div class="seccion-titulo">
+
+                <div>
+                    <h2>
+                        Mesas
+
+                        <span th:if="${idPisoSeleccionado != null}"
+                              class="filtro-indicador">
+                            Piso seleccionado
+                        </span>
+                    </h2>
+
+                    <p>
+                        La ocupación diaria será gestionada
+                        posteriormente desde el panel del mozo.
+                    </p>
+                </div>
+
+                <a th:if="${pisos != null
+                    and !pisos.isEmpty()}"
+                   th:href="@{/admin/mesas/nueva(
+                        piso=${idPisoSeleccionado}
+                   )}"
+                   class="btn-principal btn-nueva-mesa">
+
+                    <i class="bi bi-plus-lg"></i>
+                    Agregar mesa
+                </a>
+
+            </div>
+
+            <div th:if="${mesas == null or mesas.isEmpty()}"
+                 class="estado-vacio estado-vacio-mesas">
+
+                <div class="estado-vacio-icono">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                </div>
+
+                <h3>No hay mesas para mostrar</h3>
+
+                <p>
+                    Agrega una mesa o selecciona otro piso.
+                </p>
+
+            </div>
+
+            <div class="tabla-contenedor"
+                 th:if="${mesas != null
+                    and !mesas.isEmpty()}">
+
+                <div class="table-responsive">
+
+                    <table class="tabla-mesas">
+
+                        <thead>
+                        <tr>
+                            <th>Mesa</th>
+                            <th>Piso</th>
+                            <th>Capacidad</th>
+                            <th>Estado</th>
+                            <th class="columna-acciones">
+                                Acciones
+                            </th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        <tr th:each="mesa : ${mesas}">
+
+                            <td>
+
+                                <div class="mesa-identidad">
+
+                                    <div class="mesa-numero-icono">
+                                        <i class="bi bi-grid-3x3"></i>
+                                    </div>
+
+                                    <div>
+                                        <strong th:text="'Mesa '
+                                            + ${mesa.numero}">
+                                            Mesa 1
+                                        </strong>
+
+                                        <span th:text="'Código M-'
+                                            + ${mesa.idMesa}">
+                                            Código
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <div class="mesa-piso">
+                                    <i class="bi bi-building"></i>
+
+                                    <span th:text="${mesa.piso.nombre}">
+                                        Primer piso
+                                    </span>
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <div class="mesa-capacidad">
+                                    <i class="bi bi-people"></i>
+
+                                    <span th:text="${mesa.capacidad}
+                                        + ' personas'">
+                                        4 personas
+                                    </span>
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <span class="estado-mesa"
+                                      th:classappend="${' estado-'
+                                          + #strings.toLowerCase(
+                                              mesa.estado.name()
+                                          )}">
+
+                                    <i class="bi bi-circle-fill"></i>
+
+                                    <span th:switch="${mesa.estado.name()}">
+                                        <span th:case="'DISPONIBLE'">
+                                            Disponible
+                                        </span>
+
+                                        <span th:case="'OCUPADA'">
+                                            Ocupada
+                                        </span>
+
+                                        <span th:case="'RESERVADA'">
+                                            Reservada
+                                        </span>
+
+                                        <span th:case="'INACTIVA'">
+                                            Inactiva
+                                        </span>
+                                    </span>
+
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <div class="mesa-acciones"
+                                     th:if="${mesa.estado.name()
+                                        == 'DISPONIBLE'
+                                        or mesa.estado.name()
+                                        == 'INACTIVA'}">
+
+                                    <a th:href="@{/admin/mesas/{id}/editar(
+                                            id=${mesa.idMesa}
+                                       )}"
+                                       class="btn-tabla btn-editar">
+
+                                        <i class="bi bi-pencil"></i>
+                                        Editar
+                                    </a>
+
+                                    <form th:action="@{/admin/mesas/{id}/estado(
+                                            id=${mesa.idMesa}
+                                          )}"
+                                          method="post">
+
+                                        <input type="hidden"
+                                               th:name="${_csrf.parameterName}"
+                                               th:value="${_csrf.token}">
+
+                                        <input type="hidden"
+                                               name="piso"
+                                               th:value="${idPisoSeleccionado}">
+
+                                        <button type="submit"
+                                                class="btn-tabla"
+                                                th:classappend="${mesa.estado.name()
+                                                    == 'DISPONIBLE'}
+                                                    ? ' btn-inactivar'
+                                                    : ' btn-habilitar'"
+                                                onclick="return confirm(
+                                                    '¿Deseas cambiar el estado de esta mesa?'
+                                                );">
+
+                                            <i th:class="${mesa.estado.name()
+                                                == 'DISPONIBLE'}
+                                                ? 'bi bi-pause-circle'
+                                                : 'bi bi-play-circle'">
+                                            </i>
+
+                                            <span th:text="${mesa.estado.name()
+                                                == 'DISPONIBLE'}
+                                                ? 'Inactivar'
+                                                : 'Habilitar'">
+                                                Inactivar
+                                            </span>
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                                <div class="mesa-control-mozo"
+                                     th:if="${mesa.estado.name()
+                                        == 'OCUPADA'
+                                        or mesa.estado.name()
+                                        == 'RESERVADA'}">
+
+                                    <i class="bi bi-person-badge"></i>
+                                    Gestionada por el mozo
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+</html>

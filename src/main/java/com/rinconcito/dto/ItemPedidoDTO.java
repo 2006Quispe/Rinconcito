@@ -4,6 +4,7 @@ public class ItemPedidoDTO {
 
     private Integer idProducto;
     private Integer cantidad = 0;
+    private String observaciones;
 
     public Integer getIdProducto() {
         return idProducto;
@@ -19,5 +20,13 @@ public class ItemPedidoDTO {
 
     public void setCantidad(Integer cantidad) {
         this.cantidad = cantidad;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
     }
 }

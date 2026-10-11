@@ -1,0 +1,462 @@
+/*
+   VALIDACIÓN DE PAGOS DE PEDIDOS Y RESERVAS
+*/
+
+.validacion-encabezado {
+    align-items: flex-start;
+}
+
+.validacion-volver {
+    display: inline-flex;
+    min-height: 43px;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 1px solid var(--caja-borde);
+    border-radius: 11px;
+    background-color: var(--caja-blanco);
+    color: var(--caja-texto);
+    font-family: "Nunito", sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 6px 18px rgba(59, 42, 34, 0.05);
+    transition:
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.validacion-volver:hover {
+    border-color: var(--caja-rojo);
+    color: var(--caja-rojo);
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   MENSAJES
+   ========================================================= */
+
+.validacion-alerta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding: 14px 17px;
+    border: 1px solid;
+    border-radius: 11px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.alerta-exito {
+    border-color: #bce1cb;
+    background-color: var(--caja-verde-claro);
+    color: var(--caja-verde);
+}
+
+.alerta-error {
+    border-color: #f0c4bc;
+    background-color: var(--caja-rojo-claro);
+    color: #a83a2b;
+}
+
+
+/*
+   PANEL
+*/
+
+.validacion-panel {
+    overflow: hidden;
+    border: 1px solid var(--caja-borde);
+    border-radius: 17px;
+    background-color: var(--caja-blanco);
+    box-shadow: var(--caja-sombra);
+}
+
+.validacion-panel-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    padding: 22px 25px;
+    border-bottom: 1px solid var(--caja-borde);
+}
+
+.validacion-panel-cabecera h2 {
+    margin: 0;
+    color: var(--caja-texto);
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.validacion-panel-cabecera p {
+    margin: 5px 0 0;
+    color: var(--caja-texto-suave);
+    font-size: 12px;
+}
+
+.validacion-contador {
+    display: flex;
+    min-width: 135px;
+    align-items: center;
+    gap: 11px;
+    padding: 10px 13px;
+    border-radius: 11px;
+    background-color: #fff4d8;
+    color: #956500;
+}
+
+.validacion-contador > i {
+    font-size: 21px;
+}
+
+.validacion-contador strong,
+.validacion-contador span {
+    display: block;
+}
+
+.validacion-contador strong {
+    color: var(--caja-texto);
+    font-size: 20px;
+    line-height: 1;
+}
+
+.validacion-contador span {
+    margin-top: 2px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.contador-reservas {
+    background-color: var(--caja-morado-claro);
+    color: var(--caja-morado);
+}
+
+
+/*
+   TABLA
+*/
+
+.validacion-tabla-contenedor {
+    overflow-x: auto;
+}
+
+.validacion-tabla {
+    width: 100%;
+    min-width: 1250px;
+    border-collapse: collapse;
+}
+
+.validacion-tabla thead {
+    background-color: #f7f0e6;
+}
+
+.validacion-tabla th {
+    padding: 14px 16px;
+    color: #65534a;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.validacion-tabla td {
+    padding: 18px 16px;
+    border-bottom: 1px solid #ede5dd;
+    color: var(--caja-texto);
+    font-size: 12px;
+    vertical-align: top;
+}
+
+.validacion-tabla tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.validacion-tabla tbody tr:hover {
+    background-color: #fdfaf6;
+}
+
+.validacion-tabla tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+
+/*
+   DATOS DEL PEDIDO Y RESERVA
+*/
+
+.pedido-datos,
+.reserva-datos,
+.evento-cliente {
+    display: flex;
+    min-width: 210px;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.codigo-registro {
+    color: var(--caja-rojo);
+    font-size: 12px;
+}
+
+.cliente-nombre {
+    font-weight: 800;
+}
+
+.dato-secundario,
+.referencia-entrega {
+    color: var(--caja-texto-suave);
+    font-size: 10px;
+}
+
+.direccion-entrega,
+.reserva-fecha {
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+    margin-top: 3px;
+    color: var(--caja-texto-suave);
+    font-size: 10px;
+}
+
+.direccion-entrega i,
+.reserva-fecha i {
+    color: var(--caja-rojo);
+}
+
+.evento-cliente strong {
+    font-size: 12px;
+}
+
+.evento-cliente span {
+    color: var(--caja-texto-suave);
+    font-size: 11px;
+}
+
+.sin-evento {
+    color: var(--caja-texto-suave);
+}
+
+
+/*
+   PRODUCTOS
+*/
+
+.productos-lista {
+    min-width: 240px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.productos-lista li {
+    display: grid;
+    grid-template-columns: minmax(100px, 1fr) auto auto;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid #eee7e0;
+    align-items: center;
+}
+
+.productos-lista li:first-child {
+    padding-top: 0;
+}
+
+.productos-lista li:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.producto-nombre {
+    font-size: 11px;
+}
+
+.producto-cantidad {
+    color: var(--caja-texto-suave);
+    font-size: 10px;
+}
+
+.productos-lista strong {
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+
+/*
+   PAGO Y EVIDENCIA
+*/
+
+.pago-monto {
+    color: var(--caja-texto);
+    font-size: 15px;
+    white-space: nowrap;
+}
+
+.pago-metodo {
+    display: inline-flex;
+    padding: 5px 9px;
+    border-radius: 7px;
+    background-color: var(--caja-azul-claro);
+    color: var(--caja-azul);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.pago-operacion {
+    display: block;
+    max-width: 160px;
+    margin-top: 7px;
+    color: var(--caja-texto-suave);
+    font-size: 10px;
+    word-break: break-word;
+}
+
+.boton-evidencia {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 11px;
+    border: 1px solid #bcd2db;
+    border-radius: 8px;
+    background-color: var(--caja-blanco);
+    color: var(--caja-azul);
+    font-size: 10px;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.boton-evidencia:hover {
+    border-color: var(--caja-azul);
+    background-color: var(--caja-azul);
+    color: var(--caja-blanco);
+}
+
+
+/*
+   APROBAR Y RECHAZAR
+*/
+
+.acciones-validacion {
+    display: grid;
+    min-width: 245px;
+    gap: 9px;
+}
+
+.acciones-validacion form {
+    margin: 0;
+}
+
+.boton-aprobar,
+.boton-rechazar {
+    display: inline-flex;
+    min-height: 36px;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 0;
+    border-radius: 8px;
+    color: var(--caja-blanco);
+    font-family: "Nunito", sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.boton-aprobar {
+    width: 100%;
+    background-color: var(--caja-verde);
+}
+
+.boton-aprobar:hover {
+    background-color: #1f6742;
+}
+
+.form-rechazo {
+    display: grid;
+    grid-template-columns: minmax(130px, 1fr) auto;
+}
+
+.form-rechazo input {
+    min-width: 0;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--caja-borde);
+    border-right: 0;
+    border-radius: 8px 0 0 8px;
+    color: var(--caja-texto);
+    font-family: "Nunito", sans-serif;
+    font-size: 10px;
+    outline: none;
+}
+
+.form-rechazo input:focus {
+    border-color: var(--caja-rojo);
+}
+
+.boton-rechazar {
+    padding: 0 12px;
+    border-radius: 0 8px 8px 0;
+    background-color: var(--caja-rojo);
+}
+
+.boton-rechazar:hover {
+    background-color: var(--caja-rojo-oscuro);
+}
+
+
+/* =========================================================
+   SIN RESULTADOS
+   ========================================================= */
+
+.validacion-vacio {
+    padding: 70px 20px;
+    text-align: center;
+}
+
+.validacion-vacio-icono {
+    display: grid;
+    width: 65px;
+    height: 65px;
+    margin: 0 auto 17px;
+    place-items: center;
+    border-radius: 18px;
+    background-color: #f7f0e6;
+    color: var(--caja-rojo);
+    font-size: 28px;
+}
+
+.validacion-vacio h3 {
+    margin: 0 0 7px;
+    color: var(--caja-texto);
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.validacion-vacio p {
+    max-width: 480px;
+    margin: auto;
+    color: var(--caja-texto-suave);
+    font-size: 12px;
+}
+
+
+/* 
+   RESPONSIVE
+ */
+
+@media (max-width: 991px) {
+    .validacion-panel-cabecera {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .validacion-contador {
+        width: fit-content;
+    }
+}

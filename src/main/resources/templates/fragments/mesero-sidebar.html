@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+
+<aside th:fragment="sidebar(seccionActiva)"
+       id="meseroSidebar"
+       class="mesero-sidebar">
+
+    <div class="mesero-sidebar-superior">
+
+        <a th:href="@{/mesero/mesas}"
+           class="mesero-sidebar-marca">
+
+            <span class="mesero-sidebar-logo">
+                <i class="bi bi-cup-hot-fill"></i>
+            </span>
+
+            <span class="mesero-sidebar-nombre">
+
+                <strong>El Rinconcito</strong>
+
+                <small>Panel del mesero</small>
+
+            </span>
+
+        </a>
+
+        <button type="button"
+                class="mesero-sidebar-cerrar"
+                aria-label="Cerrar menú"
+                onclick="cerrarSidebarMesero()">
+
+            <i class="bi bi-x-lg"></i>
+
+        </button>
+
+    </div>
+
+    <nav class="mesero-sidebar-menu">
+
+        <p class="mesero-sidebar-etiqueta">
+            OPERACIÓN
+        </p>
+
+        <a th:href="@{/mesero/mesas}"
+           class="mesero-sidebar-enlace"
+           th:classappend="${seccionActiva == 'mesas'}
+                ? ' activo'
+                : ''">
+
+            <span class="mesero-sidebar-enlace-icono">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+            </span>
+
+            <span class="mesero-sidebar-enlace-texto">
+                <strong>Control de mesas</strong>
+                <small>Disponibilidad y ocupación</small>
+            </span>
+
+        </a>
+
+        <a th:href="@{/mesero/pedidos/nuevo}"
+           class="mesero-sidebar-enlace"
+           th:classappend="${seccionActiva == 'nuevo-pedido'}
+                ? ' activo'
+                : ''">
+
+            <span class="mesero-sidebar-enlace-icono">
+                <i class="bi bi-plus-circle-fill"></i>
+            </span>
+
+            <span class="mesero-sidebar-enlace-texto">
+                <strong>Nuevo pedido</strong>
+                <small>Registrar pedido presencial</small>
+            </span>
+
+        </a>
+
+        <a th:href="@{/mesero/pedidos}"
+           class="mesero-sidebar-enlace"
+           th:classappend="${seccionActiva == 'pedidos'}
+                ? ' activo'
+                : ''">
+
+            <span class="mesero-sidebar-enlace-icono">
+                <i class="bi bi-receipt-cutoff"></i>
+            </span>
+
+            <span class="mesero-sidebar-enlace-texto">
+                <strong>Pedidos activos</strong>
+                <small>Pedidos de las mesas</small>
+            </span>
+
+        </a>
+
+        <a th:href="@{/mesero/reservas}"
+           class="mesero-sidebar-enlace"
+           th:classappend="${seccionActiva == 'reservas'}
+                ? ' activo'
+                : ''">
+            <span class="mesero-sidebar-enlace-icono">
+                <i class="bi bi-calendar-check-fill"></i>
+            </span>
+
+            <span class="mesero-sidebar-enlace-texto">
+                <strong>Reservas del día</strong>
+                <small>Llegadas y atenciones</small>
+            </span>
+
+        </a>
+
+        <p class="mesero-sidebar-etiqueta mesero-sidebar-etiqueta-separada">
+            CONSULTAS
+        </p>
+
+        <a th:href="@{/mesero/historial}"
+           class="mesero-sidebar-enlace"
+           th:classappend="${seccionActiva == 'historial'}
+                ? ' activo'
+                : ''">
+
+            <span class="mesero-sidebar-enlace-icono">
+                <i class="bi bi-clock-history"></i>
+            </span>
+
+            <span class="mesero-sidebar-enlace-texto">
+                <strong>Historial</strong>
+                <small>Atenciones realizadas</small>
+            </span>
+
+        </a>
+
+    </nav>
+
+    <div class="mesero-sidebar-inferior">
+
+        <div class="mesero-sidebar-usuario">
+
+            <span class="mesero-sidebar-avatar">
+                <i class="bi bi-person-fill"></i>
+            </span>
+
+            <div class="mesero-sidebar-usuario-datos">
+
+                <strong sec:authentication="name">
+                    mesero@rinconcito.pe
+                </strong>
+                <small>MESERO</small>
+            </div>
+        </div>
+        <form th:action="@{/logout}"
+              method="post"
+              class="mesero-sidebar-logout">
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+            <button type="submit"
+                    class="mesero-sidebar-salir">
+                <i class="bi bi-box-arrow-right"></i>
+                Cerrar sesión
+
+            </button>
+
+        </form>
+
+    </div>
+
+</aside>
+
+</body>
+</html>

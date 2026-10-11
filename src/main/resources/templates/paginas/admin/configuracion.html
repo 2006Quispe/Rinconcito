@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${titulo}
+        + ' - El Rinconcito Ayacuchano'">
+        Configuración
+    </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+    <link th:href="@{/css/admin.css}"
+          rel="stylesheet">
+
+	<link th:href="@{/css/admin-configuracion.css}"
+		  rel="stylesheet">
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <aside th:replace="~{fragments/admin-sidebar
+        :: sidebar('configuracion')}">
+    </aside>
+
+    <main class="admin-contenido configuracion-contenido">
+
+        <header class="configuracion-encabezado">
+
+            <div>
+                <p class="configuracion-etiqueta">
+                    ADMINISTRACIÓN
+                </p>
+
+                <h1>Configuración del restaurante</h1>
+
+                <p>
+                    Actualiza los datos públicos, medios de contacto
+                    y métodos de pago.
+                </p>
+            </div>
+        </header>
+
+        <div th:if="${exito}"
+             class="alert alert-success"
+             th:text="${exito}">
+        </div>
+
+        <div th:if="${error}"
+             class="alert alert-danger"
+             th:text="${error}">
+        </div>
+
+        <form th:action="@{/admin/configuracion/guardar}"
+              th:object="${configuracionForm}"
+              method="post"
+              enctype="multipart/form-data"
+              class="configuracion-formulario">
+
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+            <input type="hidden"
+                   th:field="*{idConfiguracion}">
+
+            <input type="hidden"
+                   th:field="*{qrYapeActual}">
+
+            <input type="hidden"
+                   th:field="*{qrPlinActual}">
+
+            <!-- DATOS GENERALES -->
+            <section class="configuracion-seccion">
+
+                <div class="seccion-encabezado">
+
+                    <div class="seccion-icono">
+                        <i class="bi bi-shop"></i>
+                    </div>
+
+                    <div>
+                        <h2>Datos generales</h2>
+
+                        <p>
+                            Información principal que se mostrará
+                            en el sitio web.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-12">
+
+                        <label for="nombre"
+                               class="form-label">
+                            Nombre del restaurante
+                            <span>*</span>
+                        </label>
+
+                        <input type="text"
+                               id="nombre"
+                               th:field="*{nombre}"
+                               class="form-control"
+                               maxlength="150"
+                               placeholder="El Rinconcito Ayacuchano Campestre"
+                               required>
+
+                    </div>
+
+                    <div class="col-lg-8">
+
+                        <label for="direccion"
+                               class="form-label">
+                            Dirección
+                            <span>*</span>
+                        </label>
+
+                        <input type="text"
+                               id="direccion"
+                               th:field="*{direccion}"
+                               class="form-control"
+                               maxlength="200"
+                               placeholder="Dirección del restaurante"
+                               required>
+
+                    </div>
+
+                    <div class="col-lg-4">
+
+                        <label for="referencia"
+                               class="form-label">
+                            Referencia
+                        </label>
+
+                        <input type="text"
+                               id="referencia"
+                               th:field="*{referencia}"
+                               class="form-control"
+                               maxlength="200"
+                               placeholder="Frente a...">
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- CONTACTO -->
+            <section class="configuracion-seccion">
+
+                <div class="seccion-encabezado">
+
+                    <div class="seccion-icono">
+                        <i class="bi bi-telephone"></i>
+                    </div>
+
+                    <div>
+                        <h2>Contacto</h2>
+
+                        <p>
+                            Datos que aparecerán principalmente
+                            en el pie de página.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-lg-4 col-md-6">
+
+                        <label for="telefono"
+                               class="form-label">
+                            Teléfono
+                        </label>
+
+                        <input type="tel"
+                               id="telefono"
+                               th:field="*{telefono}"
+                               class="form-control"
+                               inputmode="numeric"
+                               maxlength="9"
+                               pattern="[0-9]{9}"
+                               placeholder="999999999">
+
+                    </div>
+
+                    <div class="col-lg-4 col-md-6">
+
+                        <label for="whatsapp"
+                               class="form-label">
+                            WhatsApp
+                        </label>
+
+                        <input type="tel"
+                               id="whatsapp"
+                               th:field="*{whatsapp}"
+                               class="form-control"
+                               inputmode="numeric"
+                               maxlength="9"
+                               pattern="[0-9]{9}"
+                               placeholder="999999999">
+
+                    </div>
+
+                    <div class="col-lg-4">
+
+                        <label for="correo"
+                               class="form-label">
+                            Correo electrónico
+                        </label>
+
+                        <input type="email"
+                               id="correo"
+                               th:field="*{correo}"
+                               class="form-control"
+                               maxlength="120"
+                               placeholder="contacto@rinconcito.pe">
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- REDES -->
+            <section class="configuracion-seccion">
+
+                <div class="seccion-encabezado">
+
+                    <div class="seccion-icono">
+                        <i class="bi bi-share"></i>
+                    </div>
+
+                    <div>
+                        <h2>Redes y ubicación</h2>
+
+                        <p>
+                            Enlaces públicos del restaurante.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-lg-6">
+
+                        <label for="urlFacebook"
+                               class="form-label">
+                            Facebook
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-facebook"></i>
+                            </span>
+
+                            <input type="url"
+                                   id="urlFacebook"
+                                   th:field="*{urlFacebook}"
+                                   class="form-control"
+                                   maxlength="255"
+                                   placeholder="https://facebook.com/...">
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-6">
+
+                        <label for="urlInstagram"
+                               class="form-label">
+                            Instagram
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-instagram"></i>
+                            </span>
+
+                            <input type="url"
+                                   id="urlInstagram"
+                                   th:field="*{urlInstagram}"
+                                   class="form-control"
+                                   maxlength="255"
+                                   placeholder="https://instagram.com/...">
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-12">
+
+                        <label for="urlGoogleMaps"
+                               class="form-label">
+                            Enlace de Google Maps
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-geo-alt"></i>
+                            </span>
+
+                            <input type="url"
+                                   id="urlGoogleMaps"
+                                   th:field="*{urlGoogleMaps}"
+                                   class="form-control"
+                                   maxlength="500"
+                                   placeholder="https://maps.google.com/...">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- MEDIOS DE PAGO -->
+            <section class="configuracion-seccion">
+
+                <div class="seccion-encabezado">
+
+                    <div class="seccion-icono">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+
+                    <div>
+                        <h2>Medios de pago</h2>
+
+                        <p>
+                            Datos que verá el cliente al pagar
+                            pedidos y reservas.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="metodos-pago-grid">
+
+                    <!-- YAPE -->
+                    <article class="metodo-configuracion">
+
+                        <div class="metodo-titulo">
+                            <div class="metodo-marca yape-marca">
+                                Y
+                            </div>
+
+                            <div>
+                                <h3>Yape</h3>
+                                <p>Número, titular y código QR.</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="numeroYape"
+                                   class="form-label">
+                                Número de Yape
+                            </label>
+
+                            <input type="tel"
+                                   id="numeroYape"
+                                   th:field="*{numeroYape}"
+                                   class="form-control"
+                                   inputmode="numeric"
+                                   maxlength="9"
+                                   pattern="[0-9]{9}"
+                                   placeholder="999999999">
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="titularYape"
+                                   class="form-label">
+                                Titular
+                            </label>
+
+                            <input type="text"
+                                   id="titularYape"
+                                   th:field="*{titularYape}"
+                                   class="form-control"
+                                   maxlength="150"
+                                   placeholder="Nombre del titular">
+
+                        </div>
+
+                        <div class="qr-configuracion">
+
+                            <div th:if="*{qrYapeActual != null
+                                and !qrYapeActual.isBlank()}"
+                                 class="qr-vista">
+
+                                <img th:src="@{/configuracion/qr/yape(
+                                        v=*{qrYapeActual}
+                                     )}"
+                                     alt="Código QR de Yape">
+
+                                <button type="submit"
+                                        form="eliminarQrYapeForm"
+                                        class="btn-eliminar-qr"
+                                        onclick="return confirm(
+                                            '¿Deseas eliminar el QR de Yape?'
+                                        );">
+
+                                    <i class="bi bi-trash"></i>
+                                    Eliminar QR
+                                </button>
+
+                            </div>
+
+                            <div th:unless="*{qrYapeActual != null
+                                and !qrYapeActual.isBlank()}"
+                                 class="qr-sin-imagen">
+
+                                <i class="bi bi-qr-code"></i>
+                                <span>Sin código QR</span>
+
+                            </div>
+
+                            <label for="archivoQrYape"
+                                   class="form-label mt-3">
+                                Seleccionar nuevo QR
+                            </label>
+
+                            <input type="file"
+                                   id="archivoQrYape"
+                                   name="archivoQrYape"
+                                   class="form-control"
+                                   accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+
+                            <div class="form-text">
+                                JPG, PNG o WEBP. Máximo 3 MB.
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    <!-- PLIN -->
+                    <article class="metodo-configuracion">
+
+                        <div class="metodo-titulo">
+                            <div class="metodo-marca plin-marca">
+                                P
+                            </div>
+
+                            <div>
+                                <h3>Plin</h3>
+                                <p>Número, titular y código QR.</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="numeroPlin"
+                                   class="form-label">
+                                Número de Plin
+                            </label>
+
+                            <input type="tel"
+                                   id="numeroPlin"
+                                   th:field="*{numeroPlin}"
+                                   class="form-control"
+                                   inputmode="numeric"
+                                   maxlength="9"
+                                   pattern="[0-9]{9}"
+                                   placeholder="999999999">
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="titularPlin"
+                                   class="form-label">
+                                Titular
+                            </label>
+
+                            <input type="text"
+                                   id="titularPlin"
+                                   th:field="*{titularPlin}"
+                                   class="form-control"
+                                   maxlength="150"
+                                   placeholder="Nombre del titular">
+
+                        </div>
+
+                        <div class="qr-configuracion">
+
+                            <div th:if="*{qrPlinActual != null
+                                and !qrPlinActual.isBlank()}"
+                                 class="qr-vista">
+
+                                <img th:src="@{/configuracion/qr/plin(
+                                        v=*{qrPlinActual}
+                                     )}"
+                                     alt="Código QR de Plin">
+
+                                <button type="submit"
+                                        form="eliminarQrPlinForm"
+                                        class="btn-eliminar-qr"
+                                        onclick="return confirm(
+                                            '¿Deseas eliminar el QR de Plin?'
+                                        );">
+
+                                    <i class="bi bi-trash"></i>
+                                    Eliminar QR
+                                </button>
+
+                            </div>
+
+                            <div th:unless="*{qrPlinActual != null
+                                and !qrPlinActual.isBlank()}"
+                                 class="qr-sin-imagen">
+
+                                <i class="bi bi-qr-code"></i>
+                                <span>Sin código QR</span>
+
+                            </div>
+
+                            <label for="archivoQrPlin"
+                                   class="form-label mt-3">
+                                Seleccionar nuevo QR
+                            </label>
+
+                            <input type="file"
+                                   id="archivoQrPlin"
+                                   name="archivoQrPlin"
+                                   class="form-control"
+                                   accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+
+                            <div class="form-text">
+                                JPG, PNG o WEBP. Máximo 3 MB.
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+            <!-- TRANSFERENCIA -->
+            <section class="configuracion-seccion">
+
+                <div class="seccion-encabezado">
+
+                    <div class="seccion-icono">
+                        <i class="bi bi-bank"></i>
+                    </div>
+
+                    <div>
+                        <h2>Transferencia bancaria</h2>
+
+                        <p>
+                            Información bancaria mostrada
+                            al seleccionar transferencia.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-lg-6">
+
+                        <label for="bancoTransferencia"
+                               class="form-label">
+                            Banco
+                        </label>
+
+                        <input type="text"
+                               id="bancoTransferencia"
+                               th:field="*{bancoTransferencia}"
+                               class="form-control"
+                               maxlength="100"
+                               placeholder="Nombre del banco">
+
+                    </div>
+
+                    <div class="col-lg-6">
+
+                        <label for="titularTransferencia"
+                               class="form-label">
+                            Titular de la cuenta
+                        </label>
+
+                        <input type="text"
+                               id="titularTransferencia"
+                               th:field="*{titularTransferencia}"
+                               class="form-control"
+                               maxlength="150"
+                               placeholder="Nombre del titular">
+
+                    </div>
+
+                    <div class="col-lg-6">
+
+                        <label for="numeroCuentaTransferencia"
+                               class="form-label">
+                            Número de cuenta
+                        </label>
+
+                        <input type="text"
+                               id="numeroCuentaTransferencia"
+                               th:field="*{numeroCuentaTransferencia}"
+                               class="form-control"
+                               maxlength="50"
+                               placeholder="Número de cuenta">
+
+                    </div>
+
+                    <div class="col-lg-6">
+
+                        <label for="cciTransferencia"
+                               class="form-label">
+                            Código CCI
+                        </label>
+
+                        <input type="text"
+                               id="cciTransferencia"
+                               th:field="*{cciTransferencia}"
+                               class="form-control"
+                               inputmode="numeric"
+                               maxlength="20"
+                               pattern="[0-9]{20}"
+                               placeholder="20 dígitos">
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <div class="configuracion-acciones">
+
+                <a th:href="@{/admin/dashboard}"
+                   class="btn-cancelar-configuracion">
+                    Cancelar
+                </a>
+
+                <button type="submit"
+                        class="btn-guardar-configuracion">
+
+                    <i class="bi bi-floppy"></i>
+                    Guardar configuración
+                </button>
+
+            </div>
+
+        </form>
+
+        <!-- Formularios externos para evitar formularios anidados -->
+
+        <form id="eliminarQrYapeForm"
+              th:action="@{/admin/configuracion/qr/yape/eliminar}"
+              method="post">
+
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+        </form>
+
+        <form id="eliminarQrPlinForm"
+              th:action="@{/admin/configuracion/qr/plin/eliminar}"
+              method="post">
+
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+        </form>
+		<!-- HORARIOS DE ATENCIÓN -->
+
+		<form th:action="@{/admin/configuracion/horarios/guardar}"
+		      th:object="${horarioForm}"
+		      method="post"
+		      class="configuracion-seccion horario-formulario">
+
+		    <input type="hidden"
+		           th:name="${_csrf.parameterName}"
+		           th:value="${_csrf.token}">
+
+		    <div class="seccion-encabezado">
+
+		        <div class="seccion-icono">
+		            <i class="bi bi-clock-history"></i>
+		        </div>
+
+		        <div>
+		            <h2>Horarios de atención</h2>
+
+		            <p>
+		                Configura los días y las horas en que
+		                el restaurante acepta reservas.
+		            </p>
+		        </div>
+
+		    </div>
+
+		    <div class="horarios-lista">
+
+		        <article th:each="horario, estado : *{horarios}"
+		                 class="horario-dia"
+		                 th:attr="data-indice=${estado.index}">
+
+		            <input type="hidden"
+		                   th:field="*{horarios[__${estado.index}__].idHorario}">
+
+		            <input type="hidden"
+		                   th:field="*{horarios[__${estado.index}__].diaSemana}">
+
+		            <div class="horario-dia-nombre">
+
+		                <div class="horario-dia-icono">
+		                    <i class="bi bi-calendar3"></i>
+		                </div>
+
+		                <div>
+
+		                    <strong th:switch="${horario.diaSemana.name()}">
+
+		                        <span th:case="'LUNES'">Lunes</span>
+		                        <span th:case="'MARTES'">Martes</span>
+		                        <span th:case="'MIERCOLES'">Miércoles</span>
+		                        <span th:case="'JUEVES'">Jueves</span>
+		                        <span th:case="'VIERNES'">Viernes</span>
+		                        <span th:case="'SABADO'">Sábado</span>
+		                        <span th:case="'DOMINGO'">Domingo</span>
+
+		                    </strong>
+
+		                    <span class="horario-estado-texto"
+		                          th:text="${horario.abierto
+		                              ? 'Abierto'
+		                              : 'Cerrado'}">
+		                        Abierto
+		                    </span>
+
+		                </div>
+
+		            </div>
+
+		            <div class="horario-interruptor">
+
+		                <label class="switch-horario">
+
+		                    <input type="checkbox"
+		                           class="checkbox-abierto"
+		                           th:field="*{horarios[__${estado.index}__].abierto}">
+
+		                    <span class="switch-deslizador"></span>
+
+		                </label>
+
+		            </div>
+
+		            <div class="horario-horas">
+
+		                <div class="horario-campo">
+
+		                    <label th:for="'horaApertura'
+		                        + ${estado.index}">
+		                        Apertura
+		                    </label>
+
+		                    <input type="time"
+		                           th:id="'horaApertura'
+		                               + ${estado.index}"
+		                           class="form-control campo-hora"
+		                           th:field="*{horarios[__${estado.index}__].horaApertura}"
+		                           step="900">
+
+		                </div>
+
+		                <span class="horario-separador">
+		                    a
+		                </span>
+
+		                <div class="horario-campo">
+
+		                    <label th:for="'horaCierre'
+		                        + ${estado.index}">
+		                        Cierre
+		                    </label>
+
+		                    <input type="time"
+		                           th:id="'horaCierre'
+		                               + ${estado.index}"
+		                           class="form-control campo-hora"
+		                           th:field="*{horarios[__${estado.index}__].horaCierre}"
+		                           step="900">
+
+		                </div>
+
+		            </div>
+
+		        </article>
+
+		    </div>
+
+		    <div class="horario-informacion">
+
+		        <i class="bi bi-info-circle"></i>
+
+		        <span>
+		            Las reservas solo podrán registrarse dentro
+		            de los horarios configurados como abiertos.
+		        </span>
+
+		    </div>
+
+		    <div class="horario-acciones">
+
+		        <button type="submit"
+		                class="btn-guardar-configuracion">
+
+		            <i class="bi bi-clock"></i>
+		            Guardar horarios
+		        </button>
+
+		    </div>
+
+		</form>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const filas = document.querySelectorAll(".horario-dia");
+
+        filas.forEach(function (fila) {
+            const checkbox =
+                fila.querySelector(".checkbox-abierto");
+
+            const camposHora =
+                fila.querySelectorAll(".campo-hora");
+
+            const textoEstado =
+                fila.querySelector(".horario-estado-texto");
+
+            function actualizarEstado() {
+                const abierto = checkbox.checked;
+
+                camposHora.forEach(function (campo) {
+                    campo.disabled = !abierto;
+                    campo.required = abierto;
+                });
+
+                textoEstado.textContent =
+                    abierto ? "Abierto" : "Cerrado";
+
+                fila.classList.toggle(
+                    "horario-cerrado",
+                    !abierto
+                );
+            }
+
+            checkbox.addEventListener(
+                "change",
+                actualizarEstado
+            );
+
+            actualizarEstado();
+        });
+    });
+</script>
+</body>
+</html>

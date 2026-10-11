@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${titulo} + ' - Rinconcito Ayacuchano Campestre'">
+        Mi cuenta
+    </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap"
+          rel="stylesheet">
+
+    <link th:href="@{/css/estilos.css}"
+          rel="stylesheet">
+
+    <link th:href="@{/css/mi-cuenta.css}"
+          rel="stylesheet">
+</head>
+
+<body>
+
+<header th:replace="~{fragments/header :: header}"></header>
+
+<main class="cuenta-pagina">
+    </section>
+
+    <section class="container cuenta-contenedor">
+
+        <div class="row g-4 align-items-start">
+
+            <!-- PERFIL -->
+            <div class="col-lg-4">
+
+                <aside class="perfil-tarjeta">
+
+                    <div class="perfil-avatar">
+                        <i class="bi bi-person"></i>
+                    </div>
+
+                    <div class="perfil-nombre">
+
+                        <span>Mi perfil</span>
+
+                        <h2 th:text="${cliente.nombres + ' ' + cliente.apellidos}">
+                            Nombre del cliente
+                        </h2>
+
+                        <p th:text="${cliente.correo}">
+                            cliente@correo.com
+                        </p>
+                    </div>
+
+                    <div class="perfil-datos">
+
+                        <div class="perfil-dato">
+                            <i class="bi bi-credit-card-2-front"></i>
+
+                            <div>
+                                <span>DNI</span>
+
+                                <strong th:text="${cliente.dni != null
+                                        ? cliente.dni
+                                        : 'No registrado'}">
+                                    No registrado
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="perfil-dato">
+                            <i class="bi bi-telephone"></i>
+
+                            <div>
+                                <span>Teléfono</span>
+
+                                <strong th:text="${cliente.telefono != null
+                                        ? cliente.telefono
+                                        : 'No registrado'}">
+                                    No registrado
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="perfil-dato">
+                            <i class="bi bi-envelope"></i>
+
+                            <div>
+                                <span>Correo</span>
+
+                                <strong th:text="${cliente.correo}">
+                                    cliente@correo.com
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="perfil-resumen">
+
+                        <div>
+                            <strong th:text="${cantidadPedidos}">
+                                0
+                            </strong>
+
+                            <span>Pedidos</span>
+                        </div>
+
+                        <div>
+                            <strong th:text="${cantidadReservas}">
+                                0
+                            </strong>
+
+                            <span>Reservas</span>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- ACTIVIDAD -->
+            <div class="col-lg-8">
+
+                <!-- PEDIDOS ACTIVOS -->
+                <section class="cuenta-seccion">
+
+                    <div class="cuenta-seccion-titulo">
+
+                        <div>
+                            <span>EN PROCESO</span>
+                            <h2>Mis pedidos</h2>
+                        </div>
+
+                        <a th:href="@{/carta}"
+                           class="cuenta-enlace">
+
+                            <i class="bi bi-plus-lg"></i>
+                            Realizar pedido
+                        </a>
+                    </div>
+
+                    <div th:if="${pedidosActivos == null or pedidosActivos.isEmpty()}"
+                         class="cuenta-vacio">
+
+                        <i class="bi bi-bag"></i>
+
+                        <div>
+                            <strong>No tienes pedidos activos</strong>
+
+                            <p>
+                                Agrega productos desde nuestra carta.
+                            </p>
+                        </div>
+                    </div>
+
+                    <article th:each="pedido : ${pedidosActivos}"
+                             class="operacion-tarjeta">
+
+                        <div class="operacion-principal">
+
+                            <div class="operacion-icono pedido-icono">
+                                <i class="bi bi-bag-check"></i>
+                            </div>
+
+                            <div>
+                                <span class="operacion-tipo">
+                                    Pedido
+                                </span>
+
+                                <h3 th:text="${pedido.codigoPedido}">
+                                    PED-000001
+                                </h3>
+
+                                <p th:text="${#temporals.format(
+                                        pedido.fechaRegistro,
+                                        'dd/MM/yyyy HH:mm'
+                                )}">
+                                    08/10/2026
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="operacion-informacion">
+
+                            <div>
+                                <span>Modalidad</span>
+
+                                <strong th:text="${#strings.replace(
+                                        pedido.tipoPedido.name(),
+                                        '_',
+                                        ' '
+                                )}">
+                                    DELIVERY
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Total</span>
+
+                                <strong th:text="'S/ ' + ${pedido.total}">
+                                    S/ 0
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="operacion-estado">
+
+                            <span class="estado-badge"
+                                  th:classappend="${'estado-' +
+                                      #strings.toLowerCase(
+                                          pedido.estado.name()
+                                      )}"
+                                  th:text="${#strings.replace(
+                                      pedido.estado.name(),
+                                      '_',
+                                      ' '
+                                  )}">
+                                Estado
+                            </span>
+                        </div>
+
+                        <div class="operacion-acciones">
+
+                            <a th:if="${pedido.estado.name() == 'PENDIENTE_PAGO'}"
+                               th:href="@{/pedidos/pago(codigo=${pedido.codigoPedido})}"
+                               class="btn-operacion-principal">
+
+                                <i class="bi bi-wallet2"></i>
+                                Realizar pago
+                            </a>
+
+                            <a th:href="@{/pedidos/consultar(codigo=${pedido.codigoPedido})}"
+                               class="btn-operacion-secundario">
+
+                                Ver detalle
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- RESERVAS ACTIVAS -->
+                <section class="cuenta-seccion">
+
+                    <div class="cuenta-seccion-titulo">
+
+                        <div>
+                            <span>PRÓXIMAS VISITAS</span>
+                            <h2>Mis reservas</h2>
+                        </div>
+
+                        <a th:href="@{/reservas}"
+                           class="cuenta-enlace">
+
+                            <i class="bi bi-plus-lg"></i>
+                            Nueva reserva
+                        </a>
+                    </div>
+
+                    <div th:if="${reservasActivas == null or reservasActivas.isEmpty()}"
+                         class="cuenta-vacio">
+
+                        <i class="bi bi-calendar2"></i>
+
+                        <div>
+                            <strong>No tienes reservas activas</strong>
+
+                            <p>
+                                Reserva una mesa para tu próxima visita.
+                            </p>
+                        </div>
+                    </div>
+
+                    <article th:each="reserva : ${reservasActivas}"
+                             class="operacion-tarjeta">
+
+                        <div class="operacion-principal">
+
+                            <div class="operacion-icono reserva-icono">
+                                <i class="bi bi-calendar-check"></i>
+                            </div>
+
+                            <div>
+                                <span class="operacion-tipo">
+                                    Reserva
+                                </span>
+
+                                <h3 th:text="${reserva.codigoReserva}">
+                                    RES-000001
+                                </h3>
+
+                                <p>
+                                    <span th:text="${#temporals.format(
+                                            reserva.fechaReserva,
+                                            'dd/MM/yyyy'
+                                    )}">
+                                        08/10/2026
+                                    </span>
+
+                                    ·
+
+                                    <span th:text="${#temporals.format(
+                                            reserva.horaInicio,
+                                            'HH:mm'
+                                    )}">
+                                        12:00
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="operacion-informacion">
+
+                            <div>
+                                <span>Piso</span>
+
+                                <strong th:text="${reserva.pisoSolicitado != null
+                                        ? reserva.pisoSolicitado.nombre
+                                        : 'Por asignar'}">
+                                    Por asignar
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Personas</span>
+
+                                <strong th:text="${reserva.numeroPersonas}">
+                                    0
+                                </strong>
+                            </div>
+
+                            <div th:if="${reserva.mesa != null}">
+                                <span>Mesa</span>
+
+                                <strong th:text="${reserva.mesa.numero}">
+                                    0
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="operacion-estado">
+
+                            <span class="estado-badge"
+                                  th:classappend="${'estado-' +
+                                      #strings.toLowerCase(
+                                          reserva.estado.name()
+                                      )}"
+                                  th:text="${#strings.replace(
+                                      reserva.estado.name(),
+                                      '_',
+                                      ' '
+                                  )}">
+                                Estado
+                            </span>
+                        </div>
+
+                        <div class="operacion-acciones">
+
+                            <a th:if="${reserva.estado.name() == 'PENDIENTE_PAGO'}"
+                               th:href="@{/reservas/pago(codigo=${reserva.codigoReserva})}"
+                               class="btn-operacion-principal">
+
+                                <i class="bi bi-wallet2"></i>
+                                Realizar pago
+                            </a>
+
+                            <a th:href="@{/reservas/consultar(codigo=${reserva.codigoReserva})}"
+                               class="btn-operacion-secundario">
+
+                                Ver detalle
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- HISTORIAL -->
+                <section class="cuenta-seccion">
+
+                    <div class="cuenta-seccion-titulo">
+
+                        <div>
+                            <span>OPERACIONES ANTERIORES</span>
+                            <h2>Mi historial</h2>
+                        </div>
+                    </div>
+
+                    <div class="historial-bloque">
+
+                        <h3>
+                            <i class="bi bi-bag"></i>
+                            Historial de pedidos
+                        </h3>
+
+                        <div th:if="${historialPedidos == null or historialPedidos.isEmpty()}"
+                             class="historial-vacio">
+
+                            Todavía no tienes pedidos finalizados o cancelados.
+                        </div>
+
+                        <div class="table-responsive"
+                             th:if="${historialPedidos != null and !historialPedidos.isEmpty()}">
+
+                            <table class="table historial-tabla">
+
+                                <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Fecha</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr th:each="pedido : ${historialPedidos}">
+
+                                    <td>
+                                        <strong th:text="${pedido.codigoPedido}">
+                                            PED-000001
+                                        </strong>
+                                    </td>
+
+                                    <td th:text="${#temporals.format(
+                                            pedido.fechaRegistro,
+                                            'dd/MM/yyyy'
+                                    )}">
+                                        08/10/2026
+                                    </td>
+
+                                    <td th:text="'S/ ' + ${pedido.total}">
+                                        S/ 0
+                                    </td>
+
+                                    <td>
+                                        <span class="estado-badge"
+                                              th:classappend="${'estado-' +
+                                                  #strings.toLowerCase(
+                                                      pedido.estado.name()
+                                                  )}"
+                                              th:text="${#strings.replace(
+                                                  pedido.estado.name(),
+                                                  '_',
+                                                  ' '
+                                              )}">
+                                            Estado
+                                        </span>
+                                    </td>
+
+                                    <td class="text-end">
+                                        <a th:href="@{/pedidos/consultar(codigo=${pedido.codigoPedido})}"
+                                           class="historial-ver">
+
+                                            Ver
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="historial-bloque">
+
+                        <h3>
+                            <i class="bi bi-calendar2"></i>
+                            Historial de reservas
+                        </h3>
+
+                        <div th:if="${historialReservas == null or historialReservas.isEmpty()}"
+                             class="historial-vacio">
+
+                            Todavía no tienes reservas finalizadas o canceladas.
+                        </div>
+
+                        <div class="table-responsive"
+                             th:if="${historialReservas != null and !historialReservas.isEmpty()}">
+
+                            <table class="table historial-tabla">
+
+                                <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Fecha</th>
+                                    <th>Personas</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr th:each="reserva : ${historialReservas}">
+
+                                    <td>
+                                        <strong th:text="${reserva.codigoReserva}">
+                                            RES-000001
+                                        </strong>
+                                    </td>
+
+                                    <td th:text="${#temporals.format(
+                                            reserva.fechaReserva,
+                                            'dd/MM/yyyy'
+                                    )}">
+                                        08/10/2026
+                                    </td>
+
+                                    <td th:text="${reserva.numeroPersonas}">
+                                        0
+                                    </td>
+
+                                    <td>
+                                        <span class="estado-badge"
+                                              th:classappend="${'estado-' +
+                                                  #strings.toLowerCase(
+                                                      reserva.estado.name()
+                                                  )}"
+                                              th:text="${#strings.replace(
+                                                  reserva.estado.name(),
+                                                  '_',
+                                                  ' '
+                                              )}">
+                                            Estado
+                                        </span>
+                                    </td>
+
+                                    <td class="text-end">
+                                        <a th:href="@{/reservas/consultar(codigo=${reserva.codigoReserva})}"
+                                           class="historial-ver">
+
+                                            Ver
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

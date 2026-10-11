@@ -1,0 +1,250 @@
+* {
+box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 24px;
+    background-color: #f5f1eb;
+    color: #211b18;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.comanda-acciones {
+    width: min(100%, 480px);
+    margin: 0 auto 16px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.comanda-acciones a,
+.comanda-acciones button {
+    min-height: 40px;
+    padding: 9px 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-volver {
+    border: 1px solid #cfc4ba;
+    background-color: #ffffff;
+    color: #5f554f;
+}
+
+.btn-imprimir {
+    border: 1px solid #5c6e49;
+    background-color: #5c6e49;
+    color: #ffffff;
+}
+
+.comanda {
+    width: min(100%, 480px);
+    margin: 0 auto;
+    padding: 24px;
+    border: 1px solid #bcb4ae;
+    background-color: #ffffff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.comanda-encabezado {
+    padding-bottom: 14px;
+    border-bottom: 2px dashed #342b26;
+    text-align: center;
+}
+
+.comanda-encabezado h1 {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.comanda-encabezado p {
+    margin: 5px 0 0;
+    font-size: 0.78rem;
+}
+
+.comanda-identificacion {
+    padding: 14px 0;
+    border-bottom: 2px dashed #342b26;
+}
+
+.comanda-mesa {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.comanda-mesa span {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.comanda-mesa strong {
+    font-size: 2rem;
+    font-weight: 900;
+}
+
+.comanda-dato {
+    margin-top: 6px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    font-size: 0.78rem;
+}
+
+.comanda-dato span:first-child {
+    font-weight: 700;
+}
+
+.comanda-dato span:last-child {
+    text-align: right;
+}
+
+.comanda-productos {
+    padding: 15px 0;
+}
+
+.comanda-productos h2 {
+    margin: 0 0 12px;
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.producto-comanda {
+    padding: 10px 0;
+    border-bottom: 1px dashed #aaa29d;
+}
+
+.producto-comanda:last-child {
+    border-bottom: 0;
+}
+
+.producto-principal {
+    display: grid;
+    grid-template-columns: 45px minmax(0, 1fr);
+    align-items: start;
+    gap: 10px;
+}
+
+.producto-cantidad {
+    font-size: 1.15rem;
+    font-weight: 900;
+    text-align: center;
+}
+
+.producto-nombre {
+    font-size: 0.9rem;
+    font-weight: 900;
+    line-height: 1.35;
+    text-transform: uppercase;
+}
+
+.producto-observacion {
+    margin: 6px 0 0 55px;
+    padding: 7px 9px;
+    border-left: 4px solid #8c2f1b;
+    background-color: #f3eee9;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.producto-observacion i {
+    margin-right: 4px;
+}
+
+.pedido-observaciones {
+    margin-top: 8px;
+    padding: 12px;
+    border: 2px solid #342b26;
+}
+
+.pedido-observaciones h3 {
+    margin: 0 0 6px;
+    font-size: 0.78rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.pedido-observaciones p {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.comanda-pie {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 2px dashed #342b26;
+    text-align: center;
+}
+
+.comanda-pie p {
+    margin: 0;
+    font-size: 0.68rem;
+}
+
+.sin-productos {
+    padding: 24px 10px;
+    color: #706761;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+@media print {
+    @page {
+        size: 80mm auto;
+        margin: 5mm;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #ffffff;
+    }
+
+    .comanda-acciones {
+        display: none;
+    }
+
+    .comanda {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        box-shadow: none;
+    }
+
+    .comanda-encabezado h1 {
+        font-size: 15pt;
+    }
+
+    .comanda-mesa strong {
+        font-size: 22pt;
+    }
+
+    .producto-nombre {
+        font-size: 10pt;
+    }
+
+    .producto-observacion {
+        background-color: transparent;
+    }
+}

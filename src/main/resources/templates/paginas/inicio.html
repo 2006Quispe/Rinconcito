@@ -1,56 +1,416 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${titulo} + ' - El Rinconcito Ayacuchano'">El Rinconcito Ayacuchano</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600&amp;display=swap" rel="stylesheet">
-    <link th:href="@{/css/estilos.css}" rel="stylesheet">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${titulo}
+        + ' - El Rinconcito Ayacuchano'">
+        El Rinconcito Ayacuchano
+    </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+          rel="stylesheet">
+
+    <link th:href="@{/css/estilos.css}"
+          rel="stylesheet">
+
 </head>
+
 <body>
 
-<header th:replace="~{fragments/header :: header}"></header>
+<header th:replace="~{fragments/header :: header}">
+</header>
 
-<main>
+<main class="inicio-publico">
 
-    <section class="text-center text-light py-5" style="background-color:#B85C38;">
-        <div class="container py-4">
-            <h1 class="fw-title display-5">El Rinconcito Ayacuchano</h1>
-            <p class="lead">Almuerzo Show, pachamanca dominical y lo mejor de la comida ayacuchana en un ambiente campestre</p>
-            <a th:href="@{/reservas}" class="btn btn-lg me-2" style="background-color:#D4A017;color:#3B2A22;">Reservar mesa</a>
-            <a th:href="@{/carta}" class="btn btn-outline-light btn-lg">Ver la carta</a>
+    <section class="inicio-hero">
+
+        <div class="hero-luz hero-luz-uno"></div>
+        <div class="hero-luz hero-luz-dos"></div>
+
+        <div class="container hero-contenedor">
+
+            <div class="row align-items-center g-3 g-lg-4">
+
+                <div class="col-lg-6">
+
+                    <div class="hero-informacion">
+
+                        <p class="hero-etiqueta">
+                            COCINA AYACUCHANA · EXPERIENCIA CAMPESTRE
+                        </p>
+
+                        <h1>
+                            Tradición ayacuchana,
+                            <span>servida con elegancia</span>
+                        </h1>
+
+                        <p class="hero-descripcion">
+                            Almuerzo Show, pachamanca dominical y
+                            lo mejor de la comida ayacuchana en un
+                            ambiente campestre.
+                        </p>
+
+                        <div class="hero-acciones">
+
+                            <a th:href="@{/reservas}"
+                               class="btn-hero-principal">
+
+                                Reservar mesa
+
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+
+                            <a th:href="@{/carta}"
+                               class="btn-hero-secundario">
+
+                                Explorar la carta
+
+                                <i class="bi bi-arrow-up-right"></i>
+                            </a>
+
+                        </div>
+
+                        <div class="hero-beneficios">
+
+                            <div>
+                                <i class="bi bi-check-circle"></i>
+                                <span>Reservas en línea</span>
+                            </div>
+
+                            <div>
+                                <i class="bi bi-check-circle"></i>
+                                <span>Eventos en vivo</span>
+                            </div>
+
+                            <div>
+                                <i class="bi bi-check-circle"></i>
+                                <span>Comida tradicional</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg-6">
+
+                    <div class="hero-carrusel-contenedor">
+
+                        <div id="carruselPlatos"
+                             class="carousel slide carousel-fade"
+                             data-bs-ride="carousel"
+                             data-bs-interval="4500"
+                             data-bs-pause="hover"
+                             data-bs-touch="true">
+
+                            <div class="carousel-indicators">
+
+                                <button type="button"
+                                        data-bs-target="#carruselPlatos"
+                                        data-bs-slide-to="0"
+                                        class="active"
+                                        aria-current="true"
+                                        aria-label="Pachamanca">
+                                </button>
+
+                                <button type="button"
+                                        data-bs-target="#carruselPlatos"
+                                        data-bs-slide-to="1"
+                                        aria-label="Cuy chactado">
+                                </button>
+
+                                <button type="button"
+                                        data-bs-target="#carruselPlatos"
+                                        data-bs-slide-to="2"
+                                        aria-label="Pollo a la brasa">
+                                </button>
+
+                            </div>
+
+                            <div class="carousel-inner">
+
+                                <div class="carousel-item active">
+
+                                    <div class="plato-presentacion">
+
+                                        <div class="plato-destello"></div>
+
+                                        <img th:src="@{/img/pachamanca.png}"
+                                             class="plato-flotante"
+                                             alt="Pachamanca dominical"
+                                             loading="eager"
+                                             draggable="false">
+
+                                        <div class="plato-sombra"></div>
+
+                                        <div class="plato-etiqueta">
+
+                                            <small>
+                                                Especialidad
+                                            </small>
+
+                                            <strong>
+                                                Pachamanca dominical
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="carousel-item">
+
+                                    <div class="plato-presentacion">
+
+                                        <div class="plato-destello"></div>
+
+                                        <img th:src="@{/img/cuy-chactado.png}"
+                                             class="plato-flotante"
+                                             alt="Cuy chactado"
+                                             loading="lazy"
+                                             draggable="false">
+
+                                        <div class="plato-sombra"></div>
+
+                                        <div class="plato-etiqueta">
+
+                                            <small>
+                                                Tradición ayacuchana
+                                            </small>
+
+                                            <strong>
+                                                Cuy chactado
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="carousel-item">
+
+                                    <div class="plato-presentacion">
+
+                                        <div class="plato-destello"></div>
+
+                                        <img th:src="@{/img/pollo-brasa.png}"
+                                             class="plato-flotante"
+                                             alt="Pollo a la brasa Wallpa Waccay"
+                                             loading="lazy"
+                                             draggable="false">
+
+                                        <div class="plato-sombra"></div>
+
+                                        <div class="plato-etiqueta">
+
+                                            <small>
+                                                Favorito de la casa
+                                            </small>
+
+                                            <strong>
+                                                Wallpa Waccay
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <button class="carousel-control-prev"
+                                    type="button"
+                                    data-bs-target="#carruselPlatos"
+                                    data-bs-slide="prev">
+
+                                <span class="control-carrusel">
+
+                                    <i class="bi bi-chevron-left"></i>
+
+                                </span>
+
+                                <span class="visually-hidden">
+                                    Plato anterior
+                                </span>
+
+                            </button>
+
+                            <button class="carousel-control-next"
+                                    type="button"
+                                    data-bs-target="#carruselPlatos"
+                                    data-bs-slide="next">
+
+                                <span class="control-carrusel">
+
+                                    <i class="bi bi-chevron-right"></i>
+
+                                </span>
+
+                                <span class="visually-hidden">
+                                    Plato siguiente
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
+
     </section>
 
-    <section class="container py-5">
-        <div class="row text-center g-4">
-            <div class="col-md-4">
-                <i class="bi bi-egg-fried" style="font-size:2.5rem;color:#8C2F1B;"></i>
-                <h3 class="fw-title mt-2">Carta</h3>
-                <p>Pachamanca, pollo a la brasa "Wallpa Waccay", cuy y parrilladas.</p>
-                <a th:href="@{/carta}" class="btn btn-sm" style="background-color:#5C6E49;color:white;">Ver platos</a>
+    <section class="experiencia-inicio">
+
+        <div class="container">
+
+            <div class="experiencia-encabezado">
+
+                <p>NUESTRA EXPERIENCIA</p>
+
+                <h2>
+                    Descubre El Rinconcito
+                </h2>
+
+                <span>
+                    Sabores tradicionales, eventos inolvidables
+                    y un espacio pensado para compartir.
+                </span>
+
             </div>
-            <div class="col-md-4">
-                <i class="bi bi-calendar-event" style="font-size:2.5rem;color:#8C2F1B;"></i>
-                <h3 class="fw-title mt-2">Eventos</h3>
-                <p>Shows en vivo con orquestas cada fin de semana y feriados.</p>
-                <a th:href="@{/eventos}" class="btn btn-sm" style="background-color:#5C6E49;color:white;">Ver eventos</a>
+
+            <div class="row g-3">
+
+                <div class="col-lg-4 col-md-6">
+
+                    <article class="experiencia-tarjeta">
+
+                        <div class="experiencia-icono">
+
+                            <i class="bi bi-egg-fried"></i>
+
+                        </div>
+
+                        <div class="experiencia-contenido">
+
+                            <h3>Nuestra carta</h3>
+
+                            <p>
+                                Pachamanca, pollo a la brasa
+                                “Wallpa Waccay”, cuy y parrilladas.
+                            </p>
+
+                            <a th:href="@{/carta}">
+
+                                Ver platos
+
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+
+                    <article class="experiencia-tarjeta">
+
+                        <div class="experiencia-icono">
+
+                            <i class="bi bi-calendar-event"></i>
+
+                        </div>
+
+                        <div class="experiencia-contenido">
+
+                            <h3>Eventos en vivo</h3>
+
+                            <p>
+                                Shows con orquestas durante los fines
+                                de semana y feriados.
+                            </p>
+
+                            <a th:href="@{/eventos}">
+
+                                Ver eventos
+
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+                <div class="col-lg-4 col-md-12">
+
+                    <article class="experiencia-tarjeta">
+
+                        <div class="experiencia-icono">
+
+                            <i class="bi bi-people"></i>
+
+                        </div>
+
+                        <div class="experiencia-contenido">
+
+                            <h3>Reserva tu mesa</h3>
+
+                            <p>
+                                Asegura tu lugar para disfrutar
+                                nuestro Almuerzo Show.
+                            </p>
+
+                            <a th:href="@{/reservas}">
+
+                                Reservar
+
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
             </div>
-            <div class="col-md-4">
-                <i class="bi bi-people" style="font-size:2.5rem;color:#8C2F1B;"></i>
-                <h3 class="fw-title mt-2">Reservas</h3>
-                <p>Asegura tu mesa para el Almuerzo Show de fin de semana.</p>
-                <a th:href="@{/reservas}" class="btn btn-sm" style="background-color:#5C6E49;color:white;">Reservar</a>
-            </div>
+
         </div>
+
     </section>
 
 </main>
 
-<footer th:replace="~{fragments/footer :: footer}"></footer>
+<footer th:replace="~{fragments/footer :: footer}">
+</footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
 </body>
 </html>

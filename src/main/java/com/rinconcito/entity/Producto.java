@@ -15,7 +15,7 @@ public class Producto {
     @JoinColumn(name = "id_categoria", nullable = false)
     private Categoria categoria;
 
-    @Column(name = "nombre", nullable = false, length = 80)
+    @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
     @Column(name = "descripcion", length = 300)
@@ -40,8 +40,6 @@ public class Producto {
 
     public Producto() {
     }
-
-    // Getters y setters
 
     public Integer getIdProducto() {
         return idProducto;

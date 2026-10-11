@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${titulo}
+            + ' - El Rinconcito Ayacuchano'">
+        Imagen de galería
+    </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+    <link th:href="@{/css/admin.css}"
+          rel="stylesheet">
+
+    <link th:href="@{/css/admin-galeria.css}"
+          rel="stylesheet">
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <aside th:replace="~{fragments/admin-sidebar
+            :: sidebar('galeria')}">
+    </aside>
+
+    <main class="admin-contenido galeria-contenido">
+
+        <header class="galeria-encabezado">
+
+            <div>
+                <p class="galeria-etiqueta">
+                    GALERÍA
+                </p>
+
+                <h1 th:text="${titulo}">
+                    Nueva imagen
+                </h1>
+
+                <p th:if="${galeria.idImagen == null}">
+                    Selecciona una fotografía y completa
+                    la información de la publicación.
+                </p>
+
+                <p th:unless="${galeria.idImagen == null}">
+                    Modifica la información o reemplaza
+                    la fotografía actual.
+                </p>
+            </div>
+
+            <a th:href="@{/admin/galeria}"
+               class="btn-volver-galeria">
+
+                <i class="bi bi-arrow-left"></i>
+                Volver a galería
+            </a>
+
+        </header>
+
+        <div th:if="${error}"
+             class="alert alert-danger"
+             th:text="${error}">
+        </div>
+
+        <form th:action="@{/admin/galeria/guardar}"
+              method="post"
+              enctype="multipart/form-data"
+              class="galeria-formulario">
+
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+            <input type="hidden"
+                   name="idImagen"
+                   th:value="${galeria.idImagen}">
+
+            <section class="galeria-formulario-imagen">
+
+                <div class="formulario-seccion-titulo">
+
+                    <div class="formulario-seccion-icono">
+                        <i class="bi bi-image"></i>
+                    </div>
+
+                    <div>
+                        <h2>Fotografía</h2>
+
+                        <p>
+                            Utiliza una imagen horizontal o cuadrada
+                            de buena calidad.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="imagen-preview-contenedor">
+
+                    <div id="previewVacio"
+                         class="imagen-preview-vacia"
+                         th:classappend="${galeria.rutaImagen != null
+                                and !galeria.rutaImagen.isBlank()}
+                                ? ' d-none'">
+
+                        <i class="bi bi-cloud-arrow-up"></i>
+
+                        <strong>Selecciona una fotografía</strong>
+
+                        <span>
+                            JPG, JPEG, PNG o WEBP
+                        </span>
+
+                    </div>
+
+                    <img id="imagenPreview"
+                         th:src="${galeria.rutaImagen}"
+                         th:classappend="${galeria.rutaImagen == null
+                                or galeria.rutaImagen.isBlank()}
+                                ? ' d-none'"
+                         alt="Vista previa"
+                         class="imagen-preview">
+
+                </div>
+
+                <label for="archivoImagen"
+                       class="form-label mt-3">
+
+                    <span th:text="${galeria.idImagen == null}
+                            ? 'Seleccionar imagen *'
+                            : 'Reemplazar imagen'">
+                        Seleccionar imagen
+                    </span>
+
+                </label>
+
+                <input type="file"
+                       id="archivoImagen"
+                       name="archivoImagen"
+                       class="form-control"
+                       accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                       th:required="${galeria.idImagen == null}">
+
+                <div class="form-text">
+                    Tamaño máximo: 5 MB. Al editar, puedes conservar
+                    la imagen actual sin seleccionar un archivo nuevo.
+                </div>
+
+            </section>
+
+            <section class="galeria-formulario-datos">
+
+                <div class="formulario-seccion-titulo">
+
+                    <div class="formulario-seccion-icono">
+                        <i class="bi bi-card-text"></i>
+                    </div>
+
+                    <div>
+                        <h2>Información</h2>
+
+                        <p>
+                            Estos datos aparecerán junto a la fotografía.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label for="titulo"
+                           class="form-label">
+                        Título
+                    </label>
+
+                    <input type="text"
+                           id="titulo"
+                           name="titulo"
+                           class="form-control"
+                           maxlength="150"
+                           placeholder="Ejemplo: Presentación musical"
+                           th:value="${galeria.titulo}">
+
+                    <div class="form-text">
+                        Opcional. Máximo 150 caracteres.
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label for="descripcion"
+                           class="form-label">
+                        Descripción
+                    </label>
+
+                    <textarea id="descripcion"
+                              name="descripcion"
+                              class="form-control"
+                              rows="5"
+                              maxlength="300"
+                              placeholder="Escribe una breve descripción..."
+                              th:text="${galeria.descripcion}">
+                    </textarea>
+
+                    <div class="form-text">
+                        Opcional. Máximo 300 caracteres.
+                    </div>
+
+                </div>
+
+                <div>
+
+                    <label for="estado"
+                           class="form-label">
+                        Visibilidad
+                    </label>
+
+                    <select id="estado"
+                            name="estado"
+                            class="form-select">
+
+                        <option th:each="estado : ${estados}"
+                                th:value="${estado}"
+                                th:selected="${galeria.estado == estado
+                                    or (galeria.estado == null
+                                    and estado.name() == 'ACTIVO')}"
+                                th:text="${estado.name() == 'ACTIVO'}
+                                    ? 'Visible en la página pública'
+                                    : 'Oculta en la página pública'">
+                            Visible
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </section>
+
+            <div class="galeria-formulario-acciones">
+
+                <a th:href="@{/admin/galeria}"
+                   class="btn-cancelar-galeria">
+                    Cancelar
+                </a>
+
+                <button type="submit"
+                        class="btn-guardar-galeria">
+
+                    <i class="bi bi-floppy"></i>
+
+                    <span th:text="${galeria.idImagen == null}
+                            ? 'Publicar imagen'
+                            : 'Guardar cambios'">
+                        Guardar
+                    </span>
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<script>
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+            const archivo =
+                document.getElementById("archivoImagen");
+
+            const preview =
+                document.getElementById("imagenPreview");
+
+            const previewVacio =
+                document.getElementById("previewVacio");
+
+            archivo.addEventListener(
+                "change",
+                function () {
+                    const imagen = archivo.files[0];
+
+                    if (!imagen) {
+                        return;
+                    }
+
+                    if (!imagen.type.startsWith("image/")) {
+                        archivo.value = "";
+
+                        alert(
+                            "Selecciona un archivo de imagen válido."
+                        );
+
+                        return;
+                    }
+
+                    const lector = new FileReader();
+
+                    lector.addEventListener(
+                        "load",
+                        function () {
+                            preview.src = lector.result;
+                            preview.classList.remove("d-none");
+                            previewVacio.classList.add("d-none");
+                        }
+                    );
+
+                    lector.readAsDataURL(imagen);
+                }
+            );
+        }
+    );
+</script>
+
+</body>
+</html>

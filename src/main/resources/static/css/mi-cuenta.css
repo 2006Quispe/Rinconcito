@@ -1,0 +1,500 @@
+:root {
+    --cuenta-rojo: #8c2f1b;
+    --cuenta-dorado: #d4a017;
+    --cuenta-verde: #5c6e49;
+    --cuenta-texto: #2f2926;
+    --cuenta-suave: #746b66;
+    --cuenta-borde: #eadfd7;
+    --cuenta-fondo: #faf8f5;
+    --cuenta-blanco: #ffffff;
+}
+
+.cuenta-pagina {
+    background-color: var(--cuenta-fondo);
+}
+
+.cuenta-encabezado {
+    padding: 46px 0;
+    color: #ffffff;
+    background:
+        linear-gradient(
+            135deg,
+            #8c2f1b,
+            #a73c25
+        );
+}
+
+.cuenta-etiqueta {
+    display: block;
+    margin-bottom: 6px;
+    color: #f2cc68;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.cuenta-encabezado h1 {
+    margin: 0 0 7px;
+    font-family: "Merriweather", serif;
+    font-size: 31px;
+}
+
+.cuenta-encabezado p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.cuenta-contenedor {
+    padding-top: 38px;
+    padding-bottom: 65px;
+}
+
+.perfil-tarjeta,
+.cuenta-seccion {
+    border: 1px solid var(--cuenta-borde);
+    border-radius: 17px;
+    background-color: var(--cuenta-blanco);
+    box-shadow: 0 7px 24px rgba(59, 42, 34, 0.07);
+}
+
+.perfil-tarjeta {
+    position: sticky;
+    top: 20px;
+    padding: 25px;
+}
+
+.perfil-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 68px;
+    height: 68px;
+    margin-bottom: 16px;
+    color: #ffffff;
+    background-color: var(--cuenta-rojo);
+    border-radius: 50%;
+    font-size: 31px;
+}
+
+.perfil-nombre > span,
+.cuenta-seccion-titulo > div > span {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--cuenta-rojo);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.perfil-nombre h2 {
+    margin: 0 0 5px;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.perfil-nombre p {
+    margin: 0;
+    color: var(--cuenta-suave);
+    overflow-wrap: anywhere;
+}
+
+.perfil-datos {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--cuenta-borde);
+}
+
+.perfil-dato {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 17px;
+}
+
+.perfil-dato i {
+    color: var(--cuenta-rojo);
+    font-size: 18px;
+}
+
+.perfil-dato span,
+.operacion-informacion span {
+    display: block;
+    color: var(--cuenta-suave);
+    font-size: 12px;
+}
+
+.perfil-dato strong {
+    display: block;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.perfil-resumen {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 9px;
+}
+
+.perfil-resumen div {
+    padding: 14px;
+    text-align: center;
+    background-color: #f7f1eb;
+    border-radius: 11px;
+}
+
+.perfil-resumen strong {
+    display: block;
+    color: var(--cuenta-rojo);
+    font-size: 22px;
+}
+
+.perfil-resumen span {
+    color: var(--cuenta-suave);
+    font-size: 12px;
+}
+
+.cuenta-seccion {
+    margin-bottom: 24px;
+    padding: 23px;
+}
+
+.cuenta-seccion-titulo {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 19px;
+}
+
+.cuenta-seccion-titulo h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.cuenta-enlace {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--cuenta-rojo);
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.cuenta-vacio {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 19px;
+    color: var(--cuenta-suave);
+    background-color: #faf7f3;
+    border: 1px dashed #d9c9be;
+    border-radius: 12px;
+}
+
+.cuenta-vacio > i {
+    color: var(--cuenta-rojo);
+    font-size: 25px;
+}
+
+.cuenta-vacio strong {
+    display: block;
+    color: var(--cuenta-texto);
+}
+
+.cuenta-vacio p {
+    margin: 2px 0 0;
+    font-size: 13px;
+}
+
+.operacion-tarjeta {
+    display: grid;
+    grid-template-columns:
+        minmax(180px, 1.4fr)
+        minmax(160px, 1fr)
+        auto;
+    gap: 17px;
+    align-items: center;
+    margin-bottom: 13px;
+    padding: 17px;
+    border: 1px solid var(--cuenta-borde);
+    border-radius: 13px;
+}
+
+.operacion-principal {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.operacion-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+    font-size: 20px;
+}
+
+.pedido-icono {
+    color: var(--cuenta-rojo);
+    background-color: #f9e9e4;
+}
+
+.reserva-icono {
+    color: var(--cuenta-verde);
+    background-color: #ebf0e7;
+}
+
+.operacion-tipo {
+    color: var(--cuenta-suave);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.operacion-principal h3 {
+    margin: 1px 0;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.operacion-principal p {
+    margin: 0;
+    color: var(--cuenta-suave);
+    font-size: 12px;
+}
+
+.operacion-informacion {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+.operacion-informacion strong {
+    font-size: 13px;
+}
+
+.operacion-estado {
+    text-align: right;
+}
+
+.operacion-acciones {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 9px;
+    padding-top: 13px;
+    border-top: 1px solid var(--cuenta-borde);
+}
+
+.estado-badge {
+    display: inline-flex;
+    padding: 6px 10px;
+    color: #615b57;
+    background-color: #eeeae7;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.estado-pendiente_pago {
+    color: #855d00;
+    background-color: #fff1c6;
+}
+
+.estado-pendiente_validacion {
+    color: #7d5200;
+    background-color: #ffe5aa;
+}
+
+.estado-confirmado,
+.estado-confirmada {
+    color: #276037;
+    background-color: #dff1e3;
+}
+
+.estado-finalizado,
+.estado-finalizada {
+    color: #355877;
+    background-color: #e0edf8;
+}
+
+.estado-cancelado,
+.estado-cancelada {
+    color: #8b2f2f;
+    background-color: #f8dddd;
+}
+
+.btn-operacion-principal,
+.btn-operacion-secundario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.btn-operacion-principal {
+    color: #3b2a22;
+    background-color: var(--cuenta-dorado);
+}
+
+.btn-operacion-secundario {
+    color: var(--cuenta-rojo);
+    border: 1px solid #d9b8ad;
+    background-color: #ffffff;
+}
+
+.historial-bloque + .historial-bloque {
+    margin-top: 26px;
+}
+
+.historial-bloque h3 {
+    margin-bottom: 13px;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.historial-bloque h3 i {
+    margin-right: 6px;
+    color: var(--cuenta-rojo);
+}
+
+.historial-vacio {
+    padding: 15px;
+    color: var(--cuenta-suave);
+    background-color: #faf7f3;
+    border-radius: 9px;
+    font-size: 13px;
+}
+
+.historial-tabla {
+    margin: 0;
+    font-size: 13px;
+}
+
+.historial-tabla th {
+    color: var(--cuenta-suave);
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+.historial-tabla td {
+    vertical-align: middle;
+}
+
+.historial-ver {
+    color: var(--cuenta-rojo);
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+@media (max-width: 991.98px) {
+    .perfil-tarjeta {
+        position: static;
+    }
+
+    .operacion-tarjeta {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .operacion-estado {
+        text-align: left;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .cuenta-encabezado {
+        padding: 34px 0;
+    }
+
+    .cuenta-encabezado h1 {
+        font-size: 25px;
+    }
+
+    .cuenta-contenedor {
+        padding-top: 25px;
+    }
+
+    .cuenta-seccion,
+    .perfil-tarjeta {
+        padding: 18px;
+    }
+
+    .cuenta-seccion-titulo {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .operacion-tarjeta {
+        grid-template-columns: 1fr;
+    }
+
+    .operacion-acciones {
+        flex-direction: column;
+    }
+
+    .btn-operacion-principal,
+    .btn-operacion-secundario {
+        width: 100%;
+    }
+	
+	/* Ajustes compactos de Mi cuenta */
+
+	.cuenta-contenedor {
+	    padding-top: 28px;
+	}
+
+	.perfil-nombre h2 {
+	    font-size: 18px;
+	}
+
+	.perfil-nombre p {
+	    font-size: 13px;
+	}
+
+	.cuenta-seccion-titulo h2 {
+	    font-size: 19px;
+	}
+
+	.cuenta-seccion-titulo > div > span,
+	.perfil-nombre > span {
+	    font-size: 10px;
+	}
+
+	.operacion-principal h3 {
+	    font-size: 14px;
+	}
+
+	.operacion-principal p,
+	.operacion-informacion strong {
+	    font-size: 12px;
+	}
+
+	.perfil-dato strong {
+	    font-size: 13px;
+	}
+
+	.perfil-resumen strong {
+	    font-size: 19px;
+	}
+
+	.cuenta-vacio strong {
+	    font-size: 14px;
+	}
+
+	.cuenta-vacio p {
+	    font-size: 12px;
+	}
+}

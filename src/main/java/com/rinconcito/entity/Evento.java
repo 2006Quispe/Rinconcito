@@ -12,11 +12,8 @@ public class Evento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_evento")
     private Integer idEvento;
-    
-    @Column(name = "precio_entrada", nullable = false)
-    private Integer precioEntrada = 0;
 
-    @Column(name = "titulo", nullable = false, length = 150)
+    @Column(name = "titulo", nullable = false, length = 100)
     private String titulo;
 
     @Column(name = "descripcion", length = 500)
@@ -34,18 +31,22 @@ public class Evento {
     @Column(name = "imagen", length = 255)
     private String imagen;
 
+    @Column(name = "requiere_pago", nullable = false)
+    private boolean requierePago = false;
+
+    @Column(name = "precio_entrada", nullable = false)
+    private Integer precioEntrada = 0;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false)
     private EstadoEvento estado = EstadoEvento.ACTIVO;
 
     public enum EstadoEvento {
-        ACTIVO, INACTIVO
+        ACTIVO, INACTIVO, CANCELADO
     }
 
     public Evento() {
     }
-
-    // Getters y setters
 
     public Integer getIdEvento() {
         return idEvento;
@@ -103,18 +104,27 @@ public class Evento {
         this.imagen = imagen;
     }
 
-    public EstadoEvento getEstado() {
-        return estado;
+    public boolean isRequierePago() {
+        return requierePago;
     }
 
-    public void setEstado(EstadoEvento estado) {
-        this.estado = estado;
+    public void setRequierePago(boolean requierePago) {
+        this.requierePago = requierePago;
     }
+
     public Integer getPrecioEntrada() {
         return precioEntrada;
     }
 
     public void setPrecioEntrada(Integer precioEntrada) {
         this.precioEntrada = precioEntrada;
+    }
+
+    public EstadoEvento getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoEvento estado) {
+        this.estado = estado;
     }
 }

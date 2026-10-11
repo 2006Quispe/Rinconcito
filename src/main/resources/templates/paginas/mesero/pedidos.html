@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo}
+        + ' - El Rinconcito Ayacuchano'">
+        Pedidos activos
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap"
+          rel="stylesheet">
+    <link th:href="@{/css/mesero-pedidos.css}"
+          rel="stylesheet">
+    <link th:href="@{/css/mesero-pedidosact.css}"
+          rel="stylesheet">
+</head>
+
+<body class="mesero-body">
+
+<div class="mesero-layout">
+
+    <aside th:replace="~{fragments/mesero-sidebar
+        :: sidebar('pedidos')}">
+    </aside>
+
+    <div class="mesero-pagina">
+
+        <header class="pedidos-encabezado">
+
+            <div>
+
+                <p class="pedidos-etiqueta">
+                    ATENCIÓN EN MESA
+                </p>
+
+                <h1>Pedidos activos</h1>
+
+                <p>
+                    Consulta los pedidos presenciales que están
+                    siendo atendidos o esperando el cobro.
+                </p>
+
+            </div>
+
+            <a th:href="@{/mesero/pedidos/nuevo}"
+               class="btn-nuevo-pedido">
+
+                <i class="bi bi-plus-circle"></i>
+                Nuevo pedido
+            </a>
+
+        </header>
+
+        <main class="mesero-contenido">
+
+            <div th:if="${exito}"
+                 class="alert alert-success"
+                 th:text="${exito}">
+            </div>
+
+            <div th:if="${error}"
+                 class="alert alert-danger"
+                 th:text="${error}">
+            </div>
+
+            <section class="pedidos-resumen">
+
+                <div class="pedidos-resumen-texto">
+
+                    <i class="bi bi-receipt-cutoff"></i>
+
+                    <div>
+                        <strong>Pedidos presenciales</strong>
+
+                        <span>
+                            Pedidos registrados en las mesas
+                            del restaurante.
+                        </span>
+                    </div>
+
+                </div>
+
+                <span class="pedidos-resumen-total"
+                      th:text="${#lists.size(pedidos)
+                        + (#lists.size(pedidos) == 1
+                            ? ' pedido'
+                            : ' pedidos')}">
+                    0 pedidos
+                </span>
+
+            </section>
+
+            <section th:if="${#lists.isEmpty(pedidos)}"
+                     class="pedidos-vacio">
+
+                <i class="bi bi-journal-check"></i>
+
+                <h2>No hay pedidos activos</h2>
+
+                <p>
+                    Los pedidos registrados por el mesero
+                    aparecerán en esta sección.
+                </p>
+
+                <a th:href="@{/mesero/pedidos/nuevo}"
+                   class="btn-nuevo-pedido">
+
+                    <i class="bi bi-plus-circle"></i>
+                    Registrar pedido
+                </a>
+
+            </section>
+
+            <section th:unless="${#lists.isEmpty(pedidos)}"
+                     class="pedidos-grid">
+
+                <article th:each="pedido : ${pedidos}"
+                         class="pedido-activo"
+                         th:classappend="${pedido.estado.name()
+                            == 'PENDIENTE_PAGO'}
+                            ? ' pedido-activo-cobro'
+                            : ''">
+
+                    <header class="pedido-activo-cabecera">
+
+                        <div>
+
+                            <span class="pedido-mesa-etiqueta">
+                                Mesa
+                            </span>
+
+                            <strong class="pedido-mesa-numero"
+                                    th:text="${pedido.mesa != null
+                                        ? pedido.mesa.numero
+                                        : '—'}">
+                                1
+                            </strong>
+
+                        </div>
+
+                        <span th:if="${pedido.estado.name()
+                                == 'CONFIRMADO'}"
+                              class="pedido-estado
+                                     pedido-estado-confirmado">
+
+                            <i class="bi bi-check-circle"></i>
+                            En atención
+                        </span>
+
+                        <span th:if="${pedido.estado.name()
+                                == 'PENDIENTE_PAGO'}"
+                              class="pedido-estado
+                                     pedido-estado-cobro">
+
+                            <i class="bi bi-hourglass-split"></i>
+                            Esperando Caja
+                        </span>
+
+                        <span th:if="${pedido.estado.name()
+                                == 'PENDIENTE_VALIDACION'}"
+                              class="pedido-estado
+                                     pedido-estado-validacion">
+
+                            <i class="bi bi-clock-history"></i>
+                            En validación
+                        </span>
+
+                        <span th:if="${pedido.estado.name()
+                                != 'CONFIRMADO'
+                                and pedido.estado.name()
+                                != 'PENDIENTE_PAGO'
+                                and pedido.estado.name()
+                                != 'PENDIENTE_VALIDACION'}"
+                              class="pedido-estado">
+
+                            <i class="bi bi-info-circle"></i>
+
+                            <span th:text="${pedido.estado}">
+                                ESTADO
+                            </span>
+                        </span>
+
+                    </header>
+
+                    <div class="pedido-activo-informacion">
+
+                        <div class="pedido-dato">
+
+                            <span>Pedido:</span>
+
+                            <strong th:text="${pedido.codigoPedido}">
+                                PED-2026-000001
+                            </strong>
+
+                        </div>
+
+                        <div class="pedido-dato">
+
+                            <span>Piso:</span>
+
+                            <strong th:text="${pedido.mesa != null
+                                and pedido.mesa.piso != null
+                                ? pedido.mesa.piso.nombre
+                                : '—'}">
+                                Piso 1
+                            </strong>
+
+                        </div>
+
+                        <div class="pedido-dato">
+
+                            <span>Registrado:</span>
+
+                            <strong th:text="${pedido.fechaRegistro != null
+                                ? #temporals.format(
+                                    pedido.fechaRegistro,
+                                    'dd/MM/yyyy HH:mm'
+                                  )
+                                : '—'}">
+                                10/10/2026 10:00
+                            </strong>
+
+                        </div>
+
+                        <div class="pedido-dato">
+
+                            <span>Mesero:</span>
+
+                            <strong th:if="${pedido.mesero != null}"
+                                    th:text="${pedido.mesero.nombres
+                                        + ' '
+                                        + pedido.mesero.apellidos}">
+                                Mesero
+                            </strong>
+
+                            <strong th:unless="${pedido.mesero != null}">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <section class="pedido-productos"
+                             th:with="detalles=${detallesPorPedido[
+                                pedido.idPedido
+                             ]}">
+
+                        <h3>
+
+                            <i class="bi bi-card-list"></i>
+                            Productos
+                        </h3>
+
+                        <p th:if="${detalles == null
+                            or #lists.isEmpty(detalles)}"
+                           class="pedido-sin-detalles">
+
+                            No hay productos registrados.
+                        </p>
+
+                        <ul th:unless="${detalles == null
+                            or #lists.isEmpty(detalles)}">
+
+                            <li th:each="detalle : ${detalles}">
+
+                                <span class="producto-cantidad-lista"
+                                      th:text="${detalle.cantidad
+                                        + 'x'}">
+                                    1x
+                                </span>
+
+                                <span class="producto-nombre-lista"
+                                      th:text="${detalle.producto != null
+                                        ? detalle.producto.nombre
+                                        : 'Producto'}">
+                                    Producto
+                                </span>
+
+                                <span class="producto-precio-lista"
+                                      th:text="'S/ '
+                                        + ${detalle.subtotal}">
+                                    S/ 0
+                                </span>
+
+                                <small th:if="${detalle.observaciones != null
+                                    and !detalle.observaciones.isBlank()}"
+                                       class="producto-indicacion-lista"
+                                       th:text="${detalle.observaciones}">
+                                    Indicación
+                                </small>
+
+                            </li>
+
+                        </ul>
+
+                    </section>
+
+                    <div th:if="${pedido.observaciones != null
+                        and !pedido.observaciones.isBlank()}"
+                         class="pedido-observacion-general">
+
+                        <strong>Observaciones</strong>
+
+                        <p th:text="${pedido.observaciones}">
+                            Observaciones del pedido.
+                        </p>
+
+                    </div>
+
+                    <div class="pedido-activo-total">
+
+                        <span>Total</span>
+
+                        <strong th:text="'S/ ' + ${pedido.total}">
+                            S/ 0
+                        </strong>
+
+                    </div>
+
+                    <div class="pedido-activo-acciones">
+
+                        <a th:if="${pedido.estado.name()
+                                == 'CONFIRMADO'}"
+                           th:href="@{/mesero/pedidos/{idPedido}/agregar(
+                                idPedido=${pedido.idPedido}
+                           )}"
+                           class="btn-agregar-productos">
+
+                            <i class="bi bi-plus-circle"></i>
+                            Agregar productos
+                        </a>
+
+                        <a th:href="@{/mesero/pedidos/{idPedido}/comanda(
+                                idPedido=${pedido.idPedido}
+                           )}"
+                           class="btn-ver-comanda">
+
+                            <i class="bi bi-printer"></i>
+                            Ver comanda
+                        </a>
+
+                        <form th:if="${pedido.estado.name()
+                                == 'CONFIRMADO'}"
+                              th:action="@{/mesero/pedidos/{idPedido}/solicitar-cobro(
+                                    idPedido=${pedido.idPedido}
+                              )}"
+                              method="post"
+                              class="form-solicitar-cobro"
+                              data-form-solicitar-cobro>
+
+                            <input type="hidden"
+                                   th:name="${_csrf.parameterName}"
+                                   th:value="${_csrf.token}">
+
+                            <button type="submit"
+                                    class="btn-solicitar-cobro">
+
+                                <i class="bi bi-cash-coin"></i>
+                                Solicitar cobro
+                            </button>
+
+                        </form>
+
+                        <div th:if="${pedido.estado.name()
+                                == 'PENDIENTE_PAGO'}"
+                             class="pedido-esperando-caja">
+
+                            <i class="bi bi-hourglass-split"></i>
+                            Esperando que Caja registre el pago
+                        </div>
+
+                        <div th:if="${pedido.estado.name()
+                                == 'PENDIENTE_VALIDACION'}"
+                             class="pedido-esperando-validacion">
+
+                            <i class="bi bi-clock-history"></i>
+                            Pago en proceso de validación
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<script>
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+            const formularios =
+                document.querySelectorAll(
+                    "[data-form-solicitar-cobro]"
+                );
+
+            formularios.forEach(
+                function (formulario) {
+                    formulario.addEventListener(
+                        "submit",
+                        function (event) {
+                            const confirmar =
+                                window.confirm(
+                                    "¿Deseas enviar este "
+                                    + "pedido a Caja para "
+                                    + "registrar el pago?"
+                                );
+
+                            if (!confirmar) {
+                                event.preventDefault();
+                                return;
+                            }
+
+                            const boton =
+                                formulario.querySelector(
+                                    "button[type='submit']"
+                                );
+
+                            if (boton) {
+                                boton.disabled = true;
+
+                                boton.innerHTML =
+                                    '<span class="spinner-border '
+                                    + 'spinner-border-sm" '
+                                    + 'aria-hidden="true"></span> '
+                                    + 'Enviando...';
+                            }
+                        }
+                    );
+                }
+            );
+        }
+    );
+</script>
+
+</body>
+</html>

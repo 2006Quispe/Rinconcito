@@ -28,11 +28,15 @@ public class Usuario {
     @Column(name = "telefono", length = 9)
     private String telefono;
 
-    @Column(name = "correo", nullable = false, unique = true, length = 100)
+    @Column(name = "correo", unique = true, length = 120)
     private String correo;
 
-    @Column(name = "contrasena", nullable = false, length = 100)
+    @Column(name = "contrasena", length = 150)
     private String contrasena;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_registro", nullable = false)
+    private TipoRegistro tipoRegistro = TipoRegistro.CUENTA;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false)
@@ -40,6 +44,10 @@ public class Usuario {
 
     @Column(name = "fecha_registro", nullable = false, updatable = false)
     private LocalDateTime fechaRegistro;
+
+    public enum TipoRegistro {
+        CUENTA, INVITADO
+    }
 
     public enum EstadoUsuario {
         ACTIVO, INACTIVO
@@ -54,8 +62,6 @@ public class Usuario {
             fechaRegistro = LocalDateTime.now();
         }
     }
-
-    // Getters y setters
 
     public Integer getIdUsuario() {
         return idUsuario;
@@ -119,6 +125,14 @@ public class Usuario {
 
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
+    }
+
+    public TipoRegistro getTipoRegistro() {
+        return tipoRegistro;
+    }
+
+    public void setTipoRegistro(TipoRegistro tipoRegistro) {
+        this.tipoRegistro = tipoRegistro;
     }
 
     public EstadoUsuario getEstado() {

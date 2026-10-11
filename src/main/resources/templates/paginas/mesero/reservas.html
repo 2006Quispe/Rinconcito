@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${titulo
+            + ' - El Rinconcito Ayacuchano'}">
+        Reservas del día
+    </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap"
+          rel="stylesheet">
+
+    <link th:href="@{/css/mesero-mesas.css}"
+          rel="stylesheet">
+
+    <link th:href="@{/css/mesero-reservas.css}"
+          rel="stylesheet">
+</head>
+
+<body>
+
+<div class="mesero-layout">
+
+    <aside th:replace="~{fragments/mesero-sidebar
+            :: sidebar('reservas')}">
+    </aside>
+
+    <div class="mesero-pagina">
+
+        <header class="reservas-encabezado">
+
+            <div>
+                <p class="reservas-etiqueta">
+                    ATENCIÓN DE CLIENTES
+                </p>
+
+                <h1>Reservas del día</h1>
+
+                <p>
+                    Registra la llegada de los clientes
+                    y controla su atención en mesa.
+                </p>
+            </div>
+
+            <div class="reservas-usuario">
+
+                <i class="bi bi-person-circle"></i>
+
+                <div>
+                    <span>Mesero</span>
+
+                    <strong sec:authentication="name">
+                        mesero
+                    </strong>
+                </div>
+
+            </div>
+
+        </header>
+
+        <main class="reservas-contenido">
+
+            <div th:if="${exito}"
+                 class="alert alert-success"
+                 th:text="${exito}">
+            </div>
+
+            <div th:if="${error}"
+                 class="alert alert-danger"
+                 th:text="${error}">
+            </div>
+
+            <section class="reservas-fecha">
+
+                <div class="reservas-fecha-icono">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+
+                <div>
+                    <span>Fecha de atención</span>
+
+                    <strong th:text="${#temporals.format(
+                            fechaActual,
+                            'dd/MM/yyyy'
+                    )}">
+                        10/10/2026
+                    </strong>
+                </div>
+
+            </section>
+
+            <section class="reservas-resumen">
+
+                <article class="resumen-tarjeta">
+
+                    <div class="resumen-icono resumen-total-icono">
+                        <i class="bi bi-calendar3"></i>
+                    </div>
+
+                    <div>
+                        <span>Total de reservas</span>
+
+                        <strong th:text="${totalReservas}">
+                            0
+                        </strong>
+                    </div>
+
+                </article>
+
+                <article class="resumen-tarjeta">
+
+                    <div class="resumen-icono resumen-confirmadas-icono">
+                        <i class="bi bi-clock"></i>
+                    </div>
+
+                    <div>
+                        <span>Por llegar</span>
+
+                        <strong th:text="${totalConfirmadas}">
+                            0
+                        </strong>
+                    </div>
+
+                </article>
+
+                <article class="resumen-tarjeta">
+
+                    <div class="resumen-icono resumen-llegaron-icono">
+                        <i class="bi bi-person-check"></i>
+                    </div>
+
+                    <div>
+                        <span>Ya llegaron</span>
+
+                        <strong th:text="${totalLlegaron}">
+                            0
+                        </strong>
+                    </div>
+
+                </article>
+
+                <article class="resumen-tarjeta">
+
+                    <div class="resumen-icono resumen-atencion-icono">
+                        <i class="bi bi-cup-hot"></i>
+                    </div>
+
+                    <div>
+                        <span>En atención</span>
+
+                        <strong th:text="${totalEnAtencion}">
+                            0
+                        </strong>
+                    </div>
+
+                </article>
+
+            </section>
+
+            <section th:if="${reservas != null
+                    and !#lists.isEmpty(reservas)}"
+                     class="reservas-grid">
+
+                <article th:each="reserva : ${reservas}"
+                         class="reserva-tarjeta"
+                         th:classappend="${reserva.estado.name() == 'CONFIRMADA'}
+                            ? ' reserva-confirmada'
+                            : (${reserva.estado.name() == 'CLIENTE_LLEGO'}
+                                ? ' reserva-llego'
+                                : ' reserva-atencion')">
+
+                    <header class="reserva-cabecera">
+
+                        <div class="reserva-horario">
+
+                            <span>Horario</span>
+
+                            <strong>
+                                <i class="bi bi-clock"></i>
+
+                                <span th:text="${#temporals.format(
+                                        reserva.horaInicio,
+                                        'HH:mm'
+                                )}">
+                                    12:00
+                                </span>
+
+                                <span>–</span>
+
+                                <span th:text="${#temporals.format(
+                                        reserva.horaFin,
+                                        'HH:mm'
+                                )}">
+                                    14:00
+                                </span>
+                            </strong>
+
+                        </div>
+
+                        <span th:if="${reserva.estado.name()
+                                == 'CONFIRMADA'}"
+                              class="reserva-estado estado-confirmada">
+
+                            <i class="bi bi-clock"></i>
+                            Por llegar
+                        </span>
+
+                        <span th:if="${reserva.estado.name()
+                                == 'CLIENTE_LLEGO'}"
+                              class="reserva-estado estado-llego">
+
+                            <i class="bi bi-person-check"></i>
+                            Cliente llegó
+                        </span>
+
+                        <span th:if="${reserva.estado.name()
+                                == 'EN_ATENCION'}"
+                              class="reserva-estado estado-atencion">
+
+                            <i class="bi bi-cup-hot"></i>
+                            En atención
+                        </span>
+
+                    </header>
+
+                    <div class="reserva-codigo">
+
+                        <span>Código de reserva</span>
+
+                        <strong th:text="${reserva.codigoReserva}">
+                            RES-2026-000001
+                        </strong>
+
+                    </div>
+
+                    <div class="reserva-cliente">
+
+                        <div class="cliente-avatar">
+
+                            <span th:text="${reserva.cliente != null
+                                    and reserva.cliente.nombres != null
+                                    and !reserva.cliente.nombres.isBlank()
+                                    ? #strings.substring(
+                                        reserva.cliente.nombres,
+                                        0,
+                                        1
+                                    )
+                                    : 'C'}">
+                                C
+                            </span>
+
+                        </div>
+
+                        <div class="cliente-informacion">
+
+                            <span>Cliente</span>
+
+                            <strong th:text="${reserva.cliente != null
+                                    ? reserva.cliente.nombres
+                                        + ' '
+                                        + reserva.cliente.apellidos
+                                    : 'Cliente no disponible'}">
+                                Nombre del cliente
+                            </strong>
+
+                            <small th:if="${reserva.cliente != null
+                                    and reserva.cliente.dni != null
+                                    and !reserva.cliente.dni.isBlank()}">
+
+                                <i class="bi bi-person-vcard"></i>
+
+                                DNI:
+
+                                <span th:text="${reserva.cliente.dni}">
+                                    00000000
+                                </span>
+
+                            </small>
+
+                            <small th:if="${reserva.cliente != null
+                                    and reserva.cliente.telefono != null
+                                    and !reserva.cliente.telefono.isBlank()}">
+
+                                <i class="bi bi-telephone"></i>
+
+                                <span th:text="${reserva.cliente.telefono}">
+                                    999999999
+                                </span>
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                    <div class="reserva-datos">
+
+                        <div class="reserva-dato">
+
+                            <span>
+                                <i class="bi bi-people"></i>
+                                Personas
+                            </span>
+
+                            <strong th:text="${reserva.numeroPersonas}">
+                                2
+                            </strong>
+
+                        </div>
+
+                        <div class="reserva-dato">
+
+                            <span>
+                                <i class="bi bi-layers"></i>
+                                Piso
+                            </span>
+
+                            <strong th:text="${reserva.pisoSolicitado != null
+                                    ? reserva.pisoSolicitado.nombre
+                                    : 'Sin piso'}">
+                                Piso 1
+                            </strong>
+
+                        </div>
+
+                        <div class="reserva-dato">
+
+                            <span>
+                                <i class="bi bi-grid-3x3-gap"></i>
+                                Mesa
+                            </span>
+
+                            <strong th:text="${reserva.mesa != null
+                                    ? 'Mesa ' + reserva.mesa.numero
+                                    : 'Sin mesa'}">
+                                Mesa 1
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <div th:if="${reserva.evento != null}"
+                         class="reserva-evento">
+
+                        <i class="bi bi-stars"></i>
+
+                        <div>
+                            <span>Evento</span>
+
+                            <strong th:text="${reserva.evento.titulo}">
+                                Evento especial
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <div th:if="${reserva.ocasionEspecial != null
+                            and !reserva.ocasionEspecial.isBlank()}"
+                         class="reserva-observacion">
+
+                        <strong>Ocasión especial</strong>
+
+                        <p th:text="${reserva.ocasionEspecial}">
+                            Cumpleaños
+                        </p>
+
+                    </div>
+
+                    <div th:if="${reserva.comentarios != null
+                            and !reserva.comentarios.isBlank()}"
+                         class="reserva-observacion">
+
+                        <strong>Comentarios</strong>
+
+                        <p th:text="${reserva.comentarios}">
+                            Comentario
+                        </p>
+
+                    </div>
+
+                    <footer class="reserva-acciones">
+
+                        <form th:if="${reserva.estado.name()
+                                == 'CONFIRMADA'}"
+                              th:action="@{/mesero/reservas/{idReserva}/llegada(
+                                    idReserva=${reserva.idReserva}
+                              )}"
+                              method="post">
+
+                            <input type="hidden"
+                                   th:name="${_csrf.parameterName}"
+                                   th:value="${_csrf.token}">
+
+                            <button type="submit"
+                                    class="btn-reserva btn-registrar-llegada"
+                                    onclick="return confirm(
+                                        '¿Confirmas que el cliente llegó?'
+                                    );">
+
+                                <i class="bi bi-person-check"></i>
+                                Registrar llegada
+                            </button>
+
+                        </form>
+
+                        <form th:if="${reserva.estado.name()
+                                == 'CLIENTE_LLEGO'}"
+                              th:action="@{/mesero/reservas/{idReserva}/iniciar(
+                                    idReserva=${reserva.idReserva}
+                              )}"
+                              method="post">
+
+                            <input type="hidden"
+                                   th:name="${_csrf.parameterName}"
+                                   th:value="${_csrf.token}">
+
+                            <button type="submit"
+                                    class="btn-reserva btn-iniciar-atencion">
+
+                                <i class="bi bi-play-circle"></i>
+                                Iniciar atención
+                            </button>
+
+                        </form>
+
+                        <div th:if="${reserva.estado.name()
+                                == 'EN_ATENCION'}"
+                             class="acciones-atencion">
+
+                            <a th:if="${reserva.mesa != null}"
+                               th:href="@{/mesero/pedidos/nuevo(
+                                    idMesa=${reserva.mesa.idMesa},
+                                    idReserva=${reserva.idReserva}
+                               )}"
+                               class="btn-reserva btn-crear-pedido">
+
+                                <i class="bi bi-plus-circle"></i>
+                                Registrar pedido
+                            </a>
+
+                            <form th:action="@{/mesero/reservas/{idReserva}/finalizar(
+                                        idReserva=${reserva.idReserva}
+                                  )}"
+                                  method="post">
+
+                                <input type="hidden"
+                                       th:name="${_csrf.parameterName}"
+                                       th:value="${_csrf.token}">
+
+                                <button type="submit"
+                                        class="btn-reserva btn-finalizar-reserva"
+                                        onclick="return confirm(
+                                            '¿Deseas finalizar esta reserva?'
+                                        );">
+
+                                    <i class="bi bi-check-circle"></i>
+                                    Finalizar reserva
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </footer>
+
+                </article>
+
+            </section>
+
+            <section th:if="${reservas == null
+                    or #lists.isEmpty(reservas)}"
+                     class="reservas-vacio">
+
+                <div class="reservas-vacio-icono">
+                    <i class="bi bi-calendar2-check"></i>
+                </div>
+
+                <h2>No hay reservas para atender</h2>
+
+                <p>
+                    No existen reservas confirmadas o en atención
+                    para la fecha actual.
+                </p>
+
+                <a th:href="@{/mesero/mesas}"
+                   class="btn-ir-mesas">
+
+                    <i class="bi bi-grid-3x3-gap"></i>
+                    Ver control de mesas
+                </a>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+
+<aside th:fragment="sidebar(activo)"
+       class="caja-sidebar">
+
+    <div class="sidebar-marca">
+
+        <div class="marca-icono">
+            <i class="bi bi-shop"></i>
+        </div>
+
+        <div>
+            <strong>Rinconcito</strong>
+            <span>Panel de Caja</span>
+        </div>
+
+    </div>
+
+    <nav class="sidebar-menu">
+
+        <a th:href="@{/caja/dashboard}"
+           class="sidebar-enlace"
+           th:classappend="${activo == 'inicio'} ? ' activo' : ''">
+
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Inicio</span>
+        </a>
+
+        <a th:href="@{/caja/pedidos-pendientes}"
+           class="sidebar-enlace"
+           th:classappend="${activo == 'pedidos'} ? ' activo' : ''">
+
+            <i class="bi bi-bag-check"></i>
+            <span>Pagos de pedidos</span>
+        </a>
+
+        <a th:href="@{/caja/pedidos-presenciales}"
+           class="sidebar-enlace"
+           th:classappend="${activo == 'presenciales'} ? ' activo' : ''">
+
+            <i class="bi bi-cash-coin"></i>
+            <span>Cobros presenciales</span>
+        </a>
+
+        <a th:href="@{/caja/reservas-pendientes}"
+           class="sidebar-enlace"
+           th:classappend="${activo == 'reservas'} ? ' activo' : ''">
+
+            <i class="bi bi-calendar2-check"></i>
+            <span>Pagos de reservas</span>
+        </a>
+
+        <a th:href="@{/caja/notas-venta}"
+           class="sidebar-enlace"
+           th:classappend="${activo == 'notas'} ? ' activo' : ''">
+
+            <i class="bi bi-receipt"></i>
+            <span>Notas de venta</span>
+        </a>
+
+    </nav>
+
+    <div class="sidebar-pie">
+
+        <div class="sidebar-usuario">
+
+            <div class="usuario-avatar">
+                <i class="bi bi-person-fill"></i>
+            </div>
+
+            <div class="usuario-informacion">
+                <strong>Caja</strong>
+
+                <span sec:authentication="name">
+                    caja@rinconcito.pe
+                </span>
+            </div>
+
+        </div>
+
+        <form th:action="@{/logout}"
+              method="post"
+              class="sidebar-logout-form">
+
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+            <button type="submit"
+                    class="sidebar-cerrar-sesion">
+
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Cerrar sesión</span>
+            </button>
+
+        </form>
+
+    </div>
+
+</aside>
+
+</body>
+</html>

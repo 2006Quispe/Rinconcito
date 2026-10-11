@@ -11,7 +11,7 @@ public class Piso {
     @Column(name = "id_piso")
     private Integer idPiso;
 
-    @Column(name = "nombre", nullable = false, length = 10)
+    @Column(name = "nombre", nullable = false, unique = true, length = 20)
     private String nombre;
 
     @Column(name = "descripcion", length = 200)
@@ -27,8 +27,6 @@ public class Piso {
 
     public Piso() {
     }
-
-    // Getters y setters
 
     public Integer getIdPiso() {
         return idPiso;

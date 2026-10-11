@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "notas_venta", uniqueConstraints = {
         @UniqueConstraint(name = "uq_notas_venta_pago", columnNames = "id_pago"),
-        @UniqueConstraint(name = "uq_notas_venta_numero", columnNames = "numero")
+        @UniqueConstraint(name = "uq_notas_venta_serie_numero", columnNames = {"serie", "numero"})
 })
 public class NotaVenta {
 
@@ -20,14 +20,20 @@ public class NotaVenta {
     private Pago pago;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_usuario_emisor")
+    @JoinColumn(name = "id_usuario_emisor", nullable = false)
     private Usuario usuarioEmisor;
 
-    @Column(name = "numero", nullable = false, unique = true)
+    @Column(name = "serie", nullable = false, length = 10)
+    private String serie = "NV01";
+
+    @Column(name = "numero", nullable = false)
     private Integer numero;
 
-    @Column(name = "cliente_nombre", length = 100)
+    @Column(name = "cliente_nombre", nullable = false, length = 150)
     private String clienteNombre;
+
+    @Column(name = "cliente_documento", length = 20)
+    private String clienteDocumento;
 
     @Column(name = "total", nullable = false)
     private Integer total;
@@ -57,9 +63,10 @@ public class NotaVenta {
         if (fechaEmision == null) {
             fechaEmision = LocalDateTime.now();
         }
+        if (serie == null || serie.isBlank()) {
+            serie = "NV01";
+        }
     }
-
-    // Getters y setters
 
     public Integer getIdNota() {
         return idNota;
@@ -85,6 +92,14 @@ public class NotaVenta {
         this.usuarioEmisor = usuarioEmisor;
     }
 
+    public String getSerie() {
+        return serie;
+    }
+
+    public void setSerie(String serie) {
+        this.serie = serie;
+    }
+
     public Integer getNumero() {
         return numero;
     }
@@ -99,6 +114,14 @@ public class NotaVenta {
 
     public void setClienteNombre(String clienteNombre) {
         this.clienteNombre = clienteNombre;
+    }
+
+    public String getClienteDocumento() {
+        return clienteDocumento;
+    }
+
+    public void setClienteDocumento(String clienteDocumento) {
+        this.clienteDocumento = clienteDocumento;
     }
 
     public Integer getTotal() {

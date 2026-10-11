@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${titulo}
+        + ' - El Rinconcito Ayacuchano'">
+        Consultar pedidos
+    </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+    <link th:href="@{/css/admin.css}"
+          rel="stylesheet">
+
+    <link th:href="@{/css/admin-pedidos.css}"
+          rel="stylesheet">
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <aside th:replace="~{fragments/admin-sidebar
+        :: sidebar('pedidos')}">
+    </aside>
+
+    <main class="admin-contenido pedidos-admin-contenido">
+
+        <header class="pedidos-encabezado">
+
+            <div>
+                <p class="pedidos-etiqueta">
+                    ADMINISTRACIÓN
+                </p>
+
+                <h1>Consultar pedidos</h1>
+
+                <p>
+                    Revisa los pedidos registrados, sus productos,
+                    modalidad de entrega y estado actual.
+                </p>
+        </header>
+
+        <section class="pedidos-resumen">
+
+            <article class="pedido-resumen-card">
+
+                <div class="pedido-resumen-icono total">
+                    <i class="bi bi-bag"></i>
+                </div>
+
+                <div>
+                    <span>Total encontrados</span>
+
+                    <strong th:text="${totalPedidos}">
+                        0
+                    </strong>
+                </div>
+
+            </article>
+
+            <article class="pedido-resumen-card">
+
+                <div class="pedido-resumen-icono pendiente">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+
+                <div>
+                    <span>Pendientes de pago</span>
+
+                    <strong th:text="${pendientesPago}">
+                        0
+                    </strong>
+                </div>
+
+            </article>
+
+            <article class="pedido-resumen-card">
+
+                <div class="pedido-resumen-icono validacion">
+                    <i class="bi bi-search"></i>
+                </div>
+
+                <div>
+                    <span>Por validar</span>
+
+                    <strong th:text="${pendientesValidacion}">
+                        0
+                    </strong>
+                </div>
+
+            </article>
+
+            <article class="pedido-resumen-card">
+
+                <div class="pedido-resumen-icono confirmado">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+
+                <div>
+                    <span>Confirmados</span>
+
+                    <strong th:text="${confirmados}">
+                        0
+                    </strong>
+                </div>
+
+            </article>
+
+            <article class="pedido-resumen-card">
+
+                <div class="pedido-resumen-icono importe">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+
+                <div>
+                    <span>Importe mostrado</span>
+
+                    <strong th:text="'S/ ' + ${totalImporte}">
+                        S/ 0
+                    </strong>
+                </div>
+
+            </article>
+
+        </section>
+
+        <section class="pedidos-filtros">
+
+            <div class="pedidos-filtros-encabezado">
+
+                <div class="pedidos-filtros-icono">
+                    <i class="bi bi-funnel"></i>
+                </div>
+
+                <div>
+                    <h2>Filtros de búsqueda</h2>
+
+                    <p>
+                        Busca por código, cliente o DNI y combina
+                        los demás filtros.
+                    </p>
+                </div>
+
+            </div>
+
+            <form method="get"
+                  th:action="@{/admin/pedidos}"
+                  class="pedidos-filtros-formulario">
+
+                <div class="filtro-campo filtro-busqueda">
+
+                    <label for="q">
+                        Buscar pedido
+                    </label>
+
+                    <div class="campo-con-icono">
+
+                        <i class="bi bi-search"></i>
+
+                        <input type="text"
+                               id="q"
+                               name="q"
+                               class="form-control"
+                               maxlength="100"
+                               placeholder="Código, cliente o DNI"
+                               th:value="${filtroBusqueda}">
+
+                    </div>
+
+                </div>
+
+                <div class="filtro-campo">
+
+                    <label for="fecha">
+                        Fecha
+                    </label>
+
+                    <input type="date"
+                           id="fecha"
+                           name="fecha"
+                           class="form-control"
+                           th:value="${filtroFecha}">
+
+                </div>
+
+                <div class="filtro-campo">
+
+                    <label for="tipoPedido">
+                        Modalidad
+                    </label>
+
+                    <select id="tipoPedido"
+                            name="tipoPedido"
+                            class="form-select">
+
+                        <option value="">
+                            Todas
+                        </option>
+
+                        <option th:each="tipo : ${tiposPedido}"
+                                th:value="${tipo}"
+                                th:selected="${filtroTipoPedido
+                                    == tipo}"
+                                th:text="${#strings.replace(
+                                    tipo.name(),
+                                    '_',
+                                    ' '
+                                )}">
+                            Modalidad
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="filtro-campo">
+
+                    <label for="estado">
+                        Estado
+                    </label>
+
+                    <select id="estado"
+                            name="estado"
+                            class="form-select">
+
+                        <option value="">
+                            Todos
+                        </option>
+
+                        <option th:each="estadoPedido : ${estados}"
+                                th:value="${estadoPedido}"
+                                th:selected="${filtroEstado
+                                    == estadoPedido}"
+                                th:text="${#strings.replace(
+                                    estadoPedido.name(),
+                                    '_',
+                                    ' '
+                                )}">
+                            Estado
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="pedidos-filtros-acciones">
+
+                    <button type="submit"
+                            class="btn-filtrar-pedidos">
+
+                        <i class="bi bi-search"></i>
+                        Filtrar
+                    </button>
+
+                    <a th:href="@{/admin/pedidos}"
+                       class="btn-limpiar-filtros">
+
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        Limpiar
+                    </a>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <section class="pedidos-panel">
+
+            <div class="pedidos-panel-encabezado">
+
+                <div>
+                    <h2>Pedidos registrados</h2>
+
+                    <p>
+                        Resultados encontrados con los filtros
+                        seleccionados.
+                    </p>
+                </div>
+
+                <span class="pedidos-contador"
+                      th:text="${totalPedidos}
+                          + ' pedidos'">
+                    0 pedidos
+                </span>
+
+            </div>
+
+            <div th:if="${pedidos == null
+                or pedidos.isEmpty()}"
+                 class="pedidos-vacios">
+
+                <div class="pedidos-vacios-icono">
+                    <i class="bi bi-bag-x"></i>
+                </div>
+
+                <h3>No se encontraron pedidos</h3>
+
+                <p>
+                    Prueba modificando o eliminando
+                    los filtros de búsqueda.
+                </p>
+
+                <a th:href="@{/admin/pedidos}"
+                   class="btn-limpiar-vacio">
+
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    Limpiar filtros
+                </a>
+
+            </div>
+
+            <div class="pedidos-tabla-contenedor"
+                 th:if="${pedidos != null
+                    and !pedidos.isEmpty()}">
+
+                <div class="table-responsive">
+
+                    <table class="pedidos-tabla">
+
+                        <thead>
+                        <tr>
+                            <th>Pedido</th>
+                            <th>Cliente</th>
+                            <th>Productos</th>
+                            <th>Modalidad</th>
+                            <th>Entrega</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Total</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        <tr th:each="pedido : ${pedidos}">
+
+                            <td>
+
+                                <span class="pedido-codigo"
+                                      th:text="${pedido.codigoPedido}">
+                                    PED-2026-000001
+                                </span>
+
+                                <span class="pedido-observacion"
+                                      th:if="${pedido.observaciones != null
+                                          and !pedido.observaciones.isBlank()}"
+                                      th:text="${pedido.observaciones}">
+                                    Observaciones
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <div class="pedido-cliente">
+
+                                    <div class="pedido-cliente-icono">
+                                        <i class="bi bi-person"></i>
+                                    </div>
+
+                                    <div>
+                                        <strong th:text="${pedido.cliente.nombres
+                                            + ' '
+                                            + pedido.cliente.apellidos}">
+                                            Cliente
+                                        </strong>
+
+                                        <span th:text="'DNI '
+                                            + ${pedido.cliente.dni}">
+                                            DNI
+                                        </span>
+
+                                        <span th:if="${pedido.cliente.telefono != null}"
+                                              th:text="'Tel. '
+                                                  + ${pedido.cliente.telefono}">
+                                            Teléfono
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <ul class="pedido-productos"
+                                    th:if="${detallesPorPedido[
+                                        pedido.idPedido
+                                    ] != null}">
+
+                                    <li th:each="detalle : ${detallesPorPedido[
+                                            pedido.idPedido
+                                        ]}">
+
+                                        <span th:text="${detalle.producto.nombre}">
+                                            Producto
+                                        </span>
+
+                                        <strong th:text="'x'
+                                            + ${detalle.cantidad}">
+                                            x1
+                                        </strong>
+
+                                    </li>
+
+                                </ul>
+
+                                <span class="sin-productos"
+                                      th:if="${detallesPorPedido[
+                                          pedido.idPedido
+                                      ] == null
+                                      or detallesPorPedido[
+                                          pedido.idPedido
+                                      ].isEmpty()}">
+                                    Sin productos
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <span class="pedido-modalidad"
+                                      th:classappend="' modalidad-'
+                                          + ${#strings.toLowerCase(
+                                              pedido.tipoPedido.name()
+                                          )}">
+
+                                    <i th:class="${pedido.tipoPedido.name()
+                                        == 'DELIVERY'}
+                                        ? 'bi bi-scooter'
+                                        : 'bi bi-shop'">
+                                    </i>
+
+                                    <span th:text="${#strings.replace(
+                                        pedido.tipoPedido.name(),
+                                        '_',
+                                        ' '
+                                    )}">
+                                        Modalidad
+                                    </span>
+
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <div th:if="${pedido.tipoPedido.name()
+                                    == 'DELIVERY'
+                                    and pedido.direccion != null}"
+                                     class="pedido-entrega">
+
+                                    <strong th:text="${pedido.direccion.direccion}">
+                                        Dirección
+                                    </strong>
+
+                                    <span th:text="${pedido.direccion.distrito}">
+                                        Distrito
+                                    </span>
+
+                                    <span th:if="${pedido.direccion.referencia != null
+                                        and !pedido.direccion.referencia.isBlank()}"
+                                          th:text="'Ref. '
+                                              + ${pedido.direccion.referencia}">
+                                        Referencia
+                                    </span>
+
+                                </div>
+
+                                <div th:unless="${pedido.tipoPedido.name()
+                                    == 'DELIVERY'
+                                    and pedido.direccion != null}"
+                                     class="pedido-recojo">
+
+                                    <i class="bi bi-shop"></i>
+                                    Recojo en el local
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <span class="pedido-fecha">
+
+                                    <i class="bi bi-calendar3"></i>
+
+                                    <span th:text="${#temporals.format(
+                                        pedido.fechaRegistro,
+                                        'dd/MM/yyyy'
+                                    )}">
+                                        Fecha
+                                    </span>
+
+                                </span>
+
+                                <span class="pedido-hora"
+                                      th:text="${#temporals.format(
+                                          pedido.fechaRegistro,
+                                          'HH:mm'
+                                      )}">
+                                    Hora
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <span class="pedido-estado"
+                                      th:classappend="' estado-'
+                                          + ${#strings.toLowerCase(
+                                              pedido.estado.name()
+                                          )}"
+                                      th:text="${#strings.replace(
+                                          pedido.estado.name(),
+                                          '_',
+                                          ' '
+                                      )}">
+                                    Estado
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <div class="pedido-total">
+
+                                    <strong th:text="'S/ '
+                                        + ${pedido.total}">
+                                        S/ 0
+                                    </strong>
+
+                                    <span th:if="${pedido.costoDelivery != null
+                                        and pedido.costoDelivery > 0}"
+                                          th:text="'Delivery S/ '
+                                              + ${pedido.costoDelivery}">
+                                        Delivery
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+</html>

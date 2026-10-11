@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${titulo + ' - El Rinconcito'}">
+        Comanda de cocina
+    </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+          rel="stylesheet">
+	<link th:href="@{/css/mesero-comanda.css}"
+		  rel="stylesheet">
+</head>
+
+<body>
+
+<div class="comanda-acciones">
+
+    <a th:href="@{/mesero/pedidos}"
+       class="btn-volver">
+
+        <i class="bi bi-arrow-left"></i>
+        Volver
+    </a>
+
+    <button type="button"
+            class="btn-imprimir"
+            onclick="window.print()">
+
+        <i class="bi bi-printer"></i>
+        Imprimir comanda
+    </button>
+
+</div>
+
+<main class="comanda">
+
+    <header class="comanda-encabezado">
+
+        <h1>Comanda de cocina</h1>
+
+        <p>El Rinconcito Ayacuchano Campestre</p>
+
+    </header>
+
+    <section class="comanda-identificacion">
+
+        <div class="comanda-mesa">
+
+            <span>Mesa</span>
+
+            <strong th:text="${pedido.mesa != null ? pedido.mesa.numero : '—'}">
+                1
+            </strong>
+
+        </div>
+
+        <div class="comanda-dato">
+
+            <span>Piso:</span>
+
+            <span th:text="${pedido.mesa != null and pedido.mesa.piso != null ? pedido.mesa.piso.nombre : 'Sin piso'}">
+                Piso 1
+            </span>
+
+        </div>
+
+        <div class="comanda-dato">
+
+            <span>Pedido:</span>
+
+            <span th:text="${pedido.codigoPedido}">
+                PED-000001
+            </span>
+
+        </div>
+
+        <div class="comanda-dato">
+
+            <span>Mesero:</span>
+
+            <span th:text="${pedido.mesero != null ? pedido.mesero.nombres + ' ' + pedido.mesero.apellidos : 'Sin asignar'}">
+                Mesero
+            </span>
+
+        </div>
+
+        <div class="comanda-dato">
+
+            <span>Fecha:</span>
+
+            <span th:text="${pedido.fechaRegistro != null ? #temporals.format(pedido.fechaRegistro, 'dd/MM/yyyy HH:mm') : '—'}">
+                10/10/2026 12:00
+            </span>
+
+        </div>
+
+    </section>
+
+    <section class="comanda-productos">
+
+        <h2>Productos solicitados</h2>
+
+        <div th:if="${detalles == null or #lists.isEmpty(detalles)}"
+             class="sin-productos">
+
+            No hay productos registrados en este pedido.
+
+        </div>
+
+        <article th:each="detalle : ${detalles}"
+                 class="producto-comanda">
+
+            <div class="producto-principal">
+
+                <div class="producto-cantidad"
+                     th:text="${detalle.cantidad + 'x'}">
+                    2x
+                </div>
+
+                <div class="producto-nombre"
+                     th:text="${detalle.producto != null ? detalle.producto.nombre : 'Producto'}">
+                    Producto
+                </div>
+
+            </div>
+
+            <div th:if="${detalle.observaciones != null and !#strings.isEmpty(detalle.observaciones)}"
+                 class="producto-observacion">
+
+                <i class="bi bi-exclamation-circle"></i>
+
+                <span th:text="${detalle.observaciones}">
+                    Sin cebolla
+                </span>
+
+            </div>
+
+        </article>
+
+    </section>
+
+    <section th:if="${pedido.observaciones != null and !#strings.isEmpty(pedido.observaciones)}"
+             class="pedido-observaciones">
+
+        <h3>Observaciones generales</h3>
+
+        <p th:text="${pedido.observaciones}">
+            Indicaciones generales del pedido.
+        </p>
+
+    </section>
+
+    <footer class="comanda-pie">
+
+        <p>
+            Impreso:
+            <span id="fechaImpresion"></span>
+        </p>
+
+    </footer>
+
+</main>
+
+<script>
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+            const ahora = new Date();
+
+            const fecha =
+                ahora.toLocaleDateString("es-PE")
+                + " "
+                + ahora.toLocaleTimeString(
+                    "es-PE",
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    }
+                );
+
+            document.getElementById(
+                "fechaImpresion"
+            ).textContent = fecha;
+        }
+    );
+</script>
+
+</body>
+</html>

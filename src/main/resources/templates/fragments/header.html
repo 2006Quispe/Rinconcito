@@ -1,39 +1,158 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <body>
-<nav th:fragment="header" class="navbar navbar-expand-lg navbar-dark" style="background-color:#8C2F1B;">
-    <div class="container">
-        <a class="navbar-brand fw-bold" th:href="@{/}">El Rinconcito Ayacuchano</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" th:href="@{/}">Inicio</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/nosotros}">Nosotros</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/carta}">Carta</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/eventos}">Eventos</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/reservas}">Reservas</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/pedidos}">Pedidos</a></li>
 
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a class="nav-link" th:href="@{/perfil}">Mi cuenta</a>
-                </li>
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <form th:action="@{/logout}" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-sm ms-2" style="background-color:#D4A017;color:#3B2A22;">Salir</button>
-                    </form>
-                </li>
+<th:block th:fragment="header">
 
-                <li class="nav-item" sec:authorize="!isAuthenticated()">
-                    <a class="nav-link" th:href="@{/registro}">Registrarme</a>
-                </li>
-                <li class="nav-item" sec:authorize="!isAuthenticated()">
-                    <a class="btn btn-sm ms-2" th:href="@{/login}" style="background-color:#D4A017;color:#3B2A22;">Ingresar</a>
-                </li>
-            </ul>
+    <nav class="navbar navbar-expand-lg navbar-dark header-publico">
+
+        <div class="container">
+
+            <a class="navbar-brand marca-publica"
+               th:href="@{/}">
+
+                <span class="marca-nombre"
+                      th:text="${configuracion != null
+                          and configuracion.nombre != null
+                          and !configuracion.nombre.isBlank()
+                          ? configuracion.nombre
+                          : 'Rinconcito Ayacuchano'}">
+
+                    Rinconcito Ayacuchano
+                </span>
+
+                <small>CAMPESTRE</small>
+            </a>
+
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navMenu"
+                    aria-controls="navMenu"
+                    aria-expanded="false"
+                    aria-label="Abrir menú">
+
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse"
+                 id="navMenu">
+
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:href="@{/}">
+                            Inicio
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:href="@{/nosotros}">
+                            Nosotros
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:href="@{/carta}">
+                            Carta
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:href="@{/reservas}">
+                            Reservas
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:href="@{/eventos}">
+                            Eventos
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:href="@{/galeria}">
+                            Galería
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-lg-2"
+                        sec:authorize="hasRole('CLIENTE')">
+
+                        <a class="btn btn-cuenta"
+                           th:href="@{/mi-cuenta}">
+
+                            <i class="bi bi-person-circle"></i>
+                            Mi cuenta
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-lg-2"
+                        sec:authorize="isAuthenticated()">
+
+                        <form th:action="@{/logout}"
+                              method="post"
+                              class="m-0">
+
+                            <input type="hidden"
+                                   th:name="${_csrf.parameterName}"
+                                   th:value="${_csrf.token}">
+
+                            <button type="submit"
+                                    class="btn btn-salir">
+
+                                <i class="bi bi-box-arrow-right"></i>
+                                Salir
+                            </button>
+
+                        </form>
+                    </li>
+
+                    <li class="nav-item ms-lg-2"
+                        sec:authorize="!isAuthenticated()">
+
+                        <a class="btn btn-ingresar"
+                           th:href="@{/login}">
+
+                            <i class="bi bi-person"></i>
+                            Iniciar sesión
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
         </div>
-    </div>
-</nav>
+
+    </nav>
+
+    <a th:href="@{/carrito}"
+       class="carrito-flotante"
+       aria-label="Abrir carrito"
+       title="Mi carrito">
+
+        <i class="bi bi-cart3"></i>
+
+        <span class="carrito-contador"
+              th:if="${carritoCount != null
+                  and carritoCount > 0}"
+              th:text="${carritoCount}">
+            0
+        </span>
+
+    </a>
+
+</th:block>
+
 </body>
 </html>

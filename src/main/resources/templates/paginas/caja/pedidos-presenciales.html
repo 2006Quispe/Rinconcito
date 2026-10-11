@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${titulo}
+        + ' - El Rinconcito Ayacuchano'">
+        Cobros presenciales
+    </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap"
+          rel="stylesheet">
+
+    <link th:href="@{/css/caja.css}"
+          rel="stylesheet">
+
+    <link th:href="@{/css/caja-presenciales.css}"
+          rel="stylesheet">
+
+</head>
+
+<body class="caja-body">
+
+<div class="caja-layout">
+
+    <aside th:replace="~{fragments/caja-sidebar
+        :: sidebar('presenciales')}">
+    </aside>
+
+    <main class="caja-contenido">
+
+        <header class="presenciales-encabezado">
+
+            <div>
+
+                <p class="presenciales-etiqueta">
+                    ATENCIÓN EN MESA
+                </p>
+
+                <h1>Cobros presenciales</h1>
+
+                <p>
+                    Registra los pagos enviados por los meseros,
+                    finaliza el pedido y libera la mesa.
+                </p>
+
+            </div>
+
+            <a th:href="@{/caja/dashboard}"
+               class="btn-volver-caja">
+
+                <i class="bi bi-arrow-left"></i>
+                Panel de Caja
+            </a>
+
+        </header>
+
+        <div th:if="${exito}"
+             class="alert alert-success"
+             th:text="${exito}">
+        </div>
+
+        <div th:if="${error}"
+             class="alert alert-danger"
+             th:text="${error}">
+        </div>
+
+        <section class="presenciales-resumen">
+
+            <div class="presenciales-resumen-icono">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+
+            <div class="presenciales-resumen-texto">
+
+                <strong>Pedidos esperando cobro</strong>
+
+                <span>
+                    Verifica la mesa, los productos y el total
+                    antes de registrar el pago.
+                </span>
+
+            </div>
+
+            <div class="presenciales-resumen-total">
+
+                <strong th:text="${#lists.size(pedidos)}">
+                    0
+                </strong>
+
+                <span>Pendientes</span>
+
+            </div>
+
+        </section>
+
+        <section th:if="${#lists.isEmpty(pedidos)}"
+                 class="presenciales-vacio">
+
+            <i class="bi bi-check-circle"></i>
+
+            <h2>No hay cobros presenciales pendientes</h2>
+
+            <p>
+                Los pedidos enviados a cobro por los meseros
+                aparecerán en esta sección.
+            </p>
+
+            <a th:href="@{/caja/dashboard}"
+               class="btn-volver-inicio">
+
+                <i class="bi bi-arrow-left"></i>
+                Volver al panel
+            </a>
+
+        </section>
+
+        <div th:unless="${#lists.isEmpty(pedidos)}"
+             class="cobros-presenciales-grid">
+
+            <article th:each="pedido : ${pedidos}"
+                     class="pedido-presencial-card">
+
+                <header class="pedido-presencial-cabecera">
+
+                    <div>
+
+                        <span class="pedido-presencial-etiqueta">
+                            Mesa
+                        </span>
+
+                        <strong class="pedido-presencial-mesa"
+                                th:text="${pedido.mesa != null
+                                    ? pedido.mesa.numero
+                                    : '—'}">
+                            1
+                        </strong>
+
+                    </div>
+
+                    <span class="pedido-presencial-estado">
+
+                        <i class="bi bi-hourglass-split"></i>
+                        Pendiente de cobro
+                    </span>
+
+                </header>
+
+                <div class="pedido-presencial-datos">
+
+                    <div class="pedido-presencial-dato">
+
+                        <span>Pedido</span>
+
+                        <strong th:text="${pedido.codigoPedido}">
+                            PED-2026-000001
+                        </strong>
+
+                    </div>
+
+                    <div class="pedido-presencial-dato">
+
+                        <span>Piso</span>
+
+                        <strong th:text="${pedido.mesa != null
+                            and pedido.mesa.piso != null
+                            ? pedido.mesa.piso.nombre
+                            : '—'}">
+                            Piso 1
+                        </strong>
+
+                    </div>
+
+                    <div class="pedido-presencial-dato">
+
+                        <span>Mesero</span>
+
+                        <strong th:if="${pedido.mesero != null}"
+                                th:text="${pedido.mesero.nombres
+                                    + ' '
+                                    + pedido.mesero.apellidos}">
+                            Mesero
+                        </strong>
+
+                        <strong th:unless="${pedido.mesero != null}">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div class="pedido-presencial-dato">
+
+                        <span>Registrado</span>
+
+                        <strong th:text="${pedido.fechaRegistro != null
+                            ? #temporals.format(
+                                pedido.fechaRegistro,
+                                'dd/MM/yyyy HH:mm'
+                              )
+                            : '—'}">
+                            10/10/2026 12:00
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <section class="pedido-presencial-productos">
+
+                    <h2>
+
+                        <i class="bi bi-receipt"></i>
+                        Productos consumidos
+                    </h2>
+
+                    <div th:with="detalles=${detallesPorPedido[pedido.idPedido]}">
+
+                        <p th:if="${detalles == null
+                            or #lists.isEmpty(detalles)}"
+                           class="pedido-sin-productos">
+
+                            No hay productos registrados.
+                        </p>
+
+                        <ul th:unless="${detalles == null
+                            or #lists.isEmpty(detalles)}">
+
+                            <li th:each="detalle : ${detalles}">
+
+                                <span class="producto-cantidad"
+                                      th:text="${detalle.cantidad + 'x'}">
+                                    1x
+                                </span>
+
+                                <div class="producto-informacion">
+
+                                    <strong th:text="${detalle.producto != null
+                                        ? detalle.producto.nombre
+                                        : 'Producto'}">
+                                        Producto
+                                    </strong>
+
+                                    <small th:if="${detalle.observaciones != null
+                                        and !detalle.observaciones.isBlank()}"
+                                           th:text="${detalle.observaciones}">
+                                        Sin cebolla
+                                    </small>
+
+                                </div>
+
+                                <span class="producto-subtotal"
+                                      th:text="'S/ ' + ${detalle.subtotal}">
+                                    S/ 0
+                                </span>
+
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </section>
+
+                <div th:if="${pedido.observaciones != null
+                    and !pedido.observaciones.isBlank()}"
+                     class="pedido-presencial-observacion">
+
+                    <strong>Observaciones</strong>
+
+                    <p th:text="${pedido.observaciones}">
+                        Observaciones del pedido.
+                    </p>
+
+                </div>
+
+                <div class="pedido-presencial-total">
+
+                    <span>Total por cobrar</span>
+
+                    <strong th:text="'S/ ' + ${pedido.total}">
+                        S/ 0
+                    </strong>
+
+                </div>
+
+                <form th:action="@{/caja/pedidos-presenciales/{idPedido}/cobrar(
+                            idPedido=${pedido.idPedido}
+                      )}"
+                      method="post"
+                      class="formulario-cobro-presencial"
+                      data-formulario-cobro>
+
+                    <input type="hidden"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}">
+
+                    <div class="campo-cobro">
+
+                        <label th:for="'metodoPago-' + ${pedido.idPedido}">
+                            Método de pago
+                            <span>*</span>
+                        </label>
+
+                        <select th:id="'metodoPago-' + ${pedido.idPedido}"
+                                name="metodoPago"
+                                class="form-select metodo-pago-presencial"
+                                required>
+
+                            <option value="">
+                                Selecciona un método
+                            </option>
+
+                            <option value="EFECTIVO">
+                                Efectivo
+                            </option>
+
+                            <option value="YAPE">
+                                Yape
+                            </option>
+
+                            <option value="PLIN">
+                                Plin
+                            </option>
+
+                            <option value="TRANSFERENCIA">
+                                Transferencia
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="campo-cobro campo-numero-operacion"
+                         hidden>
+
+                        <label th:for="'numeroOperacion-' + ${pedido.idPedido}">
+                            Número de operación
+                            <span>*</span>
+                        </label>
+
+                        <input type="text"
+                               th:id="'numeroOperacion-' + ${pedido.idPedido}"
+                               name="numeroOperacion"
+                               class="form-control numero-operacion-presencial"
+                               maxlength="50"
+                               autocomplete="off"
+                               placeholder="Ingresa el número de operación">
+
+                        <small>
+                            Obligatorio para Yape, Plin o transferencia.
+                        </small>
+
+                    </div>
+
+                    <div class="cobro-presencial-informacion">
+
+                        <i class="bi bi-info-circle"></i>
+
+                        <span>
+                            Al confirmar, el pedido finalizará,
+                            se emitirá la nota de venta y la mesa
+                            quedará disponible.
+                        </span>
+
+                    </div>
+
+                    <button type="submit"
+                            class="btn-confirmar-cobro">
+
+                        <i class="bi bi-check-circle"></i>
+                        Confirmar pago
+                    </button>
+
+                </form>
+
+            </article>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<script>
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+            const formularios =
+                document.querySelectorAll(
+                    "[data-formulario-cobro]"
+                );
+
+            formularios.forEach(function (formulario) {
+                const metodoPago =
+                    formulario.querySelector(
+                        ".metodo-pago-presencial"
+                    );
+
+                const contenedorOperacion =
+                    formulario.querySelector(
+                        ".campo-numero-operacion"
+                    );
+
+                const numeroOperacion =
+                    formulario.querySelector(
+                        ".numero-operacion-presencial"
+                    );
+
+                const boton =
+                    formulario.querySelector(
+                        ".btn-confirmar-cobro"
+                    );
+
+                function actualizarNumeroOperacion() {
+                    const metodo =
+                        metodoPago.value;
+
+                    const requiereOperacion =
+                        metodo === "YAPE"
+                        || metodo === "PLIN"
+                        || metodo === "TRANSFERENCIA";
+
+                    contenedorOperacion.hidden =
+                        !requiereOperacion;
+
+                    numeroOperacion.required =
+                        requiereOperacion;
+
+                    if (!requiereOperacion) {
+                        numeroOperacion.value = "";
+                    }
+                }
+
+                metodoPago.addEventListener(
+                    "change",
+                    actualizarNumeroOperacion
+                );
+
+                formulario.addEventListener(
+                    "submit",
+                    function (event) {
+                        actualizarNumeroOperacion();
+
+                        if (!formulario.checkValidity()) {
+                            event.preventDefault();
+                            formulario.reportValidity();
+                            return;
+                        }
+
+                        const metodoSeleccionado =
+                            metodoPago.options[
+                                metodoPago.selectedIndex
+                            ].text;
+
+                        const confirmar =
+                            window.confirm(
+                                "¿Confirmas el pago mediante "
+                                + metodoSeleccionado
+                                + "?\n\n"
+                                + "El pedido finalizará y la mesa "
+                                + "quedará disponible."
+                            );
+
+                        if (!confirmar) {
+                            event.preventDefault();
+                            return;
+                        }
+
+                        boton.disabled = true;
+
+                        boton.innerHTML =
+                            '<span class="spinner-border '
+                            + 'spinner-border-sm" '
+                            + 'aria-hidden="true"></span> '
+                            + 'Procesando...';
+                    }
+                );
+
+                actualizarNumeroOperacion();
+            });
+        }
+    );
+</script>
+
+</body>
+</html>

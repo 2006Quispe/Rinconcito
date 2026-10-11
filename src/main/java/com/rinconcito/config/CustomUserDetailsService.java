@@ -11,8 +11,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -25,10 +23,26 @@ public class CustomUserDetailsService implements UserDetailsService {
         Usuario usuario = usuarioRepository.findByCorreo(correo)
                 .orElseThrow(() -> new UsernameNotFoundException("Correo o contraseña incorrectos"));
 
-        return new User(
-                usuario.getCorreo(),
-                usuario.getContrasena(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().getNombre()))
-        );
+        // INVITADO (sin cuenta real) no puede iniciar sesión
+        if (usuario.getTipoRegistro() == Usuario.TipoRegistro.INVITADO) {
+            throw new UsernameNotFoundException("Correo o contraseña incorrectos");
+        }
+
+        if (usuario.getContrasena() == null || usuario.getContrasena().isBlank()) {
+            throw new UsernameNotFoundException("Correo o contraseña incorrectos");
+        }
+
+        if (usuario.getRol() == null || usuario.getRol().getNombre() == null) {
+            throw new UsernameNotFoundException("Correo o contraseña incorrectos");
+        }
+
+        boolean activo = usuario.getEstado() == Usuario.EstadoUsuario.ACTIVO;
+
+        return User.builder()
+                .username(usuario.getCorreo())
+                .password(usuario.getContrasena())
+                .disabled(!activo)
+                .authorities(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().getNombre()))
+                .build();
     }
 }

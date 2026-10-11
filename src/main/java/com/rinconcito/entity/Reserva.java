@@ -14,13 +14,24 @@ public class Reserva {
     @Column(name = "id_reserva")
     private Integer idReserva;
 
+    @Column(name = "codigo_reserva", nullable = false, unique = true, length = 20)
+    private String codigoReserva;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cliente", nullable = false)
     private Usuario cliente;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_mesa", nullable = false)
+    @JoinColumn(name = "id_piso_solicitado", nullable = false)
+    private Piso pisoSolicitado;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_mesa")
     private Mesa mesa;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_evento")
+    private Evento evento;
 
     @Column(name = "fecha_reserva", nullable = false)
     private LocalDate fechaReserva;
@@ -40,15 +51,29 @@ public class Reserva {
     @Column(name = "comentarios", length = 300)
     private String comentarios;
 
+    @Column(name = "requiere_pago", nullable = false)
+    private boolean requierePago = false;
+
+    @Column(name = "monto_reserva", nullable = false)
+    private Integer montoReserva = 0;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false)
-    private EstadoReserva estado = EstadoReserva.CONFIRMADA;
+    private EstadoReserva estado = EstadoReserva.SOLICITADA;
 
     @Column(name = "fecha_registro", nullable = false, updatable = false)
     private LocalDateTime fechaRegistro;
 
     public enum EstadoReserva {
-        CONFIRMADA, CLIENTE_LLEGO, EN_ATENCION, FINALIZADA, CANCELADA
+        SOLICITADA,
+        PENDIENTE_PAGO,
+        PENDIENTE_VALIDACION,
+        CONFIRMADA,
+        CLIENTE_LLEGO,
+        EN_ATENCION,
+        FINALIZADA,
+        CANCELADA,
+        RECHAZADA
     }
 
     public Reserva() {
@@ -61,14 +86,20 @@ public class Reserva {
         }
     }
 
-    // Getters y setters
-
     public Integer getIdReserva() {
         return idReserva;
     }
 
     public void setIdReserva(Integer idReserva) {
         this.idReserva = idReserva;
+    }
+
+    public String getCodigoReserva() {
+        return codigoReserva;
+    }
+
+    public void setCodigoReserva(String codigoReserva) {
+        this.codigoReserva = codigoReserva;
     }
 
     public Usuario getCliente() {
@@ -79,12 +110,28 @@ public class Reserva {
         this.cliente = cliente;
     }
 
+    public Piso getPisoSolicitado() {
+        return pisoSolicitado;
+    }
+
+    public void setPisoSolicitado(Piso pisoSolicitado) {
+        this.pisoSolicitado = pisoSolicitado;
+    }
+
     public Mesa getMesa() {
         return mesa;
     }
 
     public void setMesa(Mesa mesa) {
         this.mesa = mesa;
+    }
+
+    public Evento getEvento() {
+        return evento;
+    }
+
+    public void setEvento(Evento evento) {
+        this.evento = evento;
     }
 
     public LocalDate getFechaReserva() {
@@ -133,6 +180,22 @@ public class Reserva {
 
     public void setComentarios(String comentarios) {
         this.comentarios = comentarios;
+    }
+
+    public boolean isRequierePago() {
+        return requierePago;
+    }
+
+    public void setRequierePago(boolean requierePago) {
+        this.requierePago = requierePago;
+    }
+
+    public Integer getMontoReserva() {
+        return montoReserva;
+    }
+
+    public void setMontoReserva(Integer montoReserva) {
+        this.montoReserva = montoReserva;
     }
 
     public EstadoReserva getEstado() {

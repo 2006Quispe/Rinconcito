@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${titulo} + ' - El Rinconcito Ayacuchano'">
+        Pagos de pedidos
+    </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Nunito:wght@400;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link th:href="@{/css/estilos.css}"
+          rel="stylesheet">
+
+    <link th:href="@{/css/caja.css(v=3)}"
+          rel="stylesheet">
+
+    <link th:href="@{/css/caja-validaciones.css(v=1)}"
+          rel="stylesheet">
+</head>
+
+<body class="caja-body">
+
+<div class="caja-layout">
+
+    <aside th:replace="~{fragments/caja-sidebar :: sidebar('pedidos')}"></aside>
+
+    <main class="caja-principal">
+
+        <header class="caja-encabezado validacion-encabezado">
+
+            <div>
+                <span class="encabezado-etiqueta">
+                    Pedidos online
+                </span>
+
+                <h1>Pagos de pedidos</h1>
+
+                <p>
+                    Revisa la modalidad, los productos, los datos del cliente
+                    y la evidencia antes de aprobar o rechazar el pago.
+                </p>
+            </div>
+        </header>
+
+        <!-- MENSAJE DE ÉXITO -->
+        <div th:if="${exito}"
+             class="validacion-alerta alerta-exito">
+
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${exito}"></span>
+        </div>
+
+        <!-- MENSAJE DE ERROR -->
+        <div th:if="${error}"
+             class="validacion-alerta alerta-error">
+
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <section class="validacion-panel">
+
+            <div class="validacion-panel-cabecera">
+
+                <div>
+                    <h2>Pedidos pendientes de validación</h2>
+
+                    <p>
+                        Pagos enviados por los clientes mediante
+                        Yape, Plin o transferencia.
+                    </p>
+                </div>
+
+                <div class="validacion-contador">
+
+                    <i class="bi bi-hourglass-split"></i>
+
+                    <div>
+                        <strong th:text="${pendientes != null
+                                ? pendientes.size()
+                                : 0}">
+                            0
+                        </strong>
+
+                        <span>Pendientes</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SIN PAGOS PENDIENTES -->
+            <div th:if="${pendientes == null or pendientes.isEmpty()}"
+                 class="validacion-vacio">
+
+                <div class="validacion-vacio-icono">
+                    <i class="bi bi-bag-check"></i>
+                </div>
+
+                <h3>No hay pagos pendientes</h3>
+
+                <p>
+                    Los pagos de pedidos que necesiten validación
+                    aparecerán en esta sección.
+                </p>
+            </div>
+
+            <!-- TABLA -->
+            <div class="validacion-tabla-contenedor"
+                 th:if="${pendientes != null and !pendientes.isEmpty()}">
+
+                <table class="validacion-tabla">
+
+                    <thead>
+                    <tr>
+                        <th>Pedido y entrega</th>
+                        <th>Productos</th>
+                        <th>Total</th>
+                        <th>Medio de pago</th>
+                        <th>Evidencia</th>
+                        <th>Decisión</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <tr th:each="pago : ${pendientes}">
+
+                        <!-- PEDIDO, CLIENTE Y MODALIDAD -->
+                        <td>
+
+                            <div class="pedido-datos">
+
+                                <strong class="codigo-registro"
+                                        th:text="${pago.pedido.codigoPedido}">
+                                    PED-2026-000001
+                                </strong>
+
+                                <!-- MODALIDAD -->
+                                <span class="pago-metodo"
+                                      th:text="${pago.pedido.tipoPedido.name() == 'RECOJO_LOCAL'
+                                          ? 'RECOJO EN LOCAL'
+                                          : pago.pedido.tipoPedido.name()}">
+                                    DELIVERY
+                                </span>
+
+                                <!-- CLIENTE -->
+                                <span class="cliente-nombre"
+                                      th:text="${pago.pedido.cliente.nombres
+                                          + ' '
+                                          + pago.pedido.cliente.apellidos}">
+                                    Cliente
+                                </span>
+
+                                <span class="dato-secundario"
+                                      th:text="'DNI: '
+                                          + ${pago.pedido.cliente.dni}
+                                          + ' · Tel: '
+                                          + ${pago.pedido.cliente.telefono}">
+                                    DNI y teléfono
+                                </span>
+
+                                <!-- DIRECCIÓN PARA DELIVERY -->
+                                <div class="direccion-entrega"
+                                     th:if="${pago.pedido.tipoPedido.name() == 'DELIVERY'
+                                         and pago.pedido.direccion != null}">
+
+                                    <i class="bi bi-geo-alt-fill"></i>
+
+                                    <span th:text="${pago.pedido.direccion.direccion
+                                            + ' - '
+                                            + pago.pedido.direccion.distrito}">
+                                        Dirección
+                                    </span>
+                                </div>
+
+                                <!-- REFERENCIA PARA DELIVERY -->
+                                <span class="referencia-entrega"
+                                      th:if="${pago.pedido.tipoPedido.name() == 'DELIVERY'
+                                          and pago.pedido.direccion != null
+                                          and pago.pedido.direccion.referencia != null
+                                          and !pago.pedido.direccion.referencia.isBlank()}"
+                                      th:text="'Referencia: '
+                                          + ${pago.pedido.direccion.referencia}">
+                                    Referencia
+                                </span>
+
+                                <!-- RECOJO EN LOCAL -->
+                                <div class="direccion-entrega"
+                                     th:if="${pago.pedido.tipoPedido.name() == 'RECOJO_LOCAL'}">
+
+                                    <i class="bi bi-shop"></i>
+
+                                    <span>
+                                        El cliente recogerá el pedido en el restaurante.
+                                    </span>
+                                </div>
+
+                                <!-- PEDIDO PRESENCIAL -->
+                                <div class="direccion-entrega"
+                                     th:if="${pago.pedido.tipoPedido.name() == 'PRESENCIAL'}">
+
+                                    <i class="bi bi-table"></i>
+
+                                    <span>
+                                        Pedido para atención presencial.
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- PRODUCTOS -->
+                        <td>
+
+                            <ul class="productos-lista"
+                                th:if="${detallesPorPago[pago.idPago] != null}">
+
+                                <li th:each="detalle : ${detallesPorPago[pago.idPago]}">
+
+                                    <span class="producto-nombre"
+                                          th:text="${detalle.producto.nombre}">
+                                        Producto
+                                    </span>
+
+                                    <span class="producto-cantidad"
+                                          th:text="'x' + ${detalle.cantidad}">
+                                        x1
+                                    </span>
+
+                                    <strong th:text="'S/ ' + ${detalle.subtotal}">
+                                        S/ 0
+                                    </strong>
+                                </li>
+                            </ul>
+
+                            <span class="dato-secundario"
+                                  th:if="${detallesPorPago[pago.idPago] == null
+                                      or detallesPorPago[pago.idPago].isEmpty()}">
+                                Sin productos registrados
+                            </span>
+                        </td>
+
+                        <!-- TOTAL -->
+                        <td>
+
+                            <strong class="pago-monto"
+                                    th:text="'S/ ' + ${pago.monto}">
+                                S/ 0
+                            </strong>
+                        </td>
+
+                        <!-- MEDIO DE PAGO -->
+                        <td>
+
+                            <span class="pago-metodo"
+                                  th:text="${pago.metodoPago}">
+                                YAPE
+                            </span>
+
+                            <span class="pago-operacion"
+                                  th:text="${pago.numeroOperacion != null
+                                      and !pago.numeroOperacion.isBlank()
+                                      ? pago.numeroOperacion
+                                      : 'Sin número de operación'}">
+                                Operación
+                            </span>
+                        </td>
+
+                        <!-- EVIDENCIA -->
+                        <td>
+
+                            <a th:href="@{/caja/evidencias-pedido/{id}(id=${pago.idPago})}"
+                               target="_blank"
+                               rel="noopener"
+                               class="boton-evidencia">
+
+                                <i class="bi bi-image"></i>
+                                Abrir captura
+                            </a>
+                        </td>
+
+                        <!-- ACCIONES -->
+                        <td>
+
+                            <div class="acciones-validacion">
+
+                                <!-- APROBAR -->
+                                <form th:action="@{/caja/pedidos-pendientes/{id}/aprobar(id=${pago.idPago})}"
+                                      method="post">
+
+                                    <input th:if="${_csrf != null}"
+                                           type="hidden"
+                                           th:name="${_csrf.parameterName}"
+                                           th:value="${_csrf.token}">
+
+                                    <button type="submit"
+                                            class="boton-aprobar">
+
+                                        <i class="bi bi-check-lg"></i>
+                                        Aprobar
+                                    </button>
+                                </form>
+
+                                <!-- RECHAZAR -->
+                                <form th:action="@{/caja/pedidos-pendientes/{id}/rechazar(id=${pago.idPago})}"
+                                      method="post"
+                                      class="form-rechazo">
+
+                                    <input th:if="${_csrf != null}"
+                                           type="hidden"
+                                           th:name="${_csrf.parameterName}"
+                                           th:value="${_csrf.token}">
+
+                                    <input type="text"
+                                           name="motivo"
+                                           placeholder="Motivo del rechazo"
+                                           required
+                                           maxlength="300">
+
+                                    <button type="submit"
+                                            class="boton-rechazar">
+
+                                        <i class="bi bi-x-lg"></i>
+                                        Rechazar
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

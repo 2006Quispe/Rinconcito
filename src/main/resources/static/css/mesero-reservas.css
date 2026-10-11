@@ -1,0 +1,672 @@
+:root {
+    --reserva-vino: #9b2f1d;
+    --reserva-vino-oscuro: #7e2517;
+    --reserva-cafe: #3b2a22;
+    --reserva-dorado: #dda914;
+    --reserva-verde: #5c704c;
+    --reserva-verde-oscuro: #48593c;
+    --reserva-naranja: #c87518;
+    --reserva-azul: #3f6f8f;
+    --reserva-fondo: #f8f4ee;
+    --reserva-blanco: #ffffff;
+    --reserva-borde: #e3d6c8;
+    --reserva-texto-suave: #806f64;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background-color: var(--reserva-fondo);
+    color: var(--reserva-cafe);
+    font-family: "Nunito", sans-serif;
+}
+
+.mesero-pagina {
+    width: calc(100% - 265px);
+    min-height: 100vh;
+    margin-left: 265px;
+    background-color: var(--reserva-fondo);
+}
+
+.reservas-encabezado {
+    width: 100%;
+    padding: 1.1rem 1.25rem 0.9rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.reservas-etiqueta {
+    margin: 0 0 0.18rem;
+    color: var(--reserva-vino);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.reservas-encabezado h1 {
+    margin: 0;
+    color: var(--reserva-cafe);
+    font-family: "Merriweather", serif;
+    font-size: clamp(1.3rem, 2vw, 1.75rem);
+}
+
+.reservas-encabezado p:not(.reservas-etiqueta) {
+    margin: 0.3rem 0 0;
+    color: var(--reserva-texto-suave);
+    font-size: 0.75rem;
+}
+
+.reservas-usuario {
+    padding: 0.45rem 0.65rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid var(--reserva-borde);
+    border-radius: 9px;
+    background-color: var(--reserva-blanco);
+}
+
+.reservas-usuario > i {
+    color: var(--reserva-vino);
+    font-size: 1rem;
+}
+
+.reservas-usuario div {
+    display: flex;
+    flex-direction: column;
+}
+
+.reservas-usuario span {
+    color: var(--reserva-texto-suave);
+    font-size: 0.52rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.reservas-usuario strong {
+    max-width: 150px;
+    color: var(--reserva-cafe);
+    font-size: 0.63rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.reservas-contenido {
+    width: 100%;
+    padding: 0 1.25rem 1.25rem;
+}
+
+.alert {
+    margin-bottom: 0.85rem;
+    border-radius: 9px;
+    font-size: 0.71rem;
+}
+
+.reservas-fecha {
+    margin-bottom: 0.85rem;
+    padding: 0.65rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    border: 1px solid var(--reserva-borde);
+    border-radius: 10px;
+    background-color: var(--reserva-blanco);
+}
+
+.reservas-fecha-icono {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background-color: #f4e8e3;
+    color: var(--reserva-vino);
+    font-size: 0.9rem;
+}
+
+.reservas-fecha div:last-child {
+    display: flex;
+    flex-direction: column;
+}
+
+.reservas-fecha span {
+    color: var(--reserva-texto-suave);
+    font-size: 0.55rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.reservas-fecha strong {
+    color: var(--reserva-cafe);
+    font-size: 0.7rem;
+}
+
+.reservas-resumen {
+    margin-bottom: 0.9rem;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.65rem;
+}
+
+.resumen-tarjeta {
+    min-width: 0;
+    padding: 0.68rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    border: 1px solid var(--reserva-borde);
+    border-radius: 10px;
+    background-color: var(--reserva-blanco);
+    box-shadow: 0 3px 10px rgba(59, 42, 34, 0.04);
+}
+
+.resumen-icono {
+    width: 35px;
+    height: 35px;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    font-size: 0.9rem;
+}
+
+.resumen-total-icono {
+    background-color: #f4e8e3;
+    color: var(--reserva-vino);
+}
+
+.resumen-confirmadas-icono {
+    background-color: #fff3d2;
+    color: #a36c00;
+}
+
+.resumen-llegaron-icono {
+    background-color: #e6f0f7;
+    color: var(--reserva-azul);
+}
+
+.resumen-atencion-icono {
+    background-color: #e8f0e3;
+    color: var(--reserva-verde);
+}
+
+.resumen-tarjeta div:last-child {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.resumen-tarjeta span {
+    color: var(--reserva-texto-suave);
+    font-size: 0.56rem;
+    font-weight: 700;
+}
+
+.resumen-tarjeta strong {
+    color: var(--reserva-cafe);
+    font-size: 1rem;
+}
+
+.reservas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: 0.8rem;
+}
+
+.reserva-tarjeta {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--reserva-borde);
+    border-top: 4px solid var(--reserva-vino);
+    border-radius: 11px;
+    background-color: var(--reserva-blanco);
+    box-shadow: 0 4px 13px rgba(59, 42, 34, 0.06);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.reserva-tarjeta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(59, 42, 34, 0.1);
+}
+
+.reserva-confirmada {
+    border-top-color: var(--reserva-dorado);
+}
+
+.reserva-llego {
+    border-top-color: var(--reserva-azul);
+}
+
+.reserva-atencion {
+    border-top-color: var(--reserva-verde);
+}
+
+.reserva-cabecera {
+    padding: 0.65rem 0.75rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.65rem;
+    border-bottom: 1px solid #eee6dd;
+}
+
+.reserva-horario {
+    display: flex;
+    flex-direction: column;
+}
+
+.reserva-horario > span {
+    margin-bottom: 0.1rem;
+    color: var(--reserva-texto-suave);
+    font-size: 0.52rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.reserva-horario strong {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    color: var(--reserva-cafe);
+    font-size: 0.74rem;
+}
+
+.reserva-horario i {
+    color: var(--reserva-vino);
+}
+
+.reserva-estado {
+    padding: 0.22rem 0.45rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.22rem;
+    border-radius: 20px;
+    font-size: 0.52rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.estado-confirmada {
+    background-color: #fff3d2;
+    color: #966300;
+}
+
+.estado-llego {
+    background-color: #e6f0f7;
+    color: var(--reserva-azul);
+}
+
+.estado-atencion {
+    background-color: #e8f0e3;
+    color: var(--reserva-verde);
+}
+
+.reserva-codigo {
+    padding: 0.55rem 0.75rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.reserva-codigo span {
+    color: var(--reserva-texto-suave);
+    font-size: 0.55rem;
+}
+
+.reserva-codigo strong {
+    color: var(--reserva-vino);
+    font-size: 0.6rem;
+    overflow-wrap: anywhere;
+}
+
+.reserva-cliente {
+    margin: 0.6rem 0.75rem;
+    padding: 0.58rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 8px;
+    background-color: #faf6f0;
+}
+
+.cliente-avatar {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: var(--reserva-vino);
+    color: var(--reserva-blanco);
+    font-family: "Merriweather", serif;
+    font-size: 0.78rem;
+}
+
+.cliente-informacion {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.cliente-informacion > span {
+    color: var(--reserva-texto-suave);
+    font-size: 0.5rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.cliente-informacion strong {
+    color: var(--reserva-cafe);
+    font-size: 0.67rem;
+    overflow-wrap: anywhere;
+}
+
+.cliente-informacion small {
+    margin-top: 0.08rem;
+    color: var(--reserva-texto-suave);
+    font-size: 0.57rem;
+}
+
+.reserva-datos {
+    padding: 0 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4rem;
+}
+
+.reserva-dato {
+    min-width: 0;
+    padding: 0.48rem 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.25rem;
+    border: 1px solid #eee5dc;
+    border-radius: 7px;
+}
+
+.reserva-dato span {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    color: var(--reserva-texto-suave);
+    font-size: 0.51rem;
+}
+
+.reserva-dato span i {
+    color: var(--reserva-vino);
+}
+
+.reserva-dato strong {
+    color: var(--reserva-cafe);
+    font-size: 0.57rem;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.reserva-evento {
+    margin: 0.6rem 0.75rem 0;
+    padding: 0.55rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    border-left: 3px solid var(--reserva-dorado);
+    border-radius: 0 7px 7px 0;
+    background-color: #fff8e5;
+}
+
+.reserva-evento > i {
+    color: #a36c00;
+    font-size: 0.8rem;
+}
+
+.reserva-evento div {
+    display: flex;
+    flex-direction: column;
+}
+
+.reserva-evento span {
+    color: #98721c;
+    font-size: 0.49rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.reserva-evento strong {
+    color: var(--reserva-cafe);
+    font-size: 0.61rem;
+}
+
+.reserva-observacion {
+    margin: 0.55rem 0.75rem 0;
+    padding: 0.52rem;
+    border-left: 3px solid var(--reserva-naranja);
+    border-radius: 0 7px 7px 0;
+    background-color: #fff3e5;
+}
+
+.reserva-observacion strong {
+    display: block;
+    margin-bottom: 0.12rem;
+    color: #a65f10;
+    font-size: 0.51rem;
+    text-transform: uppercase;
+}
+
+.reserva-observacion p {
+    margin: 0;
+    color: var(--reserva-cafe);
+    font-size: 0.58rem;
+    line-height: 1.35;
+}
+
+.reserva-acciones {
+    margin-top: 0.7rem;
+    padding: 0.65rem 0.75rem 0.75rem;
+    border-top: 1px solid #eee6dd;
+}
+
+.reserva-acciones form {
+    margin: 0;
+}
+
+.acciones-atencion {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+}
+
+.btn-reserva {
+    width: 100%;
+    min-height: 35px;
+    padding: 0.43rem 0.55rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.32rem;
+    border-radius: 7px;
+    font-family: "Nunito", sans-serif;
+    font-size: 0.6rem;
+    font-weight: 800;
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-registrar-llegada {
+    border: 1px solid var(--reserva-dorado);
+    background-color: var(--reserva-dorado);
+    color: var(--reserva-cafe);
+}
+
+.btn-registrar-llegada:hover {
+    background-color: #c99910;
+    color: var(--reserva-cafe);
+}
+
+.btn-iniciar-atencion {
+    border: 1px solid var(--reserva-azul);
+    background-color: var(--reserva-azul);
+    color: var(--reserva-blanco);
+}
+
+.btn-iniciar-atencion:hover {
+    background-color: #315b77;
+}
+
+.btn-crear-pedido {
+    border: 1px solid var(--reserva-vino);
+    background-color: var(--reserva-vino);
+    color: var(--reserva-blanco);
+}
+
+.btn-crear-pedido:hover {
+    background-color: var(--reserva-vino-oscuro);
+    color: var(--reserva-blanco);
+}
+
+.btn-finalizar-reserva {
+    border: 1px solid var(--reserva-verde);
+    background-color: var(--reserva-verde);
+    color: var(--reserva-blanco);
+}
+
+.btn-finalizar-reserva:hover {
+    background-color: var(--reserva-verde-oscuro);
+}
+
+.reservas-vacio {
+    padding: 3rem 1rem;
+    border: 1px dashed var(--reserva-borde);
+    border-radius: 12px;
+    background-color: var(--reserva-blanco);
+    text-align: center;
+}
+
+.reservas-vacio-icono {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #f4e8e3;
+    color: var(--reserva-vino);
+    font-size: 1.35rem;
+}
+
+.reservas-vacio h2 {
+    margin: 0.65rem 0 0.25rem;
+    color: var(--reserva-cafe);
+    font-family: "Merriweather", serif;
+    font-size: 0.92rem;
+}
+
+.reservas-vacio p {
+    margin: 0 auto 0.85rem;
+    max-width: 430px;
+    color: var(--reserva-texto-suave);
+    font-size: 0.68rem;
+}
+
+.btn-ir-mesas {
+    min-height: 36px;
+    padding: 0.46rem 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    border-radius: 7px;
+    background-color: var(--reserva-vino);
+    color: var(--reserva-blanco);
+    font-size: 0.63rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.btn-ir-mesas:hover {
+    background-color: var(--reserva-vino-oscuro);
+    color: var(--reserva-blanco);
+}
+
+@media (max-width: 1450px) {
+    .reservas-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 1100px) {
+    .reservas-resumen {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .acciones-atencion {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 900px) {
+    .mesero-pagina {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .reservas-encabezado {
+        padding: 1rem;
+    }
+
+    .reservas-contenido {
+        padding: 0 1rem 1rem;
+    }
+
+    .reservas-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 650px) {
+    .reservas-encabezado {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .reservas-usuario {
+        align-self: flex-start;
+    }
+
+    .reserva-datos {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .reservas-resumen {
+        grid-template-columns: 1fr;
+    }
+
+    .reserva-cabecera {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .reserva-estado {
+        align-self: flex-start;
+    }
+}

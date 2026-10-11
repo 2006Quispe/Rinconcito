@@ -16,7 +16,7 @@ public class Comanda {
     @JoinColumn(name = "id_pedido", nullable = false)
     private Pedido pedido;
 
-    @Column(name = "numero_comanda", nullable = false, length = 20)
+    @Column(name = "numero_comanda", nullable = false, unique = true, length = 25)
     private String numeroComanda;
 
     @Column(name = "fecha_emision", nullable = false, updatable = false)
@@ -30,7 +30,7 @@ public class Comanda {
     private String observaciones;
 
     public enum EstadoComanda {
-        PENDIENTE, EN_PREPARACION, LISTA, ENTREGADA
+        PENDIENTE, EN_PREPARACION, LISTA, ENTREGADA, CANCELADA
     }
 
     public Comanda() {
@@ -42,8 +42,6 @@ public class Comanda {
             fechaEmision = LocalDateTime.now();
         }
     }
-
-    // Getters y setters
 
     public Integer getIdComanda() {
         return idComanda;
