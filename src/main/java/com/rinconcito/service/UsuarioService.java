@@ -254,52 +254,21 @@ public class UsuarioService {
         Optional<Usuario> existente =
                 usuarioRepository.findByDni(dni);
 
-        Usuario usuario;
-
         if (existente.isPresent()) {
-
-            usuario = existente.get();
-
-            usuario.setNombres(
-                    limpiarNombre(dto.getNombres())
-            );
-
-            usuario.setApellidos(
-                    limpiarNombre(dto.getApellidos())
-            );
-
-            usuario.setTelefono(
-                    limpiarTexto(dto.getTelefono())
-            );
-
-            if (usuario.getRol() == null) {
-                usuario.setRol(
-                        obtenerRolCliente()
-                );
-            }
-
-        } else {
-
-            usuario = new Usuario();
-
-            usuario.setRol(
-                    obtenerRolCliente()
-            );
-
-            usuario.setNombres(
-                    limpiarNombre(dto.getNombres())
-            );
-
-            usuario.setApellidos(
-                    limpiarNombre(dto.getApellidos())
-            );
-
-            usuario.setDni(dni);
-
-            usuario.setTelefono(
-                    limpiarTexto(dto.getTelefono())
+            // El registro público no verifica la identidad del titular,
+            // por lo que tampoco puede convertir invitados en cuentas.
+            throw new IllegalStateException(
+                    "Ese DNI ya está registrado. Si te pertenece, "
+                            + "contacta al restaurante para verificar tu identidad."
             );
         }
+
+        Usuario usuario = new Usuario();
+        usuario.setRol(obtenerRolCliente());
+        usuario.setNombres(limpiarNombre(dto.getNombres()));
+        usuario.setApellidos(limpiarNombre(dto.getApellidos()));
+        usuario.setDni(dni);
+        usuario.setTelefono(limpiarTexto(dto.getTelefono()));
 
         usuario.setTipoRegistro(
                 TipoRegistro.CUENTA
