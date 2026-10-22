@@ -3,6 +3,8 @@ package com.rinconcito.controller;
 import com.rinconcito.entity.NotaVenta;
 import com.rinconcito.service.NotaVentaPdfService;
 import com.rinconcito.service.NotaVentaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,6 +20,8 @@ import java.nio.charset.StandardCharsets;
 @Controller
 @RequestMapping("/caja/notas-venta")
 public class NotaVentaPdfController {
+
+    private static final Logger log = LoggerFactory.getLogger(NotaVentaPdfController.class);
 
     private final NotaVentaPdfService notaVentaPdfService;
     private final NotaVentaService notaVentaService;
@@ -38,26 +42,17 @@ public class NotaVentaPdfController {
                     defaultValue = "false"
             ) boolean descargar
     ) {
-        System.out.println(
-                "=== INICIANDO PDF DE NOTA " + idNota + " ==="
-        );
+        // Este detalle solo hace falta cuando estamos investigando un problema.
+        log.debug("Generando PDF de la nota {}", idNota);
 
         try {
             NotaVenta notaVenta =
                     notaVentaService.obtenerParaPdf(idNota);
 
-            System.out.println(
-                    "Nota encontrada: "
-                            + notaVentaService.formarNumero(notaVenta)
-            );
-
             byte[] contenidoPdf =
                     notaVentaPdfService.generar(idNota);
 
-            System.out.println(
-                    "PDF generado correctamente. Bytes: "
-                            + contenidoPdf.length
-            );
+            log.info("PDF generado para la nota {} ({} bytes)", idNota, contenidoPdf.length);
 
             String numeroNota =
                     notaVentaService.formarNumero(notaVenta);
@@ -98,14 +93,8 @@ public class NotaVentaPdfController {
                     .contentLength(contenidoPdf.length)
                     .body(contenidoPdf);
 
-        } catch (Throwable e) {
-            System.err.println(
-                    "=== ERROR GENERANDO PDF DE NOTA "
-                            + idNota
-                            + " ==="
-            );
-
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error("No se pudo generar el PDF de la nota {}", idNota, e);
 
             return ResponseEntity
                     .internalServerError()

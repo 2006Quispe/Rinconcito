@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Los logs se generan en cada equipo; no forman parte del codigo.
+/logs/
+*.log
+*.log.*

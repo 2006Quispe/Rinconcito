@@ -1,5 +1,7 @@
 package com.rinconcito.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +23,8 @@ import java.util.UUID;
  */
 @Service
 public class EvidenciaStorageService {
+
+    private static final Logger log = LoggerFactory.getLogger(EvidenciaStorageService.class);
 
     public static final long MAX_BYTES = 5L * 1024 * 1024;
 
@@ -81,6 +85,8 @@ public class EvidenciaStorageService {
             }
             return nombre;
         } catch (IOException e) {
+            // Guardamos el error tecnico aqui; el cliente sigue viendo un mensaje sencillo.
+            log.error("No se pudo guardar una evidencia de pago", e);
             throw new IllegalStateException("No se pudo guardar la captura. Intenta de nuevo.");
         }
     }

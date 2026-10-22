@@ -8,6 +8,8 @@ import com.rinconcito.entity.Usuario;
 import com.rinconcito.repository.UsuarioRepository;
 import com.rinconcito.service.EvidenciaStorageService;
 import com.rinconcito.service.PagoPedidoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +33,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/caja")
 public class CajaPagoPedidoController {
+
+    private static final Logger log = LoggerFactory.getLogger(CajaPagoPedidoController.class);
 
     private final PagoPedidoService
             pagoPedidoService;
@@ -208,6 +212,9 @@ public class CajaPagoPedidoController {
                                     validador
                             );
 
+            // Con el ID podemos seguir el cobro sin guardar datos del cliente en el log.
+            log.info("Cobro presencial registrado para el pedido {}", idPedido);
+
             redirectAttributes.addFlashAttribute(
                     "exito",
                     "Pago del pedido "
@@ -218,6 +225,7 @@ public class CajaPagoPedidoController {
             );
 
         } catch (IllegalStateException e) {
+            log.warn("No se pudo registrar el cobro presencial del pedido {}", idPedido);
             redirectAttributes.addFlashAttribute(
                     "error",
                     e.getMessage()
@@ -244,12 +252,15 @@ public class CajaPagoPedidoController {
                     validador
             );
 
+            log.info("Pago de pedido {} aprobado", idPago);
+
             redirectAttributes.addFlashAttribute(
                     "exito",
                     "Pago aprobado y pedido confirmado."
             );
 
         } catch (IllegalStateException e) {
+            log.warn("No se pudo aprobar el pago de pedido {}", idPago);
             redirectAttributes.addFlashAttribute(
                     "error",
                     e.getMessage()
@@ -281,6 +292,8 @@ public class CajaPagoPedidoController {
                     motivo
             );
 
+            log.info("Pago de pedido {} rechazado", idPago);
+
             redirectAttributes.addFlashAttribute(
                     "exito",
                     "Pago rechazado. El pedido volvió "
@@ -288,6 +301,7 @@ public class CajaPagoPedidoController {
             );
 
         } catch (IllegalStateException e) {
+            log.warn("No se pudo rechazar el pago de pedido {}", idPago);
             redirectAttributes.addFlashAttribute(
                     "error",
                     e.getMessage()
@@ -349,11 +363,13 @@ public class CajaPagoPedidoController {
                     .body(resource);
 
         } catch (IllegalStateException e) {
+            log.debug("La evidencia del pago de pedido {} no esta disponible", idPago);
             return ResponseEntity
                     .notFound()
                     .build();
 
         } catch (Exception e) {
+            log.error("No se pudo leer la evidencia del pago de pedido {}", idPago, e);
             return ResponseEntity
                     .internalServerError()
                     .build();

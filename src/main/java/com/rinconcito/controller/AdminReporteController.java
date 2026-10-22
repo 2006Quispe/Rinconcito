@@ -6,6 +6,8 @@ import com.rinconcito.dto.ReporteMetodoPagoDTO;
 import com.rinconcito.service.AdminReporteExcelService;
 import com.rinconcito.service.AdminReportePdfService;
 import com.rinconcito.service.AdminReporteService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +26,8 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin/reportes")
 public class AdminReporteController {
+
+    private static final Logger log = LoggerFactory.getLogger(AdminReporteController.class);
 
     private final AdminReporteService
             adminReporteService;
@@ -81,6 +85,7 @@ public class AdminReporteController {
                     );
 
         } catch (IllegalStateException e) {
+            log.warn("No se pudo consultar el reporte del periodo {} a {}", desde, hasta);
             model.addAttribute(
                     "error",
                     e.getMessage()
@@ -153,6 +158,9 @@ public class AdminReporteController {
                             reporte
                     );
 
+            log.info("Reporte PDF generado del {} al {} ({} bytes)",
+                    reporte.getDesde(), reporte.getHasta(), contenido.length);
+
             String nombreArchivo =
                     construirNombreArchivo(
                             reporte,
@@ -187,11 +195,13 @@ public class AdminReporteController {
                     .body(contenido);
 
         } catch (IllegalStateException e) {
+            log.warn("No se pudo exportar el reporte PDF del periodo {} a {}", desde, hasta, e);
             return ResponseEntity
                     .badRequest()
                     .build();
 
         } catch (Exception e) {
+            log.error("Error inesperado al exportar el reporte PDF del periodo {} a {}", desde, hasta, e);
             return ResponseEntity
                     .internalServerError()
                     .build();
@@ -229,6 +239,9 @@ public class AdminReporteController {
                     adminReporteExcelService.generar(
                             reporte
                     );
+
+            log.info("Reporte Excel generado del {} al {} ({} bytes)",
+                    reporte.getDesde(), reporte.getHasta(), contenido.length);
 
             String nombreArchivo =
                     construirNombreArchivo(
@@ -268,11 +281,13 @@ public class AdminReporteController {
                     .body(contenido);
 
         } catch (IllegalStateException e) {
+            log.warn("No se pudo exportar el reporte Excel del periodo {} a {}", desde, hasta, e);
             return ResponseEntity
                     .badRequest()
                     .build();
 
         } catch (Exception e) {
+            log.error("Error inesperado al exportar el reporte Excel del periodo {} a {}", desde, hasta, e);
             return ResponseEntity
                     .internalServerError()
                     .build();

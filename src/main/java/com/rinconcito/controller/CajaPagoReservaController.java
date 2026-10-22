@@ -6,6 +6,8 @@ import com.rinconcito.repository.UsuarioRepository;
 import com.rinconcito.service.EvidenciaStorageService;
 import com.rinconcito.service.PagoPedidoService;
 import com.rinconcito.service.PagoReservaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -28,6 +30,8 @@ import java.util.List;
 @Controller
 @RequestMapping("/caja")
 public class CajaPagoReservaController {
+
+    private static final Logger log = LoggerFactory.getLogger(CajaPagoReservaController.class);
 
     @Autowired
     private PagoReservaService pagoReservaService;
@@ -72,8 +76,10 @@ public class CajaPagoReservaController {
         try {
             Usuario validador = usuarioActual(authentication);
             pagoReservaService.aprobar(idPago, validador);
+            log.info("Pago de reserva {} aprobado", idPago);
             ra.addFlashAttribute("exito", "Pago aprobado y reserva confirmada con mesa asignada.");
         } catch (IllegalStateException e) {
+            log.warn("No se pudo aprobar el pago de reserva {}", idPago);
             ra.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/caja/reservas-pendientes";
@@ -87,8 +93,11 @@ public class CajaPagoReservaController {
         try {
             Usuario validador = usuarioActual(authentication);
             pagoReservaService.rechazar(idPago, validador, motivo);
+            // El motivo queda en la base de datos, no hace falta copiarlo al log.
+            log.info("Pago de reserva {} rechazado", idPago);
             ra.addFlashAttribute("exito", "Pago rechazado. La reserva volvió a pendiente de pago.");
         } catch (IllegalStateException e) {
+            log.warn("No se pudo rechazar el pago de reserva {}", idPago);
             ra.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/caja/reservas-pendientes";
@@ -117,8 +126,10 @@ public class CajaPagoReservaController {
                     .contentType(MediaType.parseMediaType(contentType))
                     .body(resource);
         } catch (IllegalStateException e) {
+            log.debug("La evidencia del pago {} no esta disponible", idPago);
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
+            log.error("No se pudo leer la evidencia del pago {}", idPago, e);
             return ResponseEntity.internalServerError().build();
         }
     }
