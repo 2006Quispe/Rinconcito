@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -158,11 +160,11 @@ public class ReservaService {
         if (dto.getDni() == null || !dto.getDni().matches("\\d{8}")) {
             throw new IllegalStateException("El DNI debe tener 8 dígitos.");
         }
-        if (dto.getNombres() == null || dto.getNombres().isBlank()) {
-            throw new IllegalStateException("Los nombres son obligatorios.");
+        if (StringUtils.isBlank(dto.getNombres())) {
+        throw new IllegalStateException("Los nombres son obligatorios.");
         }
-        if (dto.getApellidos() == null || dto.getApellidos().isBlank()) {
-            throw new IllegalStateException("Los apellidos son obligatorios.");
+        if (StringUtils.isBlank(dto.getApellidos())) {
+        throw new IllegalStateException("Los apellidos son obligatorios.");
         }
         if (dto.getTelefono() == null || !dto.getTelefono().matches("\\d{9}")) {
             throw new IllegalStateException("El teléfono debe tener 9 dígitos.");
@@ -227,9 +229,6 @@ public class ReservaService {
     }
 
     private String blankToNull(String value) {
-        if (value == null || value.isBlank()) {
-            return null;
-        }
-        return value.trim();
+        return StringUtils.trimToNull(value);
     }
 }

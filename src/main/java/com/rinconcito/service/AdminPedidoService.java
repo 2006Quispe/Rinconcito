@@ -9,6 +9,8 @@ import com.rinconcito.repository.PedidoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -141,14 +143,7 @@ public class AdminPedidoService {
                 .sum();
     }
 
-    private String normalizarBusqueda(
-            String busqueda
-    ) {
-        if (busqueda == null
-                || busqueda.isBlank()) {
-            return null;
+    private String normalizarBusqueda(String busqueda) {
+        return StringUtils.trimToNull(busqueda);
         }
-
-        return busqueda.trim();
-    }
 }

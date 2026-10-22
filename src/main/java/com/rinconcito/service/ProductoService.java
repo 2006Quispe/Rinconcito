@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -71,10 +73,7 @@ public class ProductoService {
             String q,
             Integer idCategoria
     ) {
-        String busqueda =
-                q == null || q.isBlank()
-                        ? null
-                        : q.trim();
+        String busqueda = StringUtils.trimToNull(q);
 
         Categoria categoria = null;
 
