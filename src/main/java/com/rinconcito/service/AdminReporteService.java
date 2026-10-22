@@ -1,5 +1,6 @@
 package com.rinconcito.service;
 
+import com.google.common.util.concurrent.AtomicLongMap;
 import com.rinconcito.dto.AdminReporteDTO;
 import com.rinconcito.dto.ReporteDiaDTO;
 import com.rinconcito.dto.ReporteMetodoPagoDTO;
@@ -344,6 +345,9 @@ public class AdminReporteService {
                 acumulados =
                 new LinkedHashMap<>();
 
+        // Contadores long por producto: conservar el rango del reporte.
+        AtomicLongMap<Integer> unidadesVendidas = AtomicLongMap.create();
+
         for (DetallePedido detalle : detalles) {
 
             Producto producto =
@@ -364,10 +368,12 @@ public class AdminReporteService {
                             )
                     );
 
-            acumulado.cantidad +=
+            unidadesVendidas.addAndGet(
+                    producto.getIdProducto(),
                     valorSeguro(
                             detalle.getCantidad()
-                    );
+                    )
+            );
 
             acumulado.monto +=
                     valorSeguro(
@@ -376,13 +382,13 @@ public class AdminReporteService {
         }
 
         List<ReporteProductoDTO> resultado =
-                acumulados.values()
+                acumulados.entrySet()
                         .stream()
-                        .map(acumulado ->
+                        .map(entrada ->
                                 new ReporteProductoDTO(
-                                        acumulado.nombre,
-                                        acumulado.cantidad,
-                                        acumulado.monto
+                                        entrada.getValue().nombre,
+                                        unidadesVendidas.get(entrada.getKey()),
+                                        entrada.getValue().monto
                                 )
                         )
                         .sorted(
@@ -454,7 +460,6 @@ public class AdminReporteService {
     private static class ProductoAcumulado {
 
         private final String nombre;
-        private long cantidad;
         private long monto;
 
         private ProductoAcumulado(
