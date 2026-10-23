@@ -3,8 +3,9 @@ package com.rinconcito.controller;
 import com.rinconcito.dto.AdminReporteDTO;
 import com.rinconcito.dto.ReporteDiaDTO;
 import com.rinconcito.dto.ReporteMetodoPagoDTO;
-import com.rinconcito.service.AdminReporteExcelService;
-import com.rinconcito.service.AdminReportePdfService;
+import com.rinconcito.dto.ArchivoReporteDTO;
+import com.rinconcito.service.ExportacionReporteService;
+import com.rinconcito.service.reporte.FormatoReporteNoSoportadoException;
 import com.rinconcito.service.AdminReporteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,28 +30,13 @@ public class AdminReporteController {
 
     private static final Logger log = LoggerFactory.getLogger(AdminReporteController.class);
 
-    private final AdminReporteService
-            adminReporteService;
+    private final AdminReporteService adminReporteService;
+    private final ExportacionReporteService exportacionReporteService;
 
-    private final AdminReportePdfService
-            adminReportePdfService;
-
-    private final AdminReporteExcelService
-            adminReporteExcelService;
-
-    public AdminReporteController(
-            AdminReporteService adminReporteService,
-            AdminReportePdfService adminReportePdfService,
-            AdminReporteExcelService adminReporteExcelService
-    ) {
-        this.adminReporteService =
-                adminReporteService;
-
-        this.adminReportePdfService =
-                adminReportePdfService;
-
-        this.adminReporteExcelService =
-                adminReporteExcelService;
+    public AdminReporteController(AdminReporteService adminReporteService,
+                                  ExportacionReporteService exportacionReporteService) {
+        this.adminReporteService = adminReporteService;
+        this.exportacionReporteService = exportacionReporteService;
     }
 
     @GetMapping
@@ -128,169 +114,62 @@ public class AdminReporteController {
 
     @GetMapping("/pdf")
     public ResponseEntity<byte[]> descargarPdf(
-            @RequestParam(
-                    value = "desde",
-                    required = false
-            )
-            @DateTimeFormat(
-                    iso = DateTimeFormat.ISO.DATE
-            )
-            LocalDate desde,
-
-            @RequestParam(
-                    value = "hasta",
-                    required = false
-            )
-            @DateTimeFormat(
-                    iso = DateTimeFormat.ISO.DATE
-            )
-            LocalDate hasta
-    ) {
-        try {
-            AdminReporteDTO reporte =
-                    adminReporteService.generar(
-                            desde,
-                            hasta
-                    );
-
-            byte[] contenido =
-                    adminReportePdfService.generar(
-                            reporte
-                    );
-
-            log.info("Reporte PDF generado del {} al {} ({} bytes)",
-                    reporte.getDesde(), reporte.getHasta(), contenido.length);
-
-            String nombreArchivo =
-                    construirNombreArchivo(
-                            reporte,
-                            "pdf"
-                    );
-
-            ContentDisposition disposicion =
-                    ContentDisposition
-                            .attachment()
-                            .filename(
-                                    nombreArchivo,
-                                    StandardCharsets.UTF_8
-                            )
-                            .build();
-
-            return ResponseEntity
-                    .ok()
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            disposicion.toString()
-                    )
-                    .header(
-                            HttpHeaders.CACHE_CONTROL,
-                            "no-store, no-cache, must-revalidate"
-                    )
-                    .contentLength(
-                            contenido.length
-                    )
-                    .body(contenido);
-
-        } catch (IllegalStateException e) {
-            log.warn("No se pudo exportar el reporte PDF del periodo {} a {}", desde, hasta, e);
-            return ResponseEntity
-                    .badRequest()
-                    .build();
-
-        } catch (Exception e) {
-            log.error("Error inesperado al exportar el reporte PDF del periodo {} a {}", desde, hasta, e);
-            return ResponseEntity
-                    .internalServerError()
-                    .build();
-        }
+            @RequestParam(value = "desde", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam(value = "hasta", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+        return descargar("pdf", desde, hasta);
     }
 
     @GetMapping("/excel")
     public ResponseEntity<byte[]> descargarExcel(
-            @RequestParam(
-                    value = "desde",
-                    required = false
-            )
-            @DateTimeFormat(
-                    iso = DateTimeFormat.ISO.DATE
-            )
-            LocalDate desde,
+            @RequestParam(value = "desde", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam(value = "hasta", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+        return descargar("excel", desde, hasta);
+    }
 
-            @RequestParam(
-                    value = "hasta",
-                    required = false
-            )
-            @DateTimeFormat(
-                    iso = DateTimeFormat.ISO.DATE
-            )
-            LocalDate hasta
-    ) {
+    @GetMapping("/exportar")
+    public ResponseEntity<byte[]> exportar(
+            @RequestParam("formato") String formato,
+            @RequestParam(value = "desde", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam(value = "hasta", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+        return descargar(formato, desde, hasta);
+    }
+
+    private ResponseEntity<byte[]> descargar(String formato, LocalDate desde, LocalDate hasta) {
+        AdminReporteDTO reporte;
         try {
-            AdminReporteDTO reporte =
-                    adminReporteService.generar(
-                            desde,
-                            hasta
-                    );
-
-            byte[] contenido =
-                    adminReporteExcelService.generar(
-                            reporte
-                    );
-
-            log.info("Reporte Excel generado del {} al {} ({} bytes)",
-                    reporte.getDesde(), reporte.getHasta(), contenido.length);
-
-            String nombreArchivo =
-                    construirNombreArchivo(
-                            reporte,
-                            "xlsx"
-                    );
-
-            ContentDisposition disposicion =
-                    ContentDisposition
-                            .attachment()
-                            .filename(
-                                    nombreArchivo,
-                                    StandardCharsets.UTF_8
-                            )
-                            .build();
-
-            MediaType tipoExcel =
-                    MediaType.parseMediaType(
-                            "application/vnd.openxmlformats-"
-                                    + "officedocument.spreadsheetml.sheet"
-                    );
-
-            return ResponseEntity
-                    .ok()
-                    .contentType(tipoExcel)
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            disposicion.toString()
-                    )
-                    .header(
-                            HttpHeaders.CACHE_CONTROL,
-                            "no-store, no-cache, must-revalidate"
-                    )
-                    .contentLength(
-                            contenido.length
-                    )
-                    .body(contenido);
-
+            reporte = adminReporteService.generar(desde, hasta);
         } catch (IllegalStateException e) {
-            log.warn("No se pudo exportar el reporte Excel del periodo {} a {}", desde, hasta, e);
-            return ResponseEntity
-                    .badRequest()
-                    .build();
-
+            log.warn("Periodo de reporte no valido: {} a {}", desde, hasta);
+            return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            log.error("Error inesperado al exportar el reporte Excel del periodo {} a {}", desde, hasta, e);
-            return ResponseEntity
-                    .internalServerError()
-                    .build();
+            log.error("Error al consultar el reporte", e);
+            return ResponseEntity.internalServerError().build();
+        }
+
+        try {
+            ArchivoReporteDTO archivo = exportacionReporteService.exportar(reporte, formato);
+            ContentDisposition disposicion = ContentDisposition.attachment()
+                    .filename(archivo.nombreArchivo(), StandardCharsets.UTF_8).build();
+            log.info("Reporte generado del {} al {} ({} bytes)",
+                    reporte.getDesde(), reporte.getHasta(), archivo.contenido().length);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(archivo.tipoContenido()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, disposicion.toString())
+                    .header(HttpHeaders.CACHE_CONTROL, "no-store, no-cache, must-revalidate")
+                    .contentLength(archivo.contenido().length)
+                    .body(archivo.contenido());
+        } catch (FormatoReporteNoSoportadoException e) {
+            log.warn("Se solicito un formato de reporte no soportado");
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            log.error("Error al generar el documento del reporte", e);
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -364,15 +243,4 @@ public class AdminReporteController {
         );
     }
 
-    private String construirNombreArchivo(
-            AdminReporteDTO reporte,
-            String extension
-    ) {
-        return "Reporte-Rinconcito-"
-                + reporte.getDesde()
-                + "-al-"
-                + reporte.getHasta()
-                + "."
-                + extension;
-    }
 }

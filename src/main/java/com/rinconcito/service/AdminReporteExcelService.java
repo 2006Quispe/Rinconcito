@@ -1,6 +1,7 @@
 package com.rinconcito.service;
 
 import com.rinconcito.dto.AdminReporteDTO;
+import com.rinconcito.service.reporte.ExportadorReporte;
 import com.rinconcito.dto.ReporteDiaDTO;
 import com.rinconcito.dto.ReporteMetodoPagoDTO;
 import com.rinconcito.dto.ReporteProductoDTO;
@@ -26,7 +27,16 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Service
-public class AdminReporteExcelService {
+public class AdminReporteExcelService implements ExportadorReporte {
+
+    @Override
+    public String formato() { return "excel"; }
+
+    @Override
+    public String extension() { return "xlsx"; }
+
+    @Override
+    public String tipoContenido() { return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"; }
 
     private static final DateTimeFormatter FORMATO_FECHA =
             DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -36,6 +46,7 @@ public class AdminReporteExcelService {
                     "dd/MM/yyyy HH:mm"
             );
 
+    @Override
     public byte[] generar(
             AdminReporteDTO reporte
     ) {

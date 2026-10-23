@@ -1,6 +1,7 @@
 package com.rinconcito.service;
 
 import com.rinconcito.dto.AdminReporteDTO;
+import com.rinconcito.service.reporte.ExportadorReporte;
 import com.rinconcito.dto.ReporteMetodoPagoDTO;
 import com.rinconcito.dto.ReporteProductoDTO;
 import com.rinconcito.entity.ConfiguracionRestaurante;
@@ -22,7 +23,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
-public class AdminReportePdfService {
+public class AdminReportePdfService implements ExportadorReporte {
+
+    @Override
+    public String formato() { return "pdf"; }
+
+    @Override
+    public String extension() { return "pdf"; }
+
+    @Override
+    public String tipoContenido() { return "application/pdf"; }
 
     private static final float MARGEN = 30;
 
@@ -70,6 +80,7 @@ public class AdminReportePdfService {
                 configuracionRestauranteService;
     }
 
+    @Override
     public byte[] generar(
             AdminReporteDTO reporte
     ) {
