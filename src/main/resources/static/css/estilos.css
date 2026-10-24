@@ -38,7 +38,7 @@ body {
     z-index: 1100;
     min-height: 58px;
     padding: 0;
-    background-color: var(--vino);
+    background-color: var(--crema-claro);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 4px 14px rgba(46, 33, 28, 0.16);
 }
@@ -53,7 +53,7 @@ body {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-    color: var(--crema) !important;
+    color: var(--cafe) !important;
     line-height: 1;
     text-decoration: none;
 }
@@ -70,7 +70,7 @@ body {
 
 .marca-publica small {
     margin-top: 0.27rem;
-    color: var(--dorado);
+    color: var(--vino);
     font-size: 0.43rem;
     font-weight: 800;
     letter-spacing: 0.3em;
@@ -80,7 +80,7 @@ body {
     position: relative;
     margin: 0 0.04rem;
     padding: 0.5rem 0.55rem !important;
-    color: rgba(255, 255, 255, 0.82);
+    color: var(--cafe);
     font-size: 0.68rem;
     font-weight: 700;
     transition:
@@ -103,7 +103,7 @@ body {
 
 .header-publico .nav-link:hover,
 .header-publico .nav-link:focus {
-    color: var(--blanco);
+    color: var(--vino);
 }
 
 .header-publico .nav-link:hover::after,
@@ -113,13 +113,14 @@ body {
 
 .header-publico .navbar-toggler {
     padding: 0.25rem 0.4rem;
-    border-color: rgba(255, 255, 255, 0.35);
+    border-color: var(--cafe);
     box-shadow: none;
 }
 
 .header-publico .navbar-toggler-icon {
     width: 1.15rem;
     height: 1.15rem;
+    filter: invert(1);
 }
 
 .btn-ingresar,
@@ -139,9 +140,9 @@ body {
 
 .btn-ingresar,
 .btn-cuenta {
-    color: var(--crema);
+    color: var(--vino);
     background-color: transparent;
-    border: 1px solid rgba(233, 216, 192, 0.78);
+    border: 1px solid var(--vino);
 }
 
 .btn-ingresar:hover,
@@ -175,23 +176,21 @@ body {
     display: flex;
     align-items: center;
     overflow: hidden;
-    background:
-        radial-gradient(
-            circle at 79% 25%,
-            rgba(198, 154, 53, 0.18),
-            transparent 27%
-        ),
-        radial-gradient(
-            circle at 5% 90%,
-            rgba(46, 33, 28, 0.55),
-            transparent 32%
-        ),
+    background: 
         linear-gradient(
-            115deg,
-            #42120f 0%,
-            var(--vino) 43%,
-            var(--terracota) 100%
-        );
+            rgba(66, 18, 15, 0.25), 
+            rgba(66, 18, 15, 0.25)
+        ), 
+        url('../img/fondo-inicio.png') center / cover no-repeat !important;
+}
+
+.inicio-hero::before {
+    display: none !important;
+}
+
+.hero-luz-uno,
+.hero-luz-dos {
+    display: none !important;
 }
 
 .inicio-hero::before {
@@ -798,8 +797,10 @@ body {
     .header-publico .navbar-collapse {
         margin-top: 0.5rem;
         padding: 0.6rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.12);
-        background-color: var(--vino);
+        border-top: 1px solid rgba(0, 0, 0, 0.1); /* Borde sutil oscuro */
+        background-color: var(--crema-claro); /* <-- Fondo claro igual a tu barra */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra para que resalte */
+        border-radius: 8px;
     }
 
     .header-publico .navbar-nav {
