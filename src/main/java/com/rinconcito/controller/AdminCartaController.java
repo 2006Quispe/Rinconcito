@@ -26,6 +26,8 @@ public class AdminCartaController {
     public String listarProductos(
             @RequestParam(value = "modal", required = false)
             String modal,
+            @RequestParam(value = "editar", required = false)
+            Integer idProductoEditar,
             Model model
     ) {
         model.addAttribute("titulo", "Admin · Carta");
@@ -41,6 +43,31 @@ public class AdminCartaController {
                 "abrirModalNuevo",
                 "nuevo".equalsIgnoreCase(modal)
         );
+        model.addAttribute(
+                "abrirModalEditar",
+                false
+        );
+
+        if (idProductoEditar != null) {
+            productoService.buscarPorId(idProductoEditar)
+                    .ifPresentOrElse(
+                            producto -> {
+                                model.addAttribute(
+                                        "productoEditar",
+                                        producto
+                                );
+                                model.addAttribute(
+                                        "abrirModalEditar",
+                                        true
+                                );
+                            },
+                            () -> model.addAttribute(
+                                    "error",
+                                    "Producto no encontrado."
+                            )
+                    );
+        }
+
         return "paginas/admin/carta";
     }
 
@@ -54,19 +81,19 @@ public class AdminCartaController {
     }
 
     @GetMapping("/carta/{id}/editar")
-    public String editarProducto(@PathVariable("id") Integer id, Model model, RedirectAttributes ra) {
-        return productoService.buscarPorId(id)
-                .map(producto -> {
-                    model.addAttribute("titulo", "Editar producto");
-                    model.addAttribute("producto", producto);
-                    model.addAttribute("categorias", categoriaService.listarTodasAdmin());
-                    model.addAttribute("estados", EstadoProducto.values());
-                    return "paginas/admin/producto-form";
-                })
-                .orElseGet(() -> {
-                    ra.addFlashAttribute("error", "Producto no encontrado.");
-                    return "redirect:/admin/carta";
-                });
+    public String editarProducto(
+            @PathVariable("id") Integer id,
+            RedirectAttributes ra
+    ) {
+        if (productoService.buscarPorId(id).isEmpty()) {
+            ra.addFlashAttribute(
+                    "error",
+                    "Producto no encontrado."
+            );
+            return "redirect:/admin/carta";
+        }
+
+        return "redirect:/admin/carta?editar=" + id;
     }
 
     @PostMapping("/carta/guardar")
@@ -131,9 +158,8 @@ public class AdminCartaController {
             );
 
             if (idProducto != null) {
-                return "redirect:/admin/carta/"
-                        + idProducto
-                        + "/editar";
+                return "redirect:/admin/carta?editar="
+                        + idProducto;
             }
             return "redirect:/admin/carta?modal=nuevo";
         }
