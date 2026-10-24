@@ -42,40 +42,53 @@ public class AdminUsuarioController {
             @RequestParam(required = false)
             String tipoRegistro,
 
+            @RequestParam(required = false)
+            String modal,
+
+            @RequestParam(required = false)
+            Integer editar,
+
             Model model
     ) {
-        model.addAttribute(
-                "titulo",
-                "Personal y usuarios"
-        );
-
-        model.addAttribute(
-                "usuarios",
-                adminUsuarioService.buscar(
-                        buscar,
-                        idRol,
-                        estado,
-                        tipoRegistro
-                )
-        );
-
-        model.addAttribute(
-                "roles",
-                adminUsuarioService.listarRoles()
-        );
-
-        model.addAttribute("buscar", buscar);
-        model.addAttribute(
-                "idRolSeleccionado",
-                idRol
-        );
-        model.addAttribute(
-                "estadoSeleccionado",
-                estado
-        );
-        model.addAttribute(
-                "tipoRegistroSeleccionado",
+        prepararListado(
+                model,
+                buscar,
+                idRol,
+                estado,
                 tipoRegistro
+        );
+
+        if (!model.containsAttribute("usuarioForm")) {
+            if (editar != null) {
+                try {
+                    model.addAttribute(
+                            "usuarioForm",
+                            adminUsuarioService
+                                    .obtenerFormulario(editar)
+                    );
+                } catch (IllegalStateException e) {
+                    model.addAttribute(
+                            "error",
+                            e.getMessage()
+                    );
+                    model.addAttribute(
+                            "usuarioForm",
+                            new AdminUsuarioFormDTO()
+                    );
+                    editar = null;
+                }
+            } else {
+                model.addAttribute(
+                        "usuarioForm",
+                        new AdminUsuarioFormDTO()
+                );
+            }
+        }
+
+        model.addAttribute(
+                "abrirModalUsuario",
+                "usuario".equalsIgnoreCase(modal)
+                        || editar != null
         );
 
         return "paginas/admin/usuarios";
@@ -85,15 +98,8 @@ public class AdminUsuarioController {
      * Muestra el formulario para registrar un usuario.
      */
     @GetMapping("/nuevo")
-    public String nuevo(Model model) {
-
-        prepararFormulario(
-                model,
-                new AdminUsuarioFormDTO(),
-                "Registrar usuario"
-        );
-
-        return "paginas/admin/usuario-form";
+    public String nuevo() {
+        return "redirect:/admin/usuarios?modal=usuario";
     }
 
     /*
@@ -102,25 +108,17 @@ public class AdminUsuarioController {
     @GetMapping("/{idUsuario}/editar")
     public String editar(
             @PathVariable Integer idUsuario,
-            Model model,
             RedirectAttributes redirectAttributes
     ) {
         try {
-            AdminUsuarioFormDTO formulario =
-                    adminUsuarioService.obtenerFormulario(
-                            idUsuario
-                    );
-
-            prepararFormulario(
-                    model,
-                    formulario,
-                    "Editar usuario"
+            adminUsuarioService.obtenerFormulario(
+                    idUsuario
             );
 
-            return "paginas/admin/usuario-form";
+            return "redirect:/admin/usuarios?editar="
+                    + idUsuario;
 
         } catch (IllegalStateException e) {
-
             redirectAttributes.addFlashAttribute(
                     "error",
                     e.getMessage()
@@ -172,15 +170,25 @@ public class AdminUsuarioController {
                     e.getMessage()
             );
 
-            prepararFormulario(
-                    model,
-                    formulario,
-                    formulario.esNuevo()
-                            ? "Registrar usuario"
-                            : "Editar usuario"
+            model.addAttribute(
+                    "usuarioForm",
+                    formulario
             );
 
-            return "paginas/admin/usuario-form";
+            prepararListado(
+                    model,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+
+            model.addAttribute(
+                    "abrirModalUsuario",
+                    true
+            );
+
+            return "paginas/admin/usuarios";
         }
     }
 
@@ -256,24 +264,45 @@ public class AdminUsuarioController {
         return "redirect:/admin/usuarios";
     }
 
-    private void prepararFormulario(
+    private void prepararListado(
             Model model,
-            AdminUsuarioFormDTO formulario,
-            String titulo
+            String buscar,
+            Integer idRol,
+            String estado,
+            String tipoRegistro
     ) {
         model.addAttribute(
                 "titulo",
-                titulo
+                "Personal y usuarios"
         );
 
         model.addAttribute(
-                "usuarioForm",
-                formulario
+                "usuarios",
+                adminUsuarioService.buscar(
+                        buscar,
+                        idRol,
+                        estado,
+                        tipoRegistro
+                )
         );
 
         model.addAttribute(
                 "roles",
                 adminUsuarioService.listarRoles()
+        );
+
+        model.addAttribute("buscar", buscar);
+        model.addAttribute(
+                "idRolSeleccionado",
+                idRol
+        );
+        model.addAttribute(
+                "estadoSeleccionado",
+                estado
+        );
+        model.addAttribute(
+                "tipoRegistroSeleccionado",
+                tipoRegistro
         );
     }
 
