@@ -43,9 +43,9 @@
                 </a>
 
                 <button type="button"
-                        class="btn-carta-principal"
+                        class="btn-carta-principal js-nuevo-producto"
                         data-bs-toggle="modal"
-                        data-bs-target="#modalNuevoProducto">
+                        data-bs-target="#modalProducto">
 
                     <i class="bi bi-plus-lg"></i>
                     Nuevo producto
@@ -103,9 +103,9 @@
                 </p>
 
                 <button type="button"
-                        class="btn-carta-principal"
+                        class="btn-carta-principal js-nuevo-producto"
                         data-bs-toggle="modal"
-                        data-bs-target="#modalNuevoProducto">
+                        data-bs-target="#modalProducto">
 
                     <i class="bi bi-plus-lg"></i>
                     Registrar producto
@@ -253,15 +253,26 @@
 
                                 <div class="producto-acciones">
 
-                                    <a th:href="@{/admin/carta/{id}/editar(
-                                            id=${producto.idProducto}
-                                       )}"
-                                       class="btn-producto-accion btn-editar"
-                                       title="Editar producto">
+                                    <button type="button"
+                                            class="btn-producto-accion btn-editar js-editar-producto"
+                                            title="Editar producto"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalProducto"
+                                            th:attr="
+                                                data-id=${producto.idProducto},
+                                                data-nombre=${producto.nombre},
+                                                data-descripcion=${producto.descripcion},
+                                                data-categoria=${producto.categoria != null
+                                                    ? producto.categoria.idCategoria
+                                                    : ''},
+                                                data-precio=${producto.precio},
+                                                data-imagen=${producto.imagen},
+                                                data-disponible=${producto.disponible},
+                                                data-estado=${producto.estado.name()}">
 
                                         <i class="bi bi-pencil"></i>
                                         Editar
-                                    </a>
+                                    </button>
 
                                     <form th:action="@{/admin/carta/{id}/estado(
                                             id=${producto.idProducto}
@@ -327,70 +338,122 @@
 </div>
 
 
-<!-- Modal para registrar un producto -->
-<div class="modal fade modal-producto"
-     id="modalNuevoProducto"
-     tabindex="-1"
-     aria-labelledby="tituloModalNuevoProducto"
-     aria-hidden="true"
-     th:attr="data-abrir=${abrirModalNuevo}">
+<!-- Datos usados para reabrir una edición después de una validación -->
+<div id="productoEdicionInicial"
+     class="d-none"
+     th:if="${productoEditar != null}"
+     th:attr="
+        data-id=${productoEditar.idProducto},
+        data-nombre=${productoEditar.nombre},
+        data-descripcion=${productoEditar.descripcion},
+        data-categoria=${productoEditar.categoria != null
+            ? productoEditar.categoria.idCategoria
+            : ''},
+        data-precio=${productoEditar.precio},
+        data-imagen=${productoEditar.imagen},
+        data-disponible=${productoEditar.disponible},
+        data-estado=${productoEditar.estado.name()}">
+</div>
 
-    <div class="modal-dialog modal-dialog-centered">
+<!-- Modal para registrar y editar productos -->
+<div class="modal fade modal-producto"
+     id="modalProducto"
+     tabindex="-1"
+     aria-labelledby="tituloModalProducto"
+     aria-hidden="true"
+     th:attr="
+        data-abrir-nuevo=${abrirModalNuevo},
+        data-abrir-edicion=${abrirModalEditar}">
+
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
 
             <div class="modal-header">
                 <div>
                     <p class="modal-producto-etiqueta">CARTA DEL RESTAURANTE</p>
-                    <h2 class="modal-title" id="tituloModalNuevoProducto">
+                    <h2 class="modal-title" id="tituloModalProducto">
                         Agregar nuevo producto
                     </h2>
                 </div>
-                <button type="button" class="btn-close"
-                        data-bs-dismiss="modal" aria-label="Cerrar"></button>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                </button>
             </div>
 
             <form th:action="@{/admin/carta/guardar}"
                   method="post"
                   enctype="multipart/form-data"
-                  id="formNuevoProducto">
+                  id="formProducto">
 
                 <input type="hidden"
                        th:name="${_csrf.parameterName}"
                        th:value="${_csrf.token}">
-                <input type="hidden" name="disponible" value="true">
-                <input type="hidden" name="estado" value="ACTIVO">
-                <input type="hidden" name="eliminarImagen" value="false">
+
+                <input type="hidden" id="modalIdProducto"
+                       name="idProducto">
+
+                <input type="hidden" id="modalDisponible"
+                       name="disponible" value="true">
+
+                <input type="hidden" id="modalEstado"
+                       name="estado" value="ACTIVO">
+
+                <input type="hidden" id="modalEliminarImagen"
+                       name="eliminarImagen" value="false">
 
                 <div class="modal-body">
 
                     <div class="mb-3">
-                        <label for="nuevoNombre" class="form-label">
+                        <label for="modalNombre" class="form-label">
                             Nombre del producto <span>*</span>
                         </label>
-                        <input type="text" id="nuevoNombre" name="nombre"
-                               class="form-control" maxlength="100"
+
+                        <input type="text"
+                               id="modalNombre"
+                               name="nombre"
+                               class="form-control"
+                               maxlength="100"
                                placeholder="Ej. Pachamanca especial"
-                               autocomplete="off" required>
+                               autocomplete="off"
+                               required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="nuevaDescripcion" class="form-label">
+                        <label for="modalDescripcion" class="form-label">
                             Descripción
                         </label>
-                        <textarea id="nuevaDescripcion" name="descripcion"
-                                  class="form-control" maxlength="300" rows="3"
+
+                        <textarea id="modalDescripcion"
+                                  name="descripcion"
+                                  class="form-control"
+                                  maxlength="300"
+                                  rows="3"
                                   placeholder="Detalles del plato, bebida o guarnición..."></textarea>
-                        <small class="modal-ayuda">Máximo 300 caracteres.</small>
+
+                        <small class="modal-ayuda">
+                            Máximo 300 caracteres.
+                        </small>
                     </div>
 
                     <div class="modal-producto-grid">
+
                         <div>
-                            <label for="nuevaCategoria" class="form-label">
+                            <label for="modalCategoria" class="form-label">
                                 Categoría <span>*</span>
                             </label>
-                            <select id="nuevaCategoria" name="idCategoria"
-                                    class="form-select" required>
-                                <option value="">Selecciona una categoría</option>
+
+                            <select id="modalCategoria"
+                                    name="idCategoria"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">
+                                    Selecciona una categoría
+                                </option>
+
                                 <option th:each="categoria : ${categorias}"
                                         th:value="${categoria.idCategoria}"
                                         th:text="${categoria.nombre}">
@@ -400,43 +463,74 @@
                         </div>
 
                         <div>
-                            <label for="nuevoPrecio" class="form-label">
+                            <label for="modalPrecio" class="form-label">
                                 Precio (S/) <span>*</span>
                             </label>
-                            <input type="number" id="nuevoPrecio" name="precio"
-                                   class="form-control" min="1" step="1"
-                                   placeholder="0" required>
+
+                            <input type="number"
+                                   id="modalPrecio"
+                                   name="precio"
+                                   class="form-control"
+                                   min="1"
+                                   step="1"
+                                   placeholder="0"
+                                   required>
                         </div>
                     </div>
 
                     <div class="modal-subida-grupo">
-                        <label for="nuevaImagen" class="form-label">
+
+                        <label for="modalImagen" class="form-label">
                             Foto del producto
                         </label>
 
                         <label class="modal-subida"
                                id="zonaSubidaProducto"
-                               for="nuevaImagen">
-                            <input type="file" id="nuevaImagen"
+                               for="modalImagen">
+
+                            <input type="file"
+                                   id="modalImagen"
                                    name="archivoImagen"
                                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+
                             <span class="modal-subida-icono">
                                 <i class="bi bi-cloud-arrow-up"></i>
                             </span>
-                            <strong>Arrastra una imagen o selecciónala</strong>
-                            <small>JPG, PNG o WEBP · máximo 5 MB</small>
+
+                            <strong>
+                                Arrastra una imagen o selecciónala
+                            </strong>
+
+                            <small>
+                                JPG, PNG o WEBP · máximo 5 MB
+                            </small>
+
                             <img id="vistaPreviaProducto"
                                  alt="Vista previa del producto">
                         </label>
+
+                        <button type="button"
+                                id="btnQuitarImagen"
+                                class="btn-quitar-imagen">
+                            <i class="bi bi-trash3"></i>
+                            Quitar imagen actual
+                        </button>
                     </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn-modal-cancelar"
-                            data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn-modal-guardar">
+                    <button type="button"
+                            class="btn-modal-cancelar"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            class="btn-modal-guardar">
                         <i class="bi bi-check2-circle"></i>
-                        Guardar producto
+                        <span id="textoGuardarProducto">
+                            Guardar producto
+                        </span>
                     </button>
                 </div>
             </form>
@@ -449,53 +543,158 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const modalElemento = document.getElementById("modalNuevoProducto");
-        const archivo = document.getElementById("nuevaImagen");
+        const modalElemento = document.getElementById("modalProducto");
+        const modal = bootstrap.Modal.getOrCreateInstance(modalElemento);
+        const formulario = document.getElementById("formProducto");
+        const titulo = document.getElementById("tituloModalProducto");
+        const textoGuardar = document.getElementById("textoGuardarProducto");
+        const idProducto = document.getElementById("modalIdProducto");
+        const nombre = document.getElementById("modalNombre");
+        const descripcion = document.getElementById("modalDescripcion");
+        const categoria = document.getElementById("modalCategoria");
+        const precio = document.getElementById("modalPrecio");
+        const disponible = document.getElementById("modalDisponible");
+        const estado = document.getElementById("modalEstado");
+        const eliminarImagen = document.getElementById("modalEliminarImagen");
+        const archivo = document.getElementById("modalImagen");
         const zona = document.getElementById("zonaSubidaProducto");
         const vista = document.getElementById("vistaPreviaProducto");
+        const btnQuitar = document.getElementById("btnQuitarImagen");
 
-        if (modalElemento && modalElemento.dataset.abrir === "true") {
-            bootstrap.Modal.getOrCreateInstance(modalElemento).show();
+        function limpiarVistaPrevia() {
+            vista.removeAttribute("src");
+            vista.classList.remove("visible");
+            zona.classList.remove("con-imagen");
+            btnQuitar.classList.remove("visible");
         }
+
+        function mostrarRutaImagen(ruta) {
+            if (!ruta) {
+                limpiarVistaPrevia();
+                return;
+            }
+
+            vista.src = ruta;
+            vista.classList.add("visible");
+            zona.classList.add("con-imagen");
+            btnQuitar.classList.add("visible");
+        }
+
+        function prepararNuevo() {
+            formulario.reset();
+            idProducto.value = "";
+            disponible.value = "true";
+            estado.value = "ACTIVO";
+            eliminarImagen.value = "false";
+            archivo.value = "";
+            titulo.textContent = "Agregar nuevo producto";
+            textoGuardar.textContent = "Guardar producto";
+            limpiarVistaPrevia();
+        }
+
+        function prepararEdicion(datos) {
+            formulario.reset();
+            idProducto.value = datos.id || "";
+            nombre.value = datos.nombre || "";
+            descripcion.value = datos.descripcion || "";
+            categoria.value = datos.categoria || "";
+            precio.value = datos.precio || "";
+            disponible.value = datos.disponible || "false";
+            estado.value = datos.estado || "ACTIVO";
+            eliminarImagen.value = "false";
+            archivo.value = "";
+            titulo.textContent = "Editar producto";
+            textoGuardar.textContent = "Guardar cambios";
+            mostrarRutaImagen(datos.imagen || "");
+        }
+
+        document.querySelectorAll(".js-nuevo-producto")
+            .forEach(function (boton) {
+                boton.addEventListener("click", prepararNuevo);
+            });
+
+        document.querySelectorAll(".js-editar-producto")
+            .forEach(function (boton) {
+                boton.addEventListener("click", function () {
+                    prepararEdicion(boton.dataset);
+                });
+            });
 
         function mostrarImagen(file) {
             if (!file || !file.type.startsWith("image/")) {
                 return;
             }
+
+            if (file.size > 5 * 1024 * 1024) {
+                alert("La imagen no puede superar los 5 MB.");
+                archivo.value = "";
+                return;
+            }
+
             const lector = new FileReader();
+
             lector.addEventListener("load", function () {
                 vista.src = lector.result;
                 vista.classList.add("visible");
                 zona.classList.add("con-imagen");
+                btnQuitar.classList.add("visible");
+                eliminarImagen.value = "false";
             });
+
             lector.readAsDataURL(file);
         }
 
-        archivo?.addEventListener("change", function () {
+        archivo.addEventListener("change", function () {
             mostrarImagen(archivo.files[0]);
         });
 
-        if (zona) {
-            ["dragenter", "dragover"].forEach(function (evento) {
-                zona.addEventListener(evento, function (e) {
-                    e.preventDefault();
-                    zona.classList.add("arrastrando");
-                });
+        ["dragenter", "dragover"].forEach(function (evento) {
+            zona.addEventListener(evento, function (e) {
+                e.preventDefault();
+                zona.classList.add("arrastrando");
             });
-            ["dragleave", "drop"].forEach(function (evento) {
-                zona.addEventListener(evento, function (e) {
-                    e.preventDefault();
-                    zona.classList.remove("arrastrando");
-                });
+        });
+
+        ["dragleave", "drop"].forEach(function (evento) {
+            zona.addEventListener(evento, function (e) {
+                e.preventDefault();
+                zona.classList.remove("arrastrando");
             });
-            zona.addEventListener("drop", function (e) {
-                const file = e.dataTransfer.files[0];
-                if (!file) return;
-                const transferencia = new DataTransfer();
-                transferencia.items.add(file);
-                archivo.files = transferencia.files;
-                mostrarImagen(file);
-            });
+        });
+
+        zona.addEventListener("drop", function (e) {
+            const file = e.dataTransfer.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            const transferencia = new DataTransfer();
+            transferencia.items.add(file);
+            archivo.files = transferencia.files;
+            mostrarImagen(file);
+        });
+
+        btnQuitar.addEventListener("click", function () {
+            archivo.value = "";
+            eliminarImagen.value = "true";
+            limpiarVistaPrevia();
+        });
+
+        const edicionInicial =
+            document.getElementById("productoEdicionInicial");
+
+        if (
+            modalElemento.dataset.abrirEdicion === "true"
+            && edicionInicial
+        ) {
+            prepararEdicion(edicionInicial.dataset);
+            modal.show();
+        } else if (
+            modalElemento.dataset.abrirNuevo === "true"
+        ) {
+            prepararNuevo();
+            modal.show();
         }
     });
 </script>
