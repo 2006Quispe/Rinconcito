@@ -54,23 +54,26 @@
 
             <div class="encabezado-acciones">
 
-                <a th:href="@{/admin/pisos/nuevo}"
-                   class="btn-secundario">
+                <button type="button"
+                        class="btn-secundario js-nuevo-piso"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalPiso">
 
                     <i class="bi bi-building-add"></i>
                     Nuevo piso
-                </a>
+                </button>
 
-                <a th:if="${pisos != null
+                <button th:if="${pisos != null
                     and !pisos.isEmpty()}"
-                   th:href="@{/admin/mesas/nueva(
-                        piso=${idPisoSeleccionado}
-                   )}"
-                   class="btn-principal">
+                        type="button"
+                        class="btn-principal js-nueva-mesa"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalMesa"
+                        th:attr="data-piso=${idPisoSeleccionado}">
 
                     <i class="bi bi-plus-lg"></i>
                     Nueva mesa
-                </a>
+                </button>
 
             </div>
 
@@ -126,12 +129,14 @@
                     a agregar mesas.
                 </p>
 
-                <a th:href="@{/admin/pisos/nuevo}"
-                   class="btn-principal">
+                <button type="button"
+                        class="btn-principal js-nuevo-piso"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalPiso">
 
                     <i class="bi bi-plus-lg"></i>
                     Registrar piso
-                </a>
+                </button>
 
             </div>
 
@@ -235,14 +240,19 @@
                             Ver mesas
                         </a>
 
-                        <a th:href="@{/admin/pisos/{id}/editar(
-                                id=${piso.idPiso}
-                           )}"
-                           class="btn-icono"
-                           title="Editar piso">
+                        <button type="button"
+                                class="btn-icono js-editar-piso"
+                                title="Editar piso"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalPiso"
+                                th:attr="
+                                    data-id=${piso.idPiso},
+                                    data-nombre=${piso.nombre},
+                                    data-descripcion=${piso.descripcion},
+                                    data-estado=${piso.estado.name()}">
 
                             <i class="bi bi-pencil"></i>
-                        </a>
+                        </button>
 
                         <form th:action="@{/admin/pisos/{id}/estado(
                                 id=${piso.idPiso}
@@ -307,16 +317,17 @@
                     </p>
                 </div>
 
-                <a th:if="${pisos != null
+                <button th:if="${pisos != null
                     and !pisos.isEmpty()}"
-                   th:href="@{/admin/mesas/nueva(
-                        piso=${idPisoSeleccionado}
-                   )}"
-                   class="btn-principal btn-nueva-mesa">
+                        type="button"
+                        class="btn-principal btn-nueva-mesa js-nueva-mesa"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalMesa"
+                        th:attr="data-piso=${idPisoSeleccionado}">
 
                     <i class="bi bi-plus-lg"></i>
                     Agregar mesa
-                </a>
+                </button>
 
             </div>
 
@@ -448,14 +459,20 @@
                                         or mesa.estado.name()
                                         == 'INACTIVA'}">
 
-                                    <a th:href="@{/admin/mesas/{id}/editar(
-                                            id=${mesa.idMesa}
-                                       )}"
-                                       class="btn-tabla btn-editar">
+                                    <button type="button"
+                                            class="btn-tabla btn-editar js-editar-mesa"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalMesa"
+                                            th:attr="
+                                                data-id=${mesa.idMesa},
+                                                data-piso=${mesa.piso.idPiso},
+                                                data-numero=${mesa.numero},
+                                                data-capacidad=${mesa.capacidad},
+                                                data-estado=${mesa.estado.name()}">
 
                                         <i class="bi bi-pencil"></i>
                                         Editar
-                                    </a>
+                                    </button>
 
                                     <form th:action="@{/admin/mesas/{id}/estado(
                                             id=${mesa.idMesa}
@@ -528,7 +545,407 @@
 
 </div>
 
+<!-- Modal de piso -->
+<div class="modal fade modal-pm"
+     id="modalPiso"
+     tabindex="-1"
+     aria-labelledby="tituloModalPiso"
+     aria-hidden="true"
+     th:attr="data-abrir=${abrirModalPiso}">
+
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <div>
+                    <p class="modal-pm-etiqueta">DISTRIBUCIÓN DEL RESTAURANTE</p>
+                    <h2 class="modal-title" id="tituloModalPiso">
+                        Registrar nuevo piso
+                    </h2>
+                    <p>Configura el nombre, descripción y estado.</p>
+                </div>
+            </div>
+
+            <form th:action="@{/admin/pisos/guardar}"
+                  th:object="${pisoForm}"
+                  method="post"
+                  id="formModalPiso">
+
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
+                <input type="hidden"
+                       id="modalPisoId"
+                       th:field="*{idPiso}">
+
+                <div class="modal-body">
+
+                    <div class="modal-pm-grid">
+                        <div>
+                            <label for="modalPisoNombre" class="form-label">
+                                Nombre del piso <span>*</span>
+                            </label>
+
+                            <input type="text"
+                                   id="modalPisoNombre"
+                                   th:field="*{nombre}"
+                                   class="form-control"
+                                   minlength="2"
+                                   maxlength="20"
+                                   pattern="[\p{L}0-9 .'-]{2,20}"
+                                   placeholder="Ej. Primer piso"
+                                   required>
+                        </div>
+
+                        <div>
+                            <label for="modalPisoEstado" class="form-label">
+                                Estado <span>*</span>
+                            </label>
+
+                            <select id="modalPisoEstado"
+                                    th:field="*{estado}"
+                                    class="form-select"
+                                    required>
+                                <option value="ACTIVO">Activo</option>
+                                <option value="INACTIVO">Inactivo</option>
+                            </select>
+                        </div>
+
+                        <div class="modal-pm-completo">
+                            <label for="modalPisoDescripcion" class="form-label">
+                                Descripción
+                            </label>
+
+                            <textarea id="modalPisoDescripcion"
+                                      th:field="*{descripcion}"
+                                      class="form-control"
+                                      maxlength="200"
+                                      rows="3"
+                                      placeholder="Ubicación o características del piso"></textarea>
+
+                            <small class="modal-pm-ayuda">
+                                Máximo 200 caracteres.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="modal-pm-aviso">
+                        <i class="bi bi-info-circle"></i>
+                        Los pisos inactivos no estarán disponibles
+                        para nuevas reservas.
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn-modal-pm-cancelar"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            class="btn-modal-pm-guardar">
+                        <i class="bi bi-building-check"></i>
+                        <span id="textoGuardarPiso">
+                            Registrar piso
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de mesa -->
+<div class="modal fade modal-pm"
+     id="modalMesa"
+     tabindex="-1"
+     aria-labelledby="tituloModalMesa"
+     aria-hidden="true"
+     th:attr="data-abrir=${abrirModalMesa}">
+
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <div>
+                    <p class="modal-pm-etiqueta">DISTRIBUCIÓN DEL RESTAURANTE</p>
+                    <h2 class="modal-title" id="tituloModalMesa">
+                        Registrar nueva mesa
+                    </h2>
+                    <p>Define el piso, número, capacidad y estado.</p>
+                </div>
+            </div>
+
+            <form th:action="@{/admin/mesas/guardar}"
+                  th:object="${mesaForm}"
+                  method="post"
+                  id="formModalMesa">
+
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
+                <input type="hidden"
+                       id="modalMesaId"
+                       th:field="*{idMesa}">
+
+                <div class="modal-body">
+
+                    <div th:if="${pisosActivos == null
+                        or pisosActivos.isEmpty()}"
+                         class="alert alert-warning mb-0">
+                        No existen pisos activos. Primero debes
+                        registrar o activar un piso.
+                    </div>
+
+                    <div th:if="${pisosActivos != null
+                        and !pisosActivos.isEmpty()}"
+                         class="modal-pm-grid">
+
+                        <div class="modal-pm-completo">
+                            <label for="modalMesaPiso" class="form-label">
+                                Piso <span>*</span>
+                            </label>
+
+                            <select id="modalMesaPiso"
+                                    th:field="*{idPiso}"
+                                    class="form-select"
+                                    required>
+                                <option value="">Selecciona un piso</option>
+                                <option th:each="piso : ${pisosActivos}"
+                                        th:value="${piso.idPiso}"
+                                        th:text="${piso.nombre}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="modalMesaNumero" class="form-label">
+                                Número de mesa <span>*</span>
+                            </label>
+
+                            <input type="number"
+                                   id="modalMesaNumero"
+                                   th:field="*{numero}"
+                                   class="form-control"
+                                   min="1"
+                                   max="999"
+                                   step="1"
+                                   placeholder="Ej. 1"
+                                   required>
+                        </div>
+
+                        <div>
+                            <label for="modalMesaCapacidad" class="form-label">
+                                Capacidad <span>*</span>
+                            </label>
+
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-people"></i>
+                                </span>
+                                <input type="number"
+                                       id="modalMesaCapacidad"
+                                       th:field="*{capacidad}"
+                                       class="form-control"
+                                       min="1"
+                                       max="30"
+                                       step="1"
+                                       placeholder="Ej. 4"
+                                       required>
+                                <span class="input-group-text">personas</span>
+                            </div>
+                        </div>
+
+                        <div class="modal-pm-completo">
+                            <label for="modalMesaEstado" class="form-label">
+                                Estado administrativo <span>*</span>
+                            </label>
+
+                            <select id="modalMesaEstado"
+                                    th:field="*{estado}"
+                                    class="form-select"
+                                    required>
+                                <option value="DISPONIBLE">Disponible</option>
+                                <option value="INACTIVA">Inactiva</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div th:if="${pisosActivos != null
+                        and !pisosActivos.isEmpty()}"
+                         class="modal-pm-aviso">
+                        <i class="bi bi-info-circle"></i>
+                        Los estados ocupada y reservada son gestionados
+                        por el mozo.
+                    </div>
+                </div>
+
+                <div class="modal-footer"
+                     th:if="${pisosActivos != null
+                        and !pisosActivos.isEmpty()}">
+                    <button type="button"
+                            class="btn-modal-pm-cancelar"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            class="btn-modal-pm-guardar">
+                        <i class="bi bi-grid-3x3-gap"></i>
+                        <span id="textoGuardarMesa">
+                            Registrar mesa
+                        </span>
+                    </button>
+                </div>
+
+                <div class="modal-footer"
+                     th:if="${pisosActivos == null
+                        or pisosActivos.isEmpty()}">
+                    <button type="button"
+                            class="btn-modal-pm-cancelar"
+                            data-bs-dismiss="modal">
+                        Cerrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modalPisoElemento = document.getElementById("modalPiso");
+        const modalMesaElemento = document.getElementById("modalMesa");
+        const modalPiso = bootstrap.Modal.getOrCreateInstance(
+            modalPisoElemento
+        );
+        const modalMesa = bootstrap.Modal.getOrCreateInstance(
+            modalMesaElemento
+        );
+
+        const formPiso = document.getElementById("formModalPiso");
+        const pisoId = document.getElementById("modalPisoId");
+        const pisoNombre = document.getElementById("modalPisoNombre");
+        const pisoEstado = document.getElementById("modalPisoEstado");
+        const pisoDescripcion =
+            document.getElementById("modalPisoDescripcion");
+        const tituloPiso = document.getElementById("tituloModalPiso");
+        const textoPiso = document.getElementById("textoGuardarPiso");
+
+        const formMesa = document.getElementById("formModalMesa");
+        const mesaId = document.getElementById("modalMesaId");
+        const mesaPiso = document.getElementById("modalMesaPiso");
+        const mesaNumero = document.getElementById("modalMesaNumero");
+        const mesaCapacidad =
+            document.getElementById("modalMesaCapacidad");
+        const mesaEstado = document.getElementById("modalMesaEstado");
+        const tituloMesa = document.getElementById("tituloModalMesa");
+        const textoMesa = document.getElementById("textoGuardarMesa");
+
+        function prepararNuevoPiso() {
+            formPiso.reset();
+            pisoId.value = "";
+            pisoNombre.value = "";
+            pisoDescripcion.value = "";
+            pisoEstado.value = "ACTIVO";
+            tituloPiso.textContent = "Registrar nuevo piso";
+            textoPiso.textContent = "Registrar piso";
+        }
+
+        function prepararEdicionPiso(datos) {
+            formPiso.reset();
+            pisoId.value = datos.id || "";
+            pisoNombre.value = datos.nombre || "";
+            pisoDescripcion.value = datos.descripcion || "";
+            pisoEstado.value = datos.estado || "ACTIVO";
+            tituloPiso.textContent = "Editar piso";
+            textoPiso.textContent = "Guardar cambios";
+        }
+
+        function prepararNuevaMesa(pisoSeleccionado) {
+            if (!formMesa || !mesaPiso) {
+                return;
+            }
+
+            formMesa.reset();
+            mesaId.value = "";
+            mesaPiso.value = pisoSeleccionado || "";
+            mesaNumero.value = "";
+            mesaCapacidad.value = "";
+            mesaEstado.value = "DISPONIBLE";
+            tituloMesa.textContent = "Registrar nueva mesa";
+            textoMesa.textContent = "Registrar mesa";
+        }
+
+        function prepararEdicionMesa(datos) {
+            if (!formMesa || !mesaPiso) {
+                return;
+            }
+
+            formMesa.reset();
+            mesaId.value = datos.id || "";
+            mesaPiso.value = datos.piso || "";
+            mesaNumero.value = datos.numero || "";
+            mesaCapacidad.value = datos.capacidad || "";
+            mesaEstado.value = datos.estado || "DISPONIBLE";
+            tituloMesa.textContent = "Editar mesa";
+            textoMesa.textContent = "Guardar cambios";
+        }
+
+        document.querySelectorAll(".js-nuevo-piso")
+            .forEach(function (boton) {
+                boton.addEventListener("click", prepararNuevoPiso);
+            });
+
+        document.querySelectorAll(".js-editar-piso")
+            .forEach(function (boton) {
+                boton.addEventListener("click", function () {
+                    prepararEdicionPiso(boton.dataset);
+                });
+            });
+
+        document.querySelectorAll(".js-nueva-mesa")
+            .forEach(function (boton) {
+                boton.addEventListener("click", function () {
+                    prepararNuevaMesa(boton.dataset.piso);
+                });
+            });
+
+        document.querySelectorAll(".js-editar-mesa")
+            .forEach(function (boton) {
+                boton.addEventListener("click", function () {
+                    prepararEdicionMesa(boton.dataset);
+                });
+            });
+
+        if (modalPisoElemento.dataset.abrir === "true") {
+            const esNuevo = !pisoId.value;
+            tituloPiso.textContent = esNuevo
+                ? "Registrar nuevo piso"
+                : "Editar piso";
+            textoPiso.textContent = esNuevo
+                ? "Registrar piso"
+                : "Guardar cambios";
+            modalPiso.show();
+        }
+
+        if (modalMesaElemento.dataset.abrir === "true") {
+            const esNueva = !mesaId.value;
+            tituloMesa.textContent = esNueva
+                ? "Registrar nueva mesa"
+                : "Editar mesa";
+            textoMesa.textContent = esNueva
+                ? "Registrar mesa"
+                : "Guardar cambios";
+            modalMesa.show();
+        }
+    });
 </script>
 
 </body>
