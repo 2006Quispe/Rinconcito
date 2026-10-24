@@ -489,17 +489,17 @@
 }
 
 .switch-horario input:checked
-+ .switch-deslizador {
+~ .switch-deslizador {
     background-color: var(--config-verde);
 }
 
 .switch-horario input:checked
-+ .switch-deslizador::before {
+~ .switch-deslizador::before {
     transform: translateX(19px);
 }
 
 .switch-horario input:focus-visible
-+ .switch-deslizador {
+~ .switch-deslizador {
     outline: 3px solid rgba(40, 122, 77, 0.2);
     outline-offset: 2px;
 }
