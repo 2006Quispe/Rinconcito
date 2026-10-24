@@ -20,7 +20,7 @@
     <link th:href="@{/css/estilos.css}" rel="stylesheet">
     <link th:href="@{/css/auth.css}" rel="stylesheet">
 </head>
-<body>
+<body class="auth-page">
 
 <header th:replace="~{fragments/header :: header}"></header>
 
@@ -47,28 +47,14 @@
                 </p>
 
                 <h1>
-                    Bienvenido de nuevo
+                    Tradición en la mesa.<br>
+                    Tu historia en un solo lugar.
                 </h1>
 
                 <p class="auth-brand-descripcion">
-                    Ingresa para consultar tus pedidos,
-                    reservas e historial desde un solo lugar.
+                    Accede a tus pedidos, reservas e historial
+                    desde un espacio pensado para ti.
                 </p>
-
-                <ul class="auth-beneficios">
-                    <li>
-                        <i class="bi bi-check-circle-fill"></i>
-                        Consulta el estado de tus pedidos
-                    </li>
-                    <li>
-                        <i class="bi bi-check-circle-fill"></i>
-                        Revisa tus próximas reservas
-                    </li>
-                    <li>
-                        <i class="bi bi-check-circle-fill"></i>
-                        Accede a tu historial personal
-                    </li>
-                </ul>
 
             </div>
 
@@ -81,13 +67,18 @@
 
         <div class="auth-panel">
 
+            <a class="auth-volver" th:href="@{/}">
+                <i class="bi bi-arrow-left"></i>
+                Volver al inicio
+            </a>
+
             <div class="auth-panel-encabezado">
                 <h2 id="tituloLogin">
-                    Iniciar sesión
+                    Bienvenido
                 </h2>
 
                 <p>
-                    Escribe el correo y la contraseña
+                    Ingresa con el correo y la contraseña
                     registrados en tu cuenta.
                 </p>
             </div>

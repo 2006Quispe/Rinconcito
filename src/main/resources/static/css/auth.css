@@ -501,3 +501,388 @@
         max-height: 66px;
     }
 }
+
+/* Diseño dividido campestre */
+
+html,
+body.auth-page {
+    min-height: 100%;
+}
+
+body.auth-page {
+    margin: 0;
+    overflow-x: hidden;
+    background-color: #f4ede3;
+}
+
+body.auth-page > header,
+body.auth-page > footer {
+    display: none;
+}
+
+.auth-page .auth-main {
+    min-height: 100vh;
+    padding: 0;
+    display: block;
+    background-color: #f4ede3;
+}
+
+.auth-page .auth-shell {
+    width: 100%;
+    max-width: none;
+    min-height: 100vh;
+    margin: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(470px, 0.95fr);
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background-color: #f4ede3;
+    box-shadow: none;
+}
+
+.auth-page .auth-shell-registro {
+    grid-template-columns: minmax(390px, 0.82fr) minmax(620px, 1.18fr);
+}
+
+.auth-page .auth-brand {
+    position: relative;
+    min-height: 100vh;
+    padding: clamp(2rem, 4vw, 4.5rem);
+    display: flex;
+    overflow: hidden;
+    color: #ffffff;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(28, 12, 8, 0.88) 0%,
+            rgba(38, 17, 12, 0.72) 48%,
+            rgba(45, 21, 14, 0.48) 100%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(25, 9, 6, 0.18),
+            rgba(25, 9, 6, 0.72)
+        ),
+        url("../img/auth-campestre.webp") center center / cover no-repeat;
+}
+
+.auth-page .auth-brand::before {
+    position: absolute;
+    inset: 0;
+    content: "";
+    pointer-events: none;
+    background:
+        radial-gradient(
+            circle at 18% 48%,
+            rgba(198, 154, 53, 0.12),
+            transparent 34%
+        );
+}
+
+.auth-page .auth-brand-contenido {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: calc(100vh - clamp(4rem, 8vw, 9rem));
+    padding: 8rem 0 5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.auth-page .auth-logo-enlace {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: min(100%, 285px);
+    margin: 0;
+    display: inline-flex;
+}
+
+.auth-page .auth-logo {
+    width: 100%;
+    max-height: 102px;
+    object-position: left center;
+    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.38));
+}
+
+.auth-page .auth-etiqueta {
+    margin-bottom: 1rem;
+    color: #e5bd61;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.auth-page .auth-brand h1 {
+    max-width: 700px;
+    margin: 0;
+    color: #fffaf2;
+    font-family: "Merriweather", serif;
+    font-size: clamp(2.15rem, 4.2vw, 4.3rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+}
+
+.auth-page .auth-brand-descripcion {
+    max-width: 520px;
+    margin: 1.3rem 0 0;
+    color: rgba(255, 255, 255, 0.86);
+    font-size: clamp(0.92rem, 1.25vw, 1.08rem);
+    line-height: 1.65;
+}
+
+.auth-page .auth-beneficios {
+    display: none;
+}
+
+.auth-page .auth-brand-pie {
+    position: absolute;
+    right: clamp(2rem, 4vw, 4.5rem);
+    bottom: 2rem;
+    left: clamp(2rem, 4vw, 4.5rem);
+    z-index: 2;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.72rem;
+}
+
+.auth-page .auth-panel {
+    width: min(540px, calc(100% - 3rem));
+    max-height: calc(100vh - 3rem);
+    margin: auto;
+    padding: clamp(2rem, 4vw, 3.25rem);
+    align-self: center;
+    justify-self: center;
+    overflow-y: auto;
+    border: 1px solid rgba(95, 66, 50, 0.15);
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 24px 60px rgba(63, 40, 26, 0.12);
+    scrollbar-width: thin;
+}
+
+.auth-page .auth-panel-registro {
+    width: min(760px, calc(100% - 2.5rem));
+    max-height: calc(100vh - 2rem);
+    padding: clamp(1.55rem, 2.8vw, 2.5rem);
+}
+
+.auth-volver {
+    margin-bottom: 2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: #4d382d;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.auth-volver:hover {
+    color: #8c2f1b;
+    transform: translateX(-3px);
+}
+
+.auth-page .auth-panel-encabezado h2,
+.auth-page .auth-exito h2 {
+    color: #33251e;
+    font-family: "Merriweather", serif;
+    font-size: clamp(2rem, 3.2vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+.auth-page .auth-panel-encabezado p {
+    margin-top: 0.65rem;
+    color: #766458;
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.auth-page .auth-campo {
+    margin-bottom: 1rem;
+}
+
+.auth-page .auth-campo label {
+    margin-bottom: 0.42rem;
+    color: #3b2a22;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.auth-page .auth-input .form-control,
+.auth-page .auth-panel .form-select {
+    min-height: 48px;
+    border-color: #dfd2c5;
+    border-radius: 10px;
+    background-color: #fffdfb;
+    font-size: 0.86rem;
+}
+
+.auth-page .auth-input .form-control:focus,
+.auth-page .auth-panel .form-select:focus {
+    border-color: #b65033;
+    box-shadow: 0 0 0 0.2rem rgba(182, 80, 51, 0.13);
+}
+
+.auth-page .auth-boton {
+    min-height: 50px;
+    border-radius: 10px;
+    background-color: #b65033;
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 800;
+    box-shadow: 0 10px 24px rgba(140, 47, 27, 0.2);
+}
+
+.auth-page .auth-boton:hover {
+    background-color: #943c26;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.auth-page .auth-alternativa {
+    margin-top: 1.35rem;
+    color: #766458;
+    font-size: 0.84rem;
+    text-align: center;
+}
+
+.auth-page .auth-alternativa a {
+    color: #8c2f1b;
+    font-weight: 800;
+}
+
+@media (max-width: 1199.98px) {
+    .auth-page .auth-shell,
+    .auth-page .auth-shell-registro {
+        grid-template-columns: minmax(360px, 0.82fr) minmax(520px, 1.18fr);
+    }
+
+    .auth-page .auth-brand h1 {
+        font-size: clamp(2rem, 4.5vw, 3.25rem);
+    }
+
+    .auth-page .auth-panel {
+        width: min(540px, calc(100% - 2rem));
+    }
+
+    .auth-page .auth-panel-registro {
+        width: min(700px, calc(100% - 1.5rem));
+    }
+}
+
+@media (max-width: 991.98px) {
+    body.auth-page {
+        overflow-y: auto;
+    }
+
+    .auth-page .auth-shell,
+    .auth-page .auth-shell-registro {
+        min-height: 100vh;
+        display: block;
+    }
+
+    .auth-page .auth-brand {
+        min-height: 270px;
+        padding: 1.5rem;
+        background-position: center 58%;
+    }
+
+    .auth-page .auth-brand-contenido {
+        min-height: 220px;
+        padding: 4.6rem 0 2rem;
+        justify-content: flex-end;
+    }
+
+    .auth-page .auth-logo-enlace {
+        top: 0;
+        width: 205px;
+        margin: 0;
+    }
+
+    .auth-page .auth-logo {
+        max-height: 68px;
+        object-position: left center;
+    }
+
+    .auth-page .auth-etiqueta {
+        margin-bottom: 0.45rem;
+        font-size: 0.58rem;
+    }
+
+    .auth-page .auth-brand h1 {
+        max-width: 650px;
+        font-size: clamp(1.65rem, 6vw, 2.5rem);
+    }
+
+    .auth-page .auth-brand-descripcion,
+    .auth-page .auth-brand-pie {
+        display: none;
+    }
+
+    .auth-page .auth-panel,
+    .auth-page .auth-panel-registro {
+        width: min(720px, calc(100% - 2rem));
+        max-height: none;
+        margin: -1.5rem auto 2rem;
+        padding: 2rem;
+        position: relative;
+        z-index: 3;
+        overflow: visible;
+    }
+
+    .auth-volver {
+        margin-bottom: 1.4rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .auth-page .auth-brand {
+        min-height: 220px;
+        padding: 1.1rem;
+    }
+
+    .auth-page .auth-brand-contenido {
+        min-height: 180px;
+        padding-top: 3.8rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .auth-page .auth-logo-enlace {
+        width: 170px;
+    }
+
+    .auth-page .auth-logo {
+        max-height: 56px;
+    }
+
+    .auth-page .auth-brand h1 {
+        font-size: 1.55rem;
+        line-height: 1.14;
+    }
+
+    .auth-page .auth-panel,
+    .auth-page .auth-panel-registro {
+        width: calc(100% - 1.2rem);
+        margin-top: -1rem;
+        padding: 1.35rem;
+        border-radius: 16px;
+    }
+
+    .auth-page .auth-form-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .auth-page .auth-panel-encabezado h2,
+    .auth-page .auth-exito h2 {
+        font-size: 1.75rem;
+    }
+}

@@ -20,7 +20,7 @@
     <link th:href="@{/css/estilos.css}" rel="stylesheet">
     <link th:href="@{/css/auth.css}" rel="stylesheet">
 </head>
-<body>
+<body class="auth-page">
 
 <header th:replace="~{fragments/header :: header}"></header>
 
@@ -47,28 +47,13 @@
                 </p>
 
                 <h1>
-                    Únete a nuestra mesa
+                    Una mesa para cada historia.
                 </h1>
 
                 <p class="auth-brand-descripcion">
-                    Regístrate para mantener tus pedidos,
-                    reservas e historial organizados.
+                    Crea tu cuenta y disfruta una experiencia
+                    más rápida al pedir y reservar.
                 </p>
-
-                <ul class="auth-beneficios">
-                    <li>
-                        <i class="bi bi-check-circle-fill"></i>
-                        Tus operaciones en un solo perfil
-                    </li>
-                    <li>
-                        <i class="bi bi-check-circle-fill"></i>
-                        Datos protegidos con acceso personal
-                    </li>
-                    <li>
-                        <i class="bi bi-check-circle-fill"></i>
-                        Registro rápido y sencillo
-                    </li>
-                </ul>
 
             </div>
 
@@ -80,6 +65,11 @@
         </aside>
 
         <div class="auth-panel auth-panel-registro">
+
+            <a class="auth-volver" th:href="@{/}">
+                <i class="bi bi-arrow-left"></i>
+                Volver al inicio
+            </a>
 
             <div th:if="${exito}"
                  class="auth-exito">
