@@ -5,6 +5,7 @@ import com.rinconcito.entity.Categoria.EstadoCategoria;
 import com.rinconcito.entity.Producto;
 import com.rinconcito.entity.Producto.EstadoProducto;
 import com.rinconcito.service.CategoriaService;
+import com.rinconcito.service.HistorialDisponibilidadProductoService;
 import com.rinconcito.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,10 @@ public class AdminCartaController {
 
     @Autowired
     private CategoriaService categoriaService;
+
+    @Autowired
+    private HistorialDisponibilidadProductoService
+            historialDisponibilidadProductoService;
 
     @GetMapping("/carta")
     public String listarProductos(
@@ -69,6 +74,24 @@ public class AdminCartaController {
         }
 
         return "paginas/admin/carta";
+    }
+
+    @GetMapping("/carta/historial-disponibilidad")
+    public String historialDisponibilidad(
+            Model model
+    ) {
+        model.addAttribute(
+                "titulo",
+                "Historial de disponibilidad"
+        );
+
+        model.addAttribute(
+                "historial",
+                historialDisponibilidadProductoService
+                        .listarRecientes()
+        );
+
+        return "paginas/admin/historial-disponibilidad";
     }
 
     @GetMapping("/carta/nuevo")
