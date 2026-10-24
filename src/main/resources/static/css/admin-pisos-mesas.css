@@ -877,3 +877,216 @@
         width: 100%;
     }
 }
+
+/* Modales de pisos y mesas */
+
+.modal-pm .modal-dialog {
+    width: calc(100% - 24px);
+    max-width: 630px;
+    margin: 12px auto;
+}
+
+.modal-pm .modal-content {
+    max-height: calc(100vh - 24px);
+    overflow: hidden;
+    border: 0;
+    border-radius: 18px;
+    background-color: var(--pm-blanco);
+    box-shadow: 0 28px 80px rgba(42, 27, 20, 0.28);
+}
+
+.modal-pm .modal-header {
+    flex: 0 0 auto;
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid var(--pm-borde);
+}
+
+.modal-pm-etiqueta {
+    margin: 0 0 3px !important;
+    color: var(--pm-rojo) !important;
+    font-size: 9px !important;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+}
+
+.modal-pm .modal-title {
+    margin: 0;
+    color: var(--pm-texto);
+    font-family: "Merriweather", serif;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.modal-pm .modal-header p:last-child {
+    margin: 4px 0 0;
+    color: var(--pm-texto-suave);
+    font-size: 10px;
+}
+
+.modal-pm form {
+    min-height: 0;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-pm .modal-body {
+    min-height: 0;
+    padding: 18px 24px 12px;
+    overflow-y: auto;
+}
+
+.modal-pm-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.modal-pm-completo {
+    grid-column: 1 / -1;
+}
+
+.modal-pm .form-label {
+    margin-bottom: 5px;
+    color: var(--pm-texto);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.modal-pm .form-label span {
+    color: var(--pm-rojo);
+}
+
+.modal-pm .form-control,
+.modal-pm .form-select,
+.modal-pm .input-group-text {
+    min-height: 41px;
+    border-color: var(--pm-borde);
+    color: var(--pm-texto);
+    font-size: 11px;
+    box-shadow: none;
+}
+
+.modal-pm textarea.form-control {
+    min-height: 82px;
+    resize: vertical;
+}
+
+.modal-pm .form-control:focus,
+.modal-pm .form-select:focus {
+    border-color: var(--pm-rojo);
+    box-shadow: 0 0 0 3px rgba(140, 47, 27, 0.10);
+}
+
+.modal-pm .input-group-text {
+    background-color: #faf5ef;
+    font-size: 10px;
+}
+
+.modal-pm-ayuda {
+    margin-top: 5px;
+    display: block;
+    color: var(--pm-texto-suave);
+    font-size: 9px;
+}
+
+.modal-pm-aviso {
+    margin-top: 15px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    border: 1px solid #e8dbb0;
+    border-radius: 8px;
+    background-color: #fff9e5;
+    color: #74601f;
+    font-size: 9px;
+    line-height: 1.45;
+}
+
+.modal-pm-aviso i {
+    color: var(--pm-dorado);
+    font-size: 12px;
+}
+
+.modal-pm .modal-footer {
+    flex: 0 0 auto;
+    padding: 13px 24px 18px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: 9px;
+    border-top: 1px solid var(--pm-borde);
+    background-color: var(--pm-blanco);
+}
+
+.btn-modal-pm-cancelar,
+.btn-modal-pm-guardar {
+    min-width: 130px;
+    min-height: 40px;
+    margin: 0 !important;
+    padding: 8px 17px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.btn-modal-pm-cancelar {
+    border: 1px solid var(--pm-borde);
+    background-color: #fffaf6;
+    color: var(--pm-texto);
+}
+
+.btn-modal-pm-guardar {
+    border: 1px solid var(--pm-rojo);
+    background-color: var(--pm-rojo);
+    color: var(--pm-blanco);
+    box-shadow: 0 8px 18px rgba(140, 47, 27, 0.18);
+}
+
+.btn-modal-pm-guardar:hover {
+    border-color: var(--pm-rojo-oscuro);
+    background-color: var(--pm-rojo-oscuro);
+}
+
+@media (max-width: 600px) {
+    .modal-pm .modal-dialog {
+        width: calc(100% - 16px);
+        margin: 8px auto;
+    }
+
+    .modal-pm .modal-content {
+        max-height: calc(100vh - 16px);
+        border-radius: 14px;
+    }
+
+    .modal-pm-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-pm-completo {
+        grid-column: auto;
+    }
+
+    .modal-pm .modal-header,
+    .modal-pm .modal-body,
+    .modal-pm .modal-footer {
+        padding-right: 16px;
+        padding-left: 16px;
+    }
+
+    .modal-pm .modal-footer {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+
+    .btn-modal-pm-cancelar,
+    .btn-modal-pm-guardar {
+        width: 100%;
+    }
+}
