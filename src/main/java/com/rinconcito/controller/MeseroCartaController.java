@@ -1,6 +1,7 @@
 package com.rinconcito.controller;
 
 import com.rinconcito.service.ProductoService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,10 +34,23 @@ public class MeseroCartaController {
     public String cambiarDisponibilidad(
             @PathVariable Integer idProducto,
             @RequestParam boolean disponible,
+            Authentication authentication,
             RedirectAttributes redirectAttributes
     ) {
         try {
-            productoService.cambiarDisponibilidad(idProducto, disponible);
+            if (authentication == null
+                    || authentication.getName() == null
+                    || authentication.getName().isBlank()) {
+                throw new IllegalStateException(
+                        "No se pudo identificar al mesero."
+                );
+            }
+
+            productoService.cambiarDisponibilidad(
+                    idProducto,
+                    disponible,
+                    authentication.getName()
+            );
             redirectAttributes.addFlashAttribute(
                     "exito",
                     disponible
