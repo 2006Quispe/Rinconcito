@@ -1042,3 +1042,45 @@ body {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* Logo institucional del encabezado */
+
+.marca-publica {
+    width: 176px;
+    max-width: 176px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+.logo-publico {
+    width: 100%;
+    height: auto;
+    max-height: 50px;
+    display: block;
+    object-fit: contain;
+    object-position: left center;
+    filter: drop-shadow(0 3px 7px rgba(25, 8, 6, 0.24));
+}
+
+@media (max-width: 991.98px) {
+    .marca-publica {
+        width: 156px;
+        max-width: 156px;
+    }
+
+    .logo-publico {
+        max-height: 46px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .marca-publica {
+        width: 140px;
+        max-width: 140px;
+    }
+
+    .logo-publico {
+        max-height: 42px;
+    }
+}

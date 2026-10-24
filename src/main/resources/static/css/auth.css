@@ -455,3 +455,49 @@
         font-size: 1.2rem;
     }
 }
+
+/* Logo institucional */
+
+.auth-logo-enlace {
+    width: min(100%, 285px);
+    margin-bottom: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-decoration: none;
+}
+
+.auth-logo {
+    width: 100%;
+    height: auto;
+    max-height: 96px;
+    display: block;
+    object-fit: contain;
+    object-position: left center;
+    filter: drop-shadow(0 8px 16px rgba(26, 10, 7, 0.25));
+}
+
+@media (max-width: 991.98px) {
+    .auth-logo-enlace {
+        width: min(100%, 235px);
+        margin-right: auto;
+        margin-left: auto;
+        justify-content: center;
+    }
+
+    .auth-logo {
+        max-height: 78px;
+        object-position: center;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .auth-logo-enlace {
+        width: min(100%, 200px);
+        margin-bottom: 0.9rem;
+    }
+
+    .auth-logo {
+        max-height: 66px;
+    }
+}
