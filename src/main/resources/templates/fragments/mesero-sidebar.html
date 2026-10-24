@@ -96,6 +96,18 @@
 
         </a>
 
+        <a th:href="@{/mesero/carta}"
+           class="mesero-sidebar-enlace"
+           th:classappend="${seccionActiva == 'carta'} ? ' activo' : ''">
+            <span class="mesero-sidebar-enlace-icono">
+                <i class="bi bi-journal-check"></i>
+            </span>
+            <span class="mesero-sidebar-enlace-texto">
+                <strong>Disponibilidad de carta</strong>
+                <small>Disponible o agotado</small>
+            </span>
+        </a>
+
         <a th:href="@{/mesero/reservas}"
            class="mesero-sidebar-enlace"
            th:classappend="${seccionActiva == 'reservas'}

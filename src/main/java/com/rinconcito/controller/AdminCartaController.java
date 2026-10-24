@@ -23,9 +23,24 @@ public class AdminCartaController {
     private CategoriaService categoriaService;
 
     @GetMapping("/carta")
-    public String listarProductos(Model model) {
+    public String listarProductos(
+            @RequestParam(value = "modal", required = false)
+            String modal,
+            Model model
+    ) {
         model.addAttribute("titulo", "Admin · Carta");
-        model.addAttribute("productos", productoService.listarTodosAdmin());
+        model.addAttribute(
+                "productos",
+                productoService.listarTodosAdmin()
+        );
+        model.addAttribute(
+                "categorias",
+                categoriaService.listarActivas()
+        );
+        model.addAttribute(
+                "abrirModalNuevo",
+                "nuevo".equalsIgnoreCase(modal)
+        );
         return "paginas/admin/carta";
     }
 
@@ -120,22 +135,8 @@ public class AdminCartaController {
                         + idProducto
                         + "/editar";
             }
-            return "redirect:/admin/carta/nuevo";
+            return "redirect:/admin/carta?modal=nuevo";
         }
-    }
-
-    @PostMapping("/carta/{id}/disponibilidad")
-    public String toggleDisponibilidad(
-            @PathVariable("id") Integer id,
-            @RequestParam("disponible") boolean disponible,
-            RedirectAttributes ra) {
-        try {
-            productoService.cambiarDisponibilidad(id, disponible);
-            ra.addFlashAttribute("exito", disponible ? "Producto marcado como disponible." : "Producto marcado como AGOTADO.");
-        } catch (IllegalStateException e) {
-            ra.addFlashAttribute("error", e.getMessage());
-        }
-        return "redirect:/admin/carta";
     }
 
     @PostMapping("/carta/{id}/estado")

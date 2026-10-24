@@ -196,6 +196,14 @@ public class ProductoService {
                                 )
                         );
 
+        if (producto.getEstado()
+                != EstadoProducto.ACTIVO) {
+            throw new IllegalStateException(
+                    "No se puede cambiar la disponibilidad "
+                            + "de un producto inactivo."
+            );
+        }
+
         producto.setDisponible(disponible);
         productoRepository.save(producto);
     }

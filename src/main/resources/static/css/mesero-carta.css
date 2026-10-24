@@ -1,0 +1,153 @@
+.carta-mesero-encabezado {
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.carta-mesero-encabezado h1 {
+    margin: 0;
+    color: var(--mesero-cafe);
+    font-family: "Merriweather", serif;
+    font-size: clamp(1.45rem, 2.5vw, 2rem);
+}
+.carta-mesero-encabezado > div > p:last-child {
+    margin: .35rem 0 0;
+    color: var(--mesero-texto-suave);
+    font-size: .78rem;
+}
+.carta-mesero-contador {
+    padding: .42rem .75rem;
+    flex-shrink: 0;
+    border-radius: 30px;
+    background-color: #efe5d9;
+    color: var(--mesero-vino);
+    font-size: .68rem;
+    font-weight: 800;
+}
+.carta-mesero-grid {
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 1rem;
+}
+.producto-operativo {
+    overflow: hidden;
+    border: 1px solid var(--mesero-borde);
+    border-radius: 14px;
+    background-color: var(--mesero-blanco);
+    box-shadow: var(--mesero-sombra);
+    transition: transform .2s ease,box-shadow .2s ease;
+}
+.producto-operativo:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(59,42,34,.12);
+}
+.producto-agotado { opacity: .82; }
+.producto-operativo-imagen {
+    position: relative;
+    height: 145px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background-color: #f2ebe3;
+}
+.producto-operativo-imagen img { width: 100%; height: 100%; object-fit: cover; }
+.producto-operativo-imagen > span:not(.producto-operativo-estado) {
+    color: #b4a69b;
+    font-size: 2rem;
+}
+.producto-operativo-estado {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: .3rem .55rem;
+    border-radius: 20px;
+    background-color: var(--mesero-verde-claro);
+    color: var(--mesero-verde);
+    font-size: .58rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+.producto-agotado .producto-operativo-estado {
+    background-color: var(--mesero-rojo-claro);
+    color: var(--mesero-rojo);
+}
+.producto-operativo-contenido { padding: .9rem; }
+.producto-operativo-contenido > small {
+    color: var(--mesero-vino);
+    font-size: .61rem;
+    font-weight: 900;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+.producto-operativo-contenido h2 {
+    margin: .2rem 0 0;
+    color: var(--mesero-cafe);
+    font-family: "Merriweather", serif;
+    font-size: .95rem;
+}
+.producto-operativo-contenido p {
+    min-height: 38px;
+    margin: .4rem 0 .8rem;
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--mesero-texto-suave);
+    font-size: .68rem;
+    line-height: 1.4;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+.producto-operativo-pie {
+    padding-top: .75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .7rem;
+    border-top: 1px solid #eee6dd;
+}
+.producto-operativo-pie strong { color: var(--mesero-vino); font-size: .9rem; }
+.producto-operativo-pie form { margin: 0; }
+.btn-marcar-agotado,.btn-marcar-disponible {
+    min-height: 34px;
+    padding: .42rem .62rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    border-radius: 8px;
+    font-size: .64rem;
+    font-weight: 900;
+    transition: .2s ease;
+}
+.btn-marcar-agotado {
+    border: 1px solid #df9f94;
+    background-color: #fff7f5;
+    color: var(--mesero-rojo);
+}
+.btn-marcar-disponible {
+    border: 1px solid #a9c49e;
+    background-color: #f4fbf1;
+    color: var(--mesero-verde);
+}
+.btn-marcar-agotado:hover { background-color: var(--mesero-rojo); color: #fff; }
+.btn-marcar-disponible:hover { background-color: var(--mesero-verde); color: #fff; }
+.carta-mesero-vacia {
+    padding: 3rem 1rem;
+    border: 1px dashed var(--mesero-borde);
+    border-radius: 14px;
+    background-color: var(--mesero-blanco);
+    text-align: center;
+}
+.carta-mesero-vacia i { color: var(--mesero-vino); font-size: 2.2rem; }
+.carta-mesero-vacia h2 {
+    margin: .7rem 0 .25rem;
+    color: var(--mesero-cafe);
+    font-family: "Merriweather",serif;
+    font-size: 1rem;
+}
+.carta-mesero-vacia p { margin: 0; color: var(--mesero-texto-suave); font-size: .72rem; }
+@media(max-width:1150px){.carta-mesero-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:700px){
+    .carta-mesero-encabezado{align-items:flex-start;flex-direction:column;}
+    .carta-mesero-grid{grid-template-columns:1fr;}
+}

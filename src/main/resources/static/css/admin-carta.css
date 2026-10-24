@@ -915,3 +915,154 @@ body {
         max-height: 175px !important;
     }
 }
+
+/* Modal de nuevo producto */
+
+.modal-producto .modal-dialog { max-width: 590px; }
+.modal-producto .modal-content {
+    overflow: hidden;
+    border: 0;
+    border-radius: 18px;
+    background-color: #fff;
+    box-shadow: 0 28px 80px rgba(44, 26, 18, .26);
+}
+.modal-producto .modal-header {
+    padding: 22px 24px 15px;
+    align-items: flex-start;
+    border-bottom: 1px solid #eee4da;
+}
+.modal-producto-etiqueta {
+    margin: 0 0 3px;
+    color: var(--carta-vino);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: .12em;
+}
+.modal-producto .modal-title {
+    margin: 0;
+    color: var(--carta-texto);
+    font-family: "Merriweather", serif;
+    font-size: 19px;
+    font-weight: 800;
+}
+.modal-producto .btn-close { margin: 1px 0 0; box-shadow: none; }
+.modal-producto .modal-body { padding: 20px 24px 12px; }
+.modal-producto .form-label {
+    margin-bottom: 6px;
+    color: var(--carta-texto);
+    font-size: 11px;
+    font-weight: 900;
+}
+.modal-producto .form-label span { color: #b43d2a; }
+.modal-producto .form-control,
+.modal-producto .form-select {
+    min-height: 42px;
+    border: 1px solid #dfd2c6;
+    border-radius: 8px;
+    color: var(--carta-texto);
+    font-size: 12px;
+    box-shadow: none;
+}
+.modal-producto textarea.form-control { min-height: 78px; resize: vertical; }
+.modal-producto .form-control:focus,
+.modal-producto .form-select:focus {
+    border-color: var(--carta-vino);
+    box-shadow: 0 0 0 3px rgba(140,47,27,.1);
+}
+.modal-ayuda {
+    margin-top: 5px;
+    display: block;
+    color: var(--carta-texto-suave);
+    font-size: 9px;
+}
+.modal-producto-grid {
+    display: grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap: 12px;
+}
+.modal-subida-grupo { margin-top: 18px; }
+.modal-subida {
+    position: relative;
+    min-height: 118px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1.5px dashed #d8b895;
+    border-radius: 10px;
+    background-color: #fcf8f3;
+    color: var(--carta-texto-suave);
+    text-align: center;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.modal-subida:hover,
+.modal-subida.arrastrando {
+    border-color: var(--carta-vino);
+    background-color: #fff5ed;
+}
+.modal-subida input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+.modal-subida-icono {
+    margin-bottom: 7px;
+    color: #c45d3e;
+    font-size: 22px;
+}
+.modal-subida strong { color: var(--carta-texto); font-size: 11px; }
+.modal-subida small { margin-top: 3px; font-size: 9px; }
+.modal-subida img {
+    position: absolute;
+    inset: 8px;
+    width: calc(100% - 16px);
+    height: calc(100% - 16px);
+    display: none;
+    border-radius: 7px;
+    object-fit: contain;
+    background-color: #fff;
+}
+.modal-subida img.visible { display: block; }
+.modal-subida.con-imagen > :not(img):not(input) { opacity: 0; }
+.modal-producto .modal-footer {
+    padding: 14px 24px 22px;
+    gap: 9px;
+    border-top: 0;
+}
+.btn-modal-cancelar,
+.btn-modal-guardar {
+    min-height: 40px;
+    padding: 8px 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 900;
+}
+.btn-modal-cancelar {
+    border: 1px solid #dfd2c6;
+    background-color: #fffaf5;
+    color: var(--carta-texto);
+}
+.btn-modal-guardar {
+    border: 1px solid var(--carta-vino);
+    background-color: var(--carta-vino);
+    color: #fff;
+}
+.btn-modal-guardar:hover { background-color: #6f2117; }
+@media (max-width:600px) {
+    .modal-producto .modal-dialog { margin: 10px; }
+    .modal-producto-grid { grid-template-columns: 1fr; }
+    .modal-producto .modal-header,
+    .modal-producto .modal-body,
+    .modal-producto .modal-footer {
+        padding-right: 17px;
+        padding-left: 17px;
+    }
+}
