@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${titulo}
+        + ' - El Rinconcito Ayacuchano'">
+        Historial de disponibilidad
+    </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Nunito:wght@400;600;700;800&display=swap"
+          rel="stylesheet">
+    <link th:href="@{/css/admin.css}"
+          rel="stylesheet">
+    <link th:href="@{/css/admin-historial-carta.css}"
+          rel="stylesheet">
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <aside th:replace="~{fragments/admin-sidebar
+        :: sidebar('carta')}">
+    </aside>
+
+    <main class="admin-contenido historial-carta-contenido">
+
+        <header class="historial-carta-encabezado">
+
+            <div>
+                <p class="historial-carta-etiqueta">
+                    CONTROL DE LA CARTA
+                </p>
+
+                <h1>Historial de disponibilidad</h1>
+
+                <p>
+                    Consulta quién marcó un producto como
+                    disponible o agotado y cuándo lo hizo.
+                </p>
+            </div>
+
+            <a th:href="@{/admin/carta}"
+               class="btn-volver-carta">
+                <i class="bi bi-arrow-left"></i>
+                Volver a productos
+            </a>
+
+        </header>
+
+        <section class="historial-resumen">
+
+            <div class="historial-resumen-icono">
+                <i class="bi bi-clock-history"></i>
+            </div>
+
+            <div>
+                <span>Cambios registrados</span>
+                <strong th:text="${historial != null
+                    ? historial.size()
+                    : 0}">
+                    0
+                </strong>
+            </div>
+
+            <p>
+                Se muestran como máximo los 200 movimientos
+                más recientes.
+            </p>
+
+        </section>
+
+        <section th:if="${historial == null
+            or historial.isEmpty()}"
+                 class="historial-vacio">
+
+            <i class="bi bi-journal-check"></i>
+
+            <h2>Aún no existen cambios</h2>
+
+            <p>
+                Los movimientos aparecerán cuando un mesero
+                cambie la disponibilidad de algún producto.
+            </p>
+
+        </section>
+
+        <section th:if="${historial != null
+            and !historial.isEmpty()}"
+                 class="historial-tabla-panel">
+
+            <div class="historial-tabla-cabecera">
+                <div>
+                    <h2>Movimientos recientes</h2>
+                    <p>
+                        Registro ordenado desde el cambio más reciente.
+                    </p>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="historial-tabla">
+
+                    <thead>
+                    <tr>
+                        <th>Fecha y hora</th>
+                        <th>Producto</th>
+                        <th>Cambio realizado</th>
+                        <th>Responsable</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <tr th:each="movimiento : ${historial}">
+
+                        <td>
+                            <div class="historial-fecha">
+                                <i class="bi bi-calendar3"></i>
+                                <div>
+                                    <strong th:text="${#temporals.format(
+                                        movimiento.fechaCambio,
+                                        'dd/MM/yyyy'
+                                    )}">
+                                        24/10/2026
+                                    </strong>
+
+                                    <span th:text="${#temporals.format(
+                                        movimiento.fechaCambio,
+                                        'HH:mm:ss'
+                                    )}">
+                                        18:30:00
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="historial-producto">
+                                <div class="historial-producto-imagen">
+                                    <img th:if="${movimiento.producto.imagen != null
+                                        and !movimiento.producto.imagen.isBlank()}"
+                                         th:src="${movimiento.producto.imagen}"
+                                         th:alt="${movimiento.producto.nombre}">
+
+                                    <i th:unless="${movimiento.producto.imagen != null
+                                        and !movimiento.producto.imagen.isBlank()}"
+                                       class="bi bi-image">
+                                    </i>
+                                </div>
+
+                                <div>
+                                    <strong th:text="${movimiento.producto.nombre}">
+                                        Producto
+                                    </strong>
+                                    <span th:text="${movimiento.producto.categoria != null
+                                        ? movimiento.producto.categoria.nombre
+                                        : 'Sin categoría'}">
+                                        Categoría
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="historial-cambio">
+                                <span class="estado-anterior"
+                                      th:classappend="${movimiento.disponibleAnterior}
+                                          ? ' estado-disponible'
+                                          : ' estado-agotado'"
+                                      th:text="${movimiento.disponibleAnterior}
+                                          ? 'Disponible'
+                                          : 'Agotado'">
+                                    Disponible
+                                </span>
+
+                                <i class="bi bi-arrow-right"></i>
+
+                                <span class="estado-nuevo"
+                                      th:classappend="${movimiento.disponibleNuevo}
+                                          ? ' estado-disponible'
+                                          : ' estado-agotado'"
+                                      th:text="${movimiento.disponibleNuevo}
+                                          ? 'Disponible'
+                                          : 'Agotado'">
+                                    Agotado
+                                </span>
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="historial-responsable">
+                                <div class="historial-avatar">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+
+                                <div>
+                                    <strong th:text="${movimiento.usuario.nombres
+                                        + ' '
+                                        + movimiento.usuario.apellidos}">
+                                        Mesero
+                                    </strong>
+
+                                    <span th:text="${movimiento.usuario.correo}">
+                                        mesero@rinconcito.pe
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
