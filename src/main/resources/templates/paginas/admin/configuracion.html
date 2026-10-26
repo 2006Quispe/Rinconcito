@@ -692,159 +692,191 @@
                    th:value="${_csrf.token}">
 
         </form>
-		<!-- HORARIOS DE ATENCIÓN -->
+        <!-- Horarios de atención -->
 
-		<form th:action="@{/admin/configuracion/horarios/guardar}"
-		      th:object="${horarioForm}"
-		      method="post"
-		      class="configuracion-seccion horario-formulario">
+        <section class="configuracion-seccion horario-resumen-config">
 
-		    <input type="hidden"
-		           th:name="${_csrf.parameterName}"
-		           th:value="${_csrf.token}">
+            <div class="seccion-encabezado">
 
-		    <div class="seccion-encabezado">
+                <div class="seccion-icono">
+                    <i class="bi bi-clock-history"></i>
+                </div>
 
-		        <div class="seccion-icono">
-		            <i class="bi bi-clock-history"></i>
-		        </div>
+                <div class="horario-resumen-texto">
+                    <h2>Horarios de atención</h2>
+                    <p>
+                        Define los días y horas en los que
+                        el restaurante acepta reservas.
+                    </p>
+                </div>
 
-		        <div>
-		            <h2>Horarios de atención</h2>
+                <button type="button"
+                        class="btn-configurar-horarios"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalHorarios">
+                    <i class="bi bi-calendar-week"></i>
+                    Configurar horarios
+                </button>
 
-		            <p>
-		                Configura los días y las horas en que
-		                el restaurante acepta reservas.
-		            </p>
-		        </div>
+            </div>
 
-		    </div>
+            <div class="horario-resumen-aviso">
+                <i class="bi bi-info-circle"></i>
+                Los cambios se aplicarán a la disponibilidad
+                mostrada en las reservas.
+            </div>
 
-		    <div class="horarios-lista">
+        </section>
 
-		        <article th:each="horario, estado : *{horarios}"
-		                 class="horario-dia"
-		                 th:attr="data-indice=${estado.index}">
+        <!-- Modal de horarios -->
+        <div class="modal fade modal-horarios"
+             id="modalHorarios"
+             tabindex="-1"
+             aria-labelledby="tituloModalHorarios"
+             aria-hidden="true"
+             th:attr="data-abrir=${abrirModalHorarios}">
 
-		            <input type="hidden"
-		                   th:field="*{horarios[__${estado.index}__].idHorario}">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
 
-		            <input type="hidden"
-		                   th:field="*{horarios[__${estado.index}__].diaSemana}">
+                    <div class="modal-header">
+                        <div>
+                            <p class="modal-horarios-etiqueta">
+                                CONFIGURACIÓN DEL RESTAURANTE
+                            </p>
+                            <h2 class="modal-title"
+                                id="tituloModalHorarios">
+                                Registrar horarios de atención
+                            </h2>
+                            <p>
+                                Activa cada día e indica su hora
+                                de apertura y cierre.
+                            </p>
+                        </div>
+                    </div>
 
-		            <div class="horario-dia-nombre">
+                    <form th:action="@{/admin/configuracion/horarios/guardar}"
+                          th:object="${horarioForm}"
+                          method="post"
+                          class="horario-formulario horario-modal-formulario">
 
-		                <div class="horario-dia-icono">
-		                    <i class="bi bi-calendar3"></i>
-		                </div>
+                        <input type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}">
 
-		                <div>
+                        <div class="modal-body">
 
-		                    <strong th:switch="${horario.diaSemana.name()}">
+                            <div class="horarios-lista">
 
-		                        <span th:case="'LUNES'">Lunes</span>
-		                        <span th:case="'MARTES'">Martes</span>
-		                        <span th:case="'MIERCOLES'">Miércoles</span>
-		                        <span th:case="'JUEVES'">Jueves</span>
-		                        <span th:case="'VIERNES'">Viernes</span>
-		                        <span th:case="'SABADO'">Sábado</span>
-		                        <span th:case="'DOMINGO'">Domingo</span>
+                                <article th:each="horario, estado : *{horarios}"
+                                         class="horario-dia"
+                                         th:attr="data-indice=${estado.index}">
 
-		                    </strong>
+                                    <input type="hidden"
+                                           th:field="*{horarios[__${estado.index}__].idHorario}">
 
-		                    <span class="horario-estado-texto"
-		                          th:text="${horario.abierto
-		                              ? 'Abierto'
-		                              : 'Cerrado'}">
-		                        Abierto
-		                    </span>
+                                    <input type="hidden"
+                                           th:field="*{horarios[__${estado.index}__].diaSemana}">
 
-		                </div>
+                                    <div class="horario-dia-nombre">
 
-		            </div>
+                                        <div class="horario-dia-icono">
+                                            <i class="bi bi-calendar3"></i>
+                                        </div>
 
-		            <div class="horario-interruptor">
+                                        <div>
+                                            <strong th:switch="${horario.diaSemana.name()}">
+                                                <span th:case="'LUNES'">Lunes</span>
+                                                <span th:case="'MARTES'">Martes</span>
+                                                <span th:case="'MIERCOLES'">Miércoles</span>
+                                                <span th:case="'JUEVES'">Jueves</span>
+                                                <span th:case="'VIERNES'">Viernes</span>
+                                                <span th:case="'SABADO'">Sábado</span>
+                                                <span th:case="'DOMINGO'">Domingo</span>
+                                            </strong>
 
-		                <label class="switch-horario">
+                                            <span class="horario-estado-texto"
+                                                  th:text="${horario.abierto
+                                                      ? 'Abierto'
+                                                      : 'Cerrado'}">
+                                                Abierto
+                                            </span>
+                                        </div>
+                                    </div>
 
-		                    <input type="checkbox"
-		                           class="checkbox-abierto"
-		                           th:field="*{horarios[__${estado.index}__].abierto}">
+                                    <div class="horario-interruptor">
+                                        <label class="switch-horario">
+                                            <input type="checkbox"
+                                                   class="checkbox-abierto"
+                                                   th:field="*{horarios[__${estado.index}__].abierto}">
+                                            <span class="switch-deslizador"></span>
+                                        </label>
+                                    </div>
 
-		                    <span class="switch-deslizador"></span>
+                                    <div class="horario-horas">
 
-		                </label>
+                                        <div class="horario-campo">
+                                            <label th:for="'horaApertura'
+                                                + ${estado.index}">
+                                                Apertura
+                                            </label>
 
-		            </div>
+                                            <input type="time"
+                                                   th:id="'horaApertura'
+                                                       + ${estado.index}"
+                                                   class="form-control campo-hora"
+                                                   th:field="*{horarios[__${estado.index}__].horaApertura}"
+                                                   step="900">
+                                        </div>
 
-		            <div class="horario-horas">
+                                        <span class="horario-separador">a</span>
 
-		                <div class="horario-campo">
+                                        <div class="horario-campo">
+                                            <label th:for="'horaCierre'
+                                                + ${estado.index}">
+                                                Cierre
+                                            </label>
 
-		                    <label th:for="'horaApertura'
-		                        + ${estado.index}">
-		                        Apertura
-		                    </label>
+                                            <input type="time"
+                                                   th:id="'horaCierre'
+                                                       + ${estado.index}"
+                                                   class="form-control campo-hora"
+                                                   th:field="*{horarios[__${estado.index}__].horaCierre}"
+                                                   step="900">
+                                        </div>
+                                    </div>
 
-		                    <input type="time"
-		                           th:id="'horaApertura'
-		                               + ${estado.index}"
-		                           class="form-control campo-hora"
-		                           th:field="*{horarios[__${estado.index}__].horaApertura}"
-		                           step="900">
+                                </article>
 
-		                </div>
+                            </div>
 
-		                <span class="horario-separador">
-		                    a
-		                </span>
+                            <div class="horario-informacion">
+                                <i class="bi bi-info-circle"></i>
+                                <span>
+                                    Las reservas solo podrán registrarse
+                                    dentro de los horarios configurados
+                                    como abiertos.
+                                </span>
+                            </div>
+                        </div>
 
-		                <div class="horario-campo">
+                        <div class="modal-footer">
+                            <button type="button"
+                                    class="btn-modal-horario-cancelar"
+                                    data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
 
-		                    <label th:for="'horaCierre'
-		                        + ${estado.index}">
-		                        Cierre
-		                    </label>
-
-		                    <input type="time"
-		                           th:id="'horaCierre'
-		                               + ${estado.index}"
-		                           class="form-control campo-hora"
-		                           th:field="*{horarios[__${estado.index}__].horaCierre}"
-		                           step="900">
-
-		                </div>
-
-		            </div>
-
-		        </article>
-
-		    </div>
-
-		    <div class="horario-informacion">
-
-		        <i class="bi bi-info-circle"></i>
-
-		        <span>
-		            Las reservas solo podrán registrarse dentro
-		            de los horarios configurados como abiertos.
-		        </span>
-
-		    </div>
-
-		    <div class="horario-acciones">
-
-		        <button type="submit"
-		                class="btn-guardar-configuracion">
-
-		            <i class="bi bi-clock"></i>
-		            Guardar horarios
-		        </button>
-
-		    </div>
-
-		</form>
-
+                            <button type="submit"
+                                    class="btn-guardar-configuracion">
+                                <i class="bi bi-clock"></i>
+                                Guardar horarios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </main>
 
 </div>
@@ -889,6 +921,18 @@
 
             actualizarEstado();
         });
+
+        const modalHorarios =
+            document.getElementById("modalHorarios");
+
+        if (
+            modalHorarios
+            && modalHorarios.dataset.abrir === "true"
+        ) {
+            bootstrap.Modal
+                    .getOrCreateInstance(modalHorarios)
+                    .show();
+        }
     });
 </script>
 </body>

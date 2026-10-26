@@ -38,7 +38,7 @@ body {
     z-index: 1100;
     min-height: 58px;
     padding: 0;
-    background-color: var(--vino);
+    background-color: var(--crema-claro);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 4px 14px rgba(46, 33, 28, 0.16);
 }
@@ -53,7 +53,7 @@ body {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-    color: var(--crema) !important;
+    color: var(--cafe) !important;
     line-height: 1;
     text-decoration: none;
 }
@@ -70,7 +70,7 @@ body {
 
 .marca-publica small {
     margin-top: 0.27rem;
-    color: var(--dorado);
+    color: var(--vino);
     font-size: 0.43rem;
     font-weight: 800;
     letter-spacing: 0.3em;
@@ -80,7 +80,7 @@ body {
     position: relative;
     margin: 0 0.04rem;
     padding: 0.5rem 0.55rem !important;
-    color: rgba(255, 255, 255, 0.82);
+    color: var(--cafe);
     font-size: 0.68rem;
     font-weight: 700;
     transition:
@@ -103,7 +103,7 @@ body {
 
 .header-publico .nav-link:hover,
 .header-publico .nav-link:focus {
-    color: var(--blanco);
+    color: var(--vino);
 }
 
 .header-publico .nav-link:hover::after,
@@ -113,13 +113,14 @@ body {
 
 .header-publico .navbar-toggler {
     padding: 0.25rem 0.4rem;
-    border-color: rgba(255, 255, 255, 0.35);
+    border-color: var(--cafe);
     box-shadow: none;
 }
 
 .header-publico .navbar-toggler-icon {
     width: 1.15rem;
     height: 1.15rem;
+    filter: invert(1);
 }
 
 .btn-ingresar,
@@ -139,9 +140,9 @@ body {
 
 .btn-ingresar,
 .btn-cuenta {
-    color: var(--crema);
+    color: var(--vino);
     background-color: transparent;
-    border: 1px solid rgba(233, 216, 192, 0.78);
+    border: 1px solid var(--vino);
 }
 
 .btn-ingresar:hover,
@@ -175,23 +176,21 @@ body {
     display: flex;
     align-items: center;
     overflow: hidden;
-    background:
-        radial-gradient(
-            circle at 79% 25%,
-            rgba(198, 154, 53, 0.18),
-            transparent 27%
-        ),
-        radial-gradient(
-            circle at 5% 90%,
-            rgba(46, 33, 28, 0.55),
-            transparent 32%
-        ),
+    background: 
         linear-gradient(
-            115deg,
-            #42120f 0%,
-            var(--vino) 43%,
-            var(--terracota) 100%
-        );
+            rgba(66, 18, 15, 0.25), 
+            rgba(66, 18, 15, 0.25)
+        ), 
+        url('../img/fondo-inicio.png') center / cover no-repeat !important;
+}
+
+.inicio-hero::before {
+    display: none !important;
+}
+
+.hero-luz-uno,
+.hero-luz-dos {
+    display: none !important;
 }
 
 .inicio-hero::before {
@@ -798,8 +797,10 @@ body {
     .header-publico .navbar-collapse {
         margin-top: 0.5rem;
         padding: 0.6rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.12);
-        background-color: var(--vino);
+        border-top: 1px solid rgba(0, 0, 0, 0.1); /* Borde sutil oscuro */
+        background-color: var(--crema-claro); /* <-- Fondo claro igual a tu barra */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra para que resalte */
+        border-radius: 8px;
     }
 
     .header-publico .navbar-nav {
@@ -1040,5 +1041,377 @@ body {
     *::after {
         scroll-behavior: auto !important;
         transition-duration: 0.01ms !important;
+    }
+}
+
+/* =========================================
+   NUEVAS TARJETAS DE PLATOS (INICIO)
+   ========================================= */
+
+.plato-card {
+    background-color: var(--blanco);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(116, 31, 24, 0.1);
+    box-shadow: 0 5px 15px rgba(46, 33, 28, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.plato-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(46, 33, 28, 0.12);
+}
+
+.plato-card-imagen {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.plato-card-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.plato-card:hover .plato-card-imagen img {
+    transform: scale(1.05);
+}
+
+.plato-card-cuerpo {
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.plato-card-titulo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.plato-card-titulo h3 {
+    margin: 0;
+    color: var(--cafe);
+    font-family: "Playfair Display", serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.plato-precio {
+    color: var(--terracota);
+    font-weight: 800;
+    font-size: 1rem;
+}
+
+.plato-card-cuerpo p {
+    color: var(--texto-suave);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+}
+
+.plato-card-footer {
+    border-top: 1px solid rgba(116, 31, 24, 0.1);
+    padding-top: 0.8rem;
+    margin-top: auto;
+}
+
+.plato-card-footer span {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--oliva);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.plato-card-footer span::after {
+    content: "\F285"; /* Icono de flecha de Bootstrap Icons */
+    font-family: "bootstrap-icons";
+    font-size: 0.7rem;
+}
+
+/* Logo institucional del encabezado */
+.marca-publica {
+    width: 176px;
+    max-width: 176px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+.logo-publico {
+    width: 100%;
+    height: auto;
+    max-height: 50px;
+    display: block;
+    object-fit: contain;
+    object-position: left center;
+    filter: drop-shadow(0 3px 7px rgba(25, 8, 6, 0.24));
+}
+
+@media (max-width: 991.98px) {
+    .marca-publica {
+        width: 156px;
+        max-width: 156px;
+    }
+
+    .logo-publico {
+        max-height: 46px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .marca-publica {
+        width: 140px;
+        max-width: 140px;
+    }
+
+    .logo-publico {
+        max-height: 42px;
+    }
+}
+
+/* =========================================
+   NUEVO DISEÑO DE LA CARTA (MENÚ)
+   ========================================= */
+
+.menu-card {
+    background-color: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.menu-card-img-container {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background-color: #f5f5f5;
+    position: relative;
+}
+
+.menu-card-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.menu-card:hover .menu-card-img-container img {
+    transform: scale(1.05);
+}
+
+.menu-card-body {
+    padding: 1.2rem 1.2rem 0.5rem 1.2rem;
+    flex-grow: 1;
+}
+
+.menu-card-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 0.5rem;
+}
+
+.menu-card-title {
+    margin: 0;
+    font-family: "Playfair Display", serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--cafe);
+}
+
+.menu-card-price {
+    color: #c0392b; /* Rojo terracota de tu diseño */
+    font-weight: 700;
+    font-size: 1.1rem;
+    white-space: nowrap;
+}
+
+.menu-card-desc {
+    color: #777;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.menu-card-footer {
+    padding: 1rem 1.2rem;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+}
+
+.menu-card-category {
+    color: #b99333; /* Color dorado/oliva */
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.btn-agregar-menu {
+    background-color: #c0392b;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-agregar-menu:hover {
+    background-color: #a93226;
+    color: white;
+}
+
+.btn-agotado {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.btn-agotado:hover {
+    background-color: #ccc;
+}
+
+/* =========================================
+   BARRA DE FILTROS DE LA CARTA
+   ========================================= */
+
+.carta-filtro-contenedor {
+    background-color: #ffffff;
+    padding: 1.2rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(116, 31, 24, 0.05);
+}
+
+/* Etiquetas (Buscar por nombre / Categoría) */
+.filtro-label {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #555;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Campos de texto y selectores */
+.filtro-input {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.95rem;
+    color: #333;
+    background-color: #fafafa;
+    transition: all 0.3s ease;
+    box-shadow: none;
+}
+
+.filtro-input:focus {
+    background-color: #fff;
+    border-color: #5C6E49; /* El verde oliva de tu proyecto */
+    box-shadow: 0 0 0 3px rgba(92, 110, 73, 0.1);
+}
+
+/* Botón Filtrar */
+.btn-filtrar {
+    background-color: #5C6E49;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-filtrar:hover {
+    background-color: #4a593a;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Botón Ver todos */
+.btn-ver-todos {
+    background-color: #fff;
+    color: #555;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-ver-todos:hover {
+    background-color: #f5f5f5;
+    color: #333;
+    border-color: #c0c0c0;
+}
+
+/* =========================================
+   BANNER DE LA CARTA (Título superior)
+   ========================================= */
+
+.carta-banner {
+    background-color: #2e211c; /* El mismo café oscuro de tu footer */
+    padding: 3.5rem 0 3rem 0;
+    border-bottom: 4px solid #d4a017; /* Una línea dorada inferior para darle elegancia */
+}
+
+.carta-banner-title {
+    font-family: "Playfair Display", serif;
+    color: #ffffff;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.carta-banner-desc {
+    color: #e9d8c0; /* Un tono beige claro para que no sea un blanco tan fuerte */
+    font-size: 1rem;
+    margin-bottom: 0;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+}
+
+/* Adaptación para celulares */
+@media (max-width: 768px) {
+    .carta-banner {
+        padding: 2rem 0;
+    }
+    .carta-banner-title {
+        font-size: 2rem;
+    }
+    .carta-banner-desc {
+        font-size: 0.9rem;
     }
 }

@@ -3,13 +3,18 @@ package com.rinconcito.controller;
 import com.rinconcito.service.CarritoService;
 import com.rinconcito.service.PedidoService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/carrito")
@@ -73,6 +78,59 @@ public class CarritoController {
         }
 
         return "redirect:/carrito";
+    }
+
+
+    /*
+     * Agrega un producto desde la carta sin recargar
+     * ni perder la posición actual de la página.
+     */
+    @PostMapping("/agregar-ajax")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>>
+    agregarProductoAjax(
+            @RequestParam("idProducto")
+            Integer idProducto,
+
+            @RequestParam(
+                    value = "cantidad",
+                    defaultValue = "1"
+            )
+            Integer cantidad,
+
+            HttpSession session
+    ) {
+        Map<String, Object> respuesta =
+                new LinkedHashMap<>();
+
+        try {
+            carritoService.agregar(
+                    session,
+                    idProducto,
+                    cantidad
+            );
+
+            respuesta.put("exito", true);
+            respuesta.put(
+                    "mensaje",
+                    "Producto agregado al carrito."
+            );
+            respuesta.put(
+                    "cantidadCarrito",
+                    carritoService.contarUnidades(session)
+            );
+
+            return ResponseEntity.ok(respuesta);
+
+        } catch (IllegalStateException e) {
+
+            respuesta.put("exito", false);
+            respuesta.put("mensaje", e.getMessage());
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(respuesta);
+        }
     }
 
     /*

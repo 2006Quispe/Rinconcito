@@ -37,6 +37,22 @@ public class AdminPisoMesaController {
                     name = "piso",
                     required = false
             ) Integer idPiso,
+
+            @RequestParam(
+                    name = "modal",
+                    required = false
+            ) String modal,
+
+            @RequestParam(
+                    name = "editarPiso",
+                    required = false
+            ) Integer idPisoEditar,
+
+            @RequestParam(
+                    name = "editarMesa",
+                    required = false
+            ) Integer idMesaEditar,
+
             Model model
     ) {
         List<Piso> pisos =
@@ -121,46 +137,104 @@ public class AdminPisoMesaController {
                 mesasReservadasPorPiso
         );
 
+        model.addAttribute(
+                "pisosActivos",
+                adminPisoMesaService.listarPisosActivos()
+        );
+
+        if (!model.containsAttribute("pisoForm")) {
+            if (idPisoEditar != null) {
+                try {
+                    model.addAttribute(
+                            "pisoForm",
+                            adminPisoMesaService
+                                    .obtenerFormularioPiso(
+                                            idPisoEditar
+                                    )
+                    );
+                } catch (IllegalStateException e) {
+                    model.addAttribute(
+                            "error",
+                            e.getMessage()
+                    );
+                    model.addAttribute(
+                            "pisoForm",
+                            adminPisoMesaService
+                                    .nuevoFormularioPiso()
+                    );
+                    idPisoEditar = null;
+                }
+            } else {
+                model.addAttribute(
+                        "pisoForm",
+                        adminPisoMesaService
+                                .nuevoFormularioPiso()
+                );
+            }
+        }
+
+        if (!model.containsAttribute("mesaForm")) {
+            if (idMesaEditar != null) {
+                try {
+                    model.addAttribute(
+                            "mesaForm",
+                            adminPisoMesaService
+                                    .obtenerFormularioMesa(
+                                            idMesaEditar
+                                    )
+                    );
+                } catch (IllegalStateException e) {
+                    model.addAttribute(
+                            "error",
+                            e.getMessage()
+                    );
+                    model.addAttribute(
+                            "mesaForm",
+                            adminPisoMesaService
+                                    .nuevoFormularioMesa(idPiso)
+                    );
+                    idMesaEditar = null;
+                }
+            } else {
+                model.addAttribute(
+                        "mesaForm",
+                        adminPisoMesaService
+                                .nuevoFormularioMesa(idPiso)
+                );
+            }
+        }
+
+        model.addAttribute(
+                "abrirModalPiso",
+                "piso".equalsIgnoreCase(modal)
+                        || idPisoEditar != null
+        );
+
+        model.addAttribute(
+                "abrirModalMesa",
+                "mesa".equalsIgnoreCase(modal)
+                        || idMesaEditar != null
+        );
+
         return "paginas/admin/pisos-mesas";
     }
 
     @GetMapping("/pisos/nuevo")
-    public String nuevoPiso(
-            Model model
-    ) {
-        model.addAttribute(
-                "titulo",
-                "Nuevo piso"
-        );
-
-        model.addAttribute(
-                "pisoForm",
-                adminPisoMesaService
-                        .nuevoFormularioPiso()
-        );
-
-        return "paginas/admin/piso-form";
+    public String nuevoPiso() {
+        return "redirect:/admin/pisos-mesas?modal=piso";
     }
 
     @GetMapping("/pisos/{idPiso}/editar")
     public String editarPiso(
             @PathVariable Integer idPiso,
-            Model model,
             RedirectAttributes redirectAttributes
     ) {
         try {
-            model.addAttribute(
-                    "titulo",
-                    "Editar piso"
-            );
+            adminPisoMesaService
+                    .obtenerFormularioPiso(idPiso);
 
-            model.addAttribute(
-                    "pisoForm",
-                    adminPisoMesaService
-                            .obtenerFormularioPiso(idPiso)
-            );
-
-            return "paginas/admin/piso-form";
+            return "redirect:/admin/pisos-mesas"
+                    + "?editarPiso=" + idPiso;
 
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute(
@@ -198,13 +272,19 @@ public class AdminPisoMesaController {
                     e.getMessage()
             );
 
+            redirectAttributes.addFlashAttribute(
+                    "pisoForm",
+                    formulario
+            );
+
             if (formulario.getIdPiso() == null) {
-                return "redirect:/admin/pisos/nuevo";
+                return "redirect:/admin/pisos-mesas"
+                        + "?modal=piso";
             }
 
-            return "redirect:/admin/pisos/"
-                    + formulario.getIdPiso()
-                    + "/editar";
+            return "redirect:/admin/pisos-mesas"
+                    + "?editarPiso="
+                    + formulario.getIdPiso();
         }
     }
 
@@ -244,54 +324,31 @@ public class AdminPisoMesaController {
             @RequestParam(
                     name = "piso",
                     required = false
-            ) Integer idPiso,
-            Model model
+            ) Integer idPiso
     ) {
-        model.addAttribute(
-                "titulo",
-                "Nueva mesa"
-        );
+        String destino =
+                "redirect:/admin/pisos-mesas?modal=mesa";
 
-        model.addAttribute(
-                "mesaForm",
-                adminPisoMesaService
-                        .nuevoFormularioMesa(idPiso)
-        );
+        if (idPiso != null) {
+            destino += "&piso=" + idPiso;
+        }
 
-        model.addAttribute(
-                "pisos",
-                adminPisoMesaService
-                        .listarPisosActivos()
-        );
-
-        return "paginas/admin/mesa-form";
+        return destino;
     }
 
     @GetMapping("/mesas/{idMesa}/editar")
     public String editarMesa(
             @PathVariable Integer idMesa,
-            Model model,
             RedirectAttributes redirectAttributes
     ) {
         try {
-            model.addAttribute(
-                    "titulo",
-                    "Editar mesa"
-            );
-
-            model.addAttribute(
-                    "mesaForm",
+            AdminMesaFormDTO formulario =
                     adminPisoMesaService
-                            .obtenerFormularioMesa(idMesa)
-            );
+                            .obtenerFormularioMesa(idMesa);
 
-            model.addAttribute(
-                    "pisos",
-                    adminPisoMesaService
-                            .listarPisosActivos()
-            );
-
-            return "paginas/admin/mesa-form";
+            return "redirect:/admin/pisos-mesas"
+                    + "?editarMesa=" + idMesa
+                    + "&piso=" + formulario.getIdPiso();
 
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute(
@@ -337,21 +394,27 @@ public class AdminPisoMesaController {
                     e.getMessage()
             );
 
+            redirectAttributes.addFlashAttribute(
+                    "mesaForm",
+                    formulario
+            );
+
+            String destino =
+                    "redirect:/admin/pisos-mesas";
+
             if (formulario.getIdMesa() == null) {
-                String destino =
-                        "redirect:/admin/mesas/nueva";
-
-                if (formulario.getIdPiso() != null) {
-                    destino += "?piso="
-                            + formulario.getIdPiso();
-                }
-
-                return destino;
+                destino += "?modal=mesa";
+            } else {
+                destino += "?editarMesa="
+                        + formulario.getIdMesa();
             }
 
-            return "redirect:/admin/mesas/"
-                    + formulario.getIdMesa()
-                    + "/editar";
+            if (formulario.getIdPiso() != null) {
+                destino += "&piso="
+                        + formulario.getIdPiso();
+            }
+
+            return destino;
         }
     }
 

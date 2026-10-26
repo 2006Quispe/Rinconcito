@@ -7,11 +7,13 @@ import com.rinconcito.entity.Usuario.EstadoUsuario;
 import com.rinconcito.entity.Usuario.TipoRegistro;
 import com.rinconcito.repository.RolRepository;
 import com.rinconcito.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,19 +23,20 @@ public class UsuarioService {
     private static final String CORREO_CONSUMIDOR_FINAL =
             "consumidor.final@rinconcito.local";
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final RolRepository rolRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private RolRepository rolRepository;
+    public UsuarioService(
+            UsuarioRepository usuarioRepository,
+            RolRepository rolRepository,
+            PasswordEncoder passwordEncoder
+    ) {
+        this.usuarioRepository = usuarioRepository;
+        this.rolRepository = rolRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    /*
-     * Busca o crea un cliente invitado utilizando
-     * los datos ingresados en un pedido o reserva.
-     */
     @Transactional
     public Usuario buscarOCrearInvitado(
             String dni,
@@ -50,10 +53,6 @@ public class UsuarioService {
         );
     }
 
-    /*
-     * Variante que también permite registrar
-     * el correo del cliente invitado.
-     */
     @Transactional
     public Usuario buscarOCrearInvitado(
             String dni,
@@ -91,7 +90,7 @@ public class UsuarioService {
                         );
 
                         String correoLimpio =
-                                limpiarTexto(correo);
+                                normalizarCorreo(correo);
 
                         if (
                                 correoLimpio != null
@@ -99,7 +98,7 @@ public class UsuarioService {
                                                 existente.getCorreo()
                                         )
                                         && !usuarioRepository
-                                        .existsByCorreo(
+                                        .existsByCorreoIgnoreCase(
                                                 correoLimpio
                                         )
                         ) {
@@ -126,11 +125,6 @@ public class UsuarioService {
                 );
     }
 
-    /*
-     * Usuario interno utilizado para pedidos
-     * presenciales donde no se solicitan datos
-     * personales al cliente de la mesa.
-     */
     @Transactional
     public Usuario obtenerOCrearConsumidorFinal() {
 
@@ -190,10 +184,6 @@ public class UsuarioService {
                 "Final"
         );
 
-        /*
-         * El DNI queda vacío porque un cliente
-         * presencial no está obligado a identificarse.
-         */
         consumidorFinal.setDni(null);
         consumidorFinal.setTelefono(null);
 
@@ -220,9 +210,6 @@ public class UsuarioService {
         );
     }
 
-    /*
-     * Registro de una cuenta normal de cliente.
-     */
     @Transactional
     public Usuario registrar(
             RegistroFormDTO dto
@@ -233,8 +220,19 @@ public class UsuarioService {
             );
         }
 
+        if (
+                !Objects.equals(
+                        dto.getContrasena(),
+                        dto.getConfirmarContrasena()
+                )
+        ) {
+            throw new IllegalStateException(
+                    "Las contraseñas no coinciden."
+            );
+        }
+
         String correo =
-                limpiarTexto(dto.getCorreo());
+                normalizarCorreo(dto.getCorreo());
 
         if (correo == null) {
             throw new IllegalStateException(
@@ -242,7 +240,10 @@ public class UsuarioService {
             );
         }
 
-        if (usuarioRepository.existsByCorreo(correo)) {
+        if (
+                usuarioRepository
+                        .existsByCorreoIgnoreCase(correo)
+        ) {
             throw new IllegalStateException(
                     "Ese correo ya está registrado."
             );
@@ -251,12 +252,16 @@ public class UsuarioService {
         String dni =
                 limpiarTexto(dto.getDni());
 
+        if (dni == null) {
+            throw new IllegalStateException(
+                    "El DNI es obligatorio."
+            );
+        }
+
         Optional<Usuario> existente =
                 usuarioRepository.findByDni(dni);
 
         if (existente.isPresent()) {
-            // El registro público no verifica la identidad del titular,
-            // por lo que tampoco puede convertir invitados en cuentas.
             throw new IllegalStateException(
                     "Ese DNI ya está registrado. Si te pertenece, "
                             + "contacta al restaurante para verificar tu identidad."
@@ -264,11 +269,24 @@ public class UsuarioService {
         }
 
         Usuario usuario = new Usuario();
-        usuario.setRol(obtenerRolCliente());
-        usuario.setNombres(limpiarNombre(dto.getNombres()));
-        usuario.setApellidos(limpiarNombre(dto.getApellidos()));
+
+        usuario.setRol(
+                obtenerRolCliente()
+        );
+
+        usuario.setNombres(
+                limpiarNombre(dto.getNombres())
+        );
+
+        usuario.setApellidos(
+                limpiarNombre(dto.getApellidos())
+        );
+
         usuario.setDni(dni);
-        usuario.setTelefono(limpiarTexto(dto.getTelefono()));
+
+        usuario.setTelefono(
+                limpiarTexto(dto.getTelefono())
+        );
 
         usuario.setTipoRegistro(
                 TipoRegistro.CUENTA
@@ -286,7 +304,16 @@ public class UsuarioService {
                 )
         );
 
-        return usuarioRepository.save(usuario);
+        try {
+            return usuarioRepository.save(
+                    usuario
+            );
+
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalStateException(
+                    "El correo o el DNI ya está registrado."
+            );
+        }
     }
 
     private Usuario crearInvitado(
@@ -297,14 +324,16 @@ public class UsuarioService {
             String correo
     ) {
         String correoLimpio =
-                limpiarTexto(correo);
+                normalizarCorreo(correo);
 
         String correoFinal;
 
         if (
                 correoLimpio != null
                         && !usuarioRepository
-                        .existsByCorreo(correoLimpio)
+                        .existsByCorreoIgnoreCase(
+                                correoLimpio
+                        )
         ) {
             correoFinal = correoLimpio;
 
@@ -353,7 +382,9 @@ public class UsuarioService {
                 EstadoUsuario.ACTIVO
         );
 
-        return usuarioRepository.save(usuario);
+        return usuarioRepository.save(
+                usuario
+        );
     }
 
     private Rol obtenerRolCliente() {
@@ -381,6 +412,19 @@ public class UsuarioService {
         return limpio.isBlank()
                 ? null
                 : limpio;
+    }
+
+    private String normalizarCorreo(
+            String correo
+    ) {
+        String limpio =
+                limpiarTexto(correo);
+
+        return limpio == null
+                ? null
+                : limpio.toLowerCase(
+                        Locale.ROOT
+                );
     }
 
     private String limpiarTexto(

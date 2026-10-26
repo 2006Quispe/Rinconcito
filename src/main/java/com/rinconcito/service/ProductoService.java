@@ -2,10 +2,14 @@ package com.rinconcito.service;
 
 import com.rinconcito.entity.Categoria;
 import com.rinconcito.entity.Categoria.EstadoCategoria;
+import com.rinconcito.entity.HistorialDisponibilidadProducto;
 import com.rinconcito.entity.Producto;
 import com.rinconcito.entity.Producto.EstadoProducto;
+import com.rinconcito.entity.Usuario;
 import com.rinconcito.repository.CategoriaRepository;
+import com.rinconcito.repository.HistorialDisponibilidadProductoRepository;
 import com.rinconcito.repository.ProductoRepository;
+import com.rinconcito.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,17 +27,26 @@ public class ProductoService {
 
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final HistorialDisponibilidadProductoRepository
+            historialDisponibilidadRepository;
     private final ProductoImagenStorageService
             productoImagenStorageService;
 
     public ProductoService(
             ProductoRepository productoRepository,
             CategoriaRepository categoriaRepository,
+            UsuarioRepository usuarioRepository,
+            HistorialDisponibilidadProductoRepository
+                    historialDisponibilidadRepository,
             ProductoImagenStorageService
                     productoImagenStorageService
     ) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.historialDisponibilidadRepository =
+                historialDisponibilidadRepository;
         this.productoImagenStorageService =
                 productoImagenStorageService;
     }
@@ -185,7 +198,8 @@ public class ProductoService {
     @Transactional
     public void cambiarDisponibilidad(
             Integer idProducto,
-            boolean disponible
+            boolean disponible,
+            String correoResponsable
     ) {
         Producto producto =
                 productoRepository
@@ -196,8 +210,56 @@ public class ProductoService {
                                 )
                         );
 
+        if (producto.getEstado()
+                != EstadoProducto.ACTIVO) {
+            throw new IllegalStateException(
+                    "No se puede cambiar la disponibilidad "
+                            + "de un producto inactivo."
+            );
+        }
+
+        if (correoResponsable == null
+                || correoResponsable.isBlank()) {
+            throw new IllegalStateException(
+                    "No se pudo identificar al usuario responsable."
+            );
+        }
+
+        Usuario responsable =
+                usuarioRepository
+                        .findByCorreo(
+                                correoResponsable.trim()
+                        )
+                        .orElseThrow(() ->
+                                new IllegalStateException(
+                                        "El usuario responsable "
+                                                + "no fue encontrado."
+                                )
+                        );
+
+        boolean disponibleAnterior =
+                producto.isDisponible();
+
+        if (disponibleAnterior == disponible) {
+            return;
+        }
+
         producto.setDisponible(disponible);
         productoRepository.save(producto);
+
+        HistorialDisponibilidadProducto historial =
+                new HistorialDisponibilidadProducto();
+
+        historial.setProducto(producto);
+        historial.setUsuario(responsable);
+        historial.setDisponibleAnterior(
+                disponibleAnterior
+        );
+        historial.setDisponibleNuevo(disponible);
+
+        historialDisponibilidadRepository.save(
+                historial
+        );
     }
 
     @Transactional

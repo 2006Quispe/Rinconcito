@@ -64,13 +64,35 @@ public class AdminConfiguracionController {
     public String mostrarConfiguracion(
             Model model
     ) {
+        HorarioConfiguracionFormDTO horarioForm;
+
+        if (model.containsAttribute("horarioForm")) {
+            horarioForm =
+                    (HorarioConfiguracionFormDTO)
+                            model.getAttribute(
+                                    "horarioForm"
+                            );
+        } else {
+            horarioForm =
+                    horarioAtencionService
+                            .obtenerFormularioConfiguracion();
+        }
+
         prepararModelo(
                 model,
                 configuracionRestauranteService
                         .obtenerFormulario(),
-                horarioAtencionService
-                        .obtenerFormularioConfiguracion()
+                horarioForm
         );
+
+        if (!model.containsAttribute(
+                "abrirModalHorarios"
+        )) {
+            model.addAttribute(
+                    "abrirModalHorarios",
+                    false
+            );
+        }
 
         return "paginas/admin/configuracion";
     }
@@ -215,6 +237,16 @@ public class AdminConfiguracionController {
             redirectAttributes.addFlashAttribute(
                     "error",
                     e.getMessage()
+            );
+
+            redirectAttributes.addFlashAttribute(
+                    "horarioForm",
+                    horarioForm
+            );
+
+            redirectAttributes.addFlashAttribute(
+                    "abrirModalHorarios",
+                    true
             );
         }
 

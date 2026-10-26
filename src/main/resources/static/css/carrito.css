@@ -544,6 +544,10 @@
     color: var(--color-texto);
 }
 
+.pagina-carrito .carrito-flotante {
+    display: none !important;
+}
+
 /* =====================================================
    DISEÑO PARA TABLET
 ===================================================== */
@@ -658,4 +662,10 @@
 	.pagina-carrito .carrito-flotante {
 	    display: none !important;
 	}
+}
+
+/* Ocultar acceso flotante dentro del carrito */
+
+.pagina-carrito .carrito-flotante {
+    display: none !important;
 }

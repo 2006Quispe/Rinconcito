@@ -12,19 +12,13 @@
         <div class="container">
 
             <a class="navbar-brand marca-publica"
-               th:href="@{/}">
+               th:href="@{/}"
+               aria-label="Rinconcito Ayacuchano Campestre">
 
-                <span class="marca-nombre"
-                      th:text="${configuracion != null
-                          and configuracion.nombre != null
-                          and !configuracion.nombre.isBlank()
-                          ? configuracion.nombre
-                          : 'Rinconcito Ayacuchano'}">
-
-                    Rinconcito Ayacuchano
-                </span>
-
-                <small>CAMPESTRE</small>
+                <img class="logo-publico"
+                     th:src="@{/img/logo-rinconcito-nombre.png}"
+                     src="/img/logo-rinconcito-nombre.png"
+                     alt="Rinconcito Ayacuchano Campestre">
             </a>
 
             <button class="navbar-toggler"
@@ -137,6 +131,7 @@
     </nav>
 
     <a th:href="@{/carrito}"
+       th:if="${mostrarCarritoFlotante == null or mostrarCarritoFlotante}"
        class="carrito-flotante"
        aria-label="Abrir carrito"
        title="Mi carrito">
