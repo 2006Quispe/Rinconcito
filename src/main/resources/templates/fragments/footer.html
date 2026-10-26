@@ -14,7 +14,35 @@
                     <span th:text="${configuracion != null and configuracion.direccion != null} ? ${configuracion.direccion} : 'Dirección por confirmar'">Dirección</span>
                 </p>
                 <p class="mb-0 text-white-50" th:if="${configuracion != null and configuracion.referencia != null}"
-                   th:text="${configuracion.referencia}"></p>
+                   th:text="${configuracion.referencia}">
+                </p>
+                
+                <!-- INICIO DEL MINI MAPA CLICABLE -->
+                <a th:href="${configuracion != null and configuracion.urlGoogleMaps != null and !configuracion.urlGoogleMaps.isBlank() ? configuracion.urlGoogleMaps : 'https://maps.google.com/?q=Carapongo,Lurigancho-Chosica,Lima'}"
+                   target="_blank"
+                   rel="noopener"
+                   class="d-block position-relative mt-3 rounded overflow-hidden shadow-sm"
+                   style="height: 130px; border: 1px solid rgba(212, 160, 23, 0.4);">
+                    
+                    <iframe src="https://maps.google.com/maps?q=Carapongo,Lurigancho-Chosica,Lima&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                            width="100%" 
+                            height="100%" 
+                            style="border:0; pointer-events: none; filter: grayscale(20%) contrast(110%);" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                    
+                    <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" 
+                         style="background: rgba(0,0,0,0.3); transition: background 0.2s;" 
+                         onmouseover="this.style.background='rgba(0,0,0,0.1)'" 
+                         onmouseout="this.style.background='rgba(0,0,0,0.3)'">
+                        
+                        <span class="badge" style="background-color: var(--dorado); color: var(--cafe); padding: 0.5rem 0.8rem; font-size: 0.75rem;">
+                            <i class="bi bi-geo-alt-fill me-1"></i> Abrir en Google Maps
+                        </span>
+                    </div>
+
+                </a>
             </div>
 
             <div class="col-md-4">

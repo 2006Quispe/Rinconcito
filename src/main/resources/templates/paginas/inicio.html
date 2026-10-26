@@ -281,127 +281,81 @@
 
     </section>
 
-    <section class="experiencia-inicio">
-
+        <section class="experiencia-inicio">
         <div class="container">
-
             <div class="experiencia-encabezado">
-
                 <p>NUESTRA EXPERIENCIA</p>
-
-                <h2>
-                    Descubre El Rinconcito
-                </h2>
-
-                <span>
-                    Sabores tradicionales, eventos inolvidables
-                    y un espacio pensado para compartir.
-                </span>
-
+                <h2>Descubre El Rinconcito</h2>
+                <span>Sabores tradicionales, eventos inolvidables y un espacio pensado para compartir.</span>
             </div>
 
-            <div class="row g-3">
-
+            <div class="row g-4">
+                <!-- Plato 1 -->
                 <div class="col-lg-4 col-md-6">
-
-                    <article class="experiencia-tarjeta">
-
-                        <div class="experiencia-icono">
-
-                            <i class="bi bi-egg-fried"></i>
-
-                        </div>
-
-                        <div class="experiencia-contenido">
-
-                            <h3>Nuestra carta</h3>
-
-                            <p>
-                                Pachamanca, pollo a la brasa
-                                “Wallpa Waccay”, cuy y parrilladas.
-                            </p>
-
-                            <a th:href="@{/carta}">
-
-                                Ver platos
-
-                                <i class="bi bi-arrow-right"></i>
-                            </a>
-
-                        </div>
-
-                    </article>
-
+                    <a th:href="@{/carta}" class="text-decoration-none">
+                        <article class="plato-card">
+                            <div class="plato-card-imagen">
+                                <img th:src="@{/img/pachamanca-expericencias.jpg}" alt="Pachamanca 3 sabores">
+                            </div>
+                            <div class="plato-card-cuerpo">
+                                <div class="plato-card-titulo">
+                                    <h3>Pachamanca 3 sabores</h3>
+                                    <span class="plato-precio">S/ 75</span>
+                                </div>
+                                <p>Auténtico ritual andino con carnes de cerdo, pollo y cordero cocidas bajo tierra.</p>
+                                <div class="plato-card-footer">
+                                    <span>El favorito de la casa</span>
+                                </div>
+                            </div>
+                        </article>
+                    </a>
                 </div>
 
+                <!-- Plato 2 -->
                 <div class="col-lg-4 col-md-6">
-
-                    <article class="experiencia-tarjeta">
-
-                        <div class="experiencia-icono">
-
-                            <i class="bi bi-calendar-event"></i>
-
-                        </div>
-
-                        <div class="experiencia-contenido">
-
-                            <h3>Eventos en vivo</h3>
-
-                            <p>
-                                Shows con orquestas durante los fines
-                                de semana y feriados.
-                            </p>
-
-                            <a th:href="@{/eventos}">
-
-                                Ver eventos
-
-                                <i class="bi bi-arrow-right"></i>
-                            </a>
-
-                        </div>
-
-                    </article>
-
+                    <a th:href="@{/carta}" class="text-decoration-none">
+                        <article class="plato-card">
+                            <div class="plato-card-imagen">
+                                <!-- Cambia 'chicharron.jpg' por el nombre real de tu imagen -->
+                                <img th:src="@{/img/chicarron.jpg}" alt="Chicharrón de Cerdo">
+                            </div>
+                            <div class="plato-card-cuerpo">
+                                <div class="plato-card-titulo">
+                                    <h3>Chicharrón de Cerdo</h3>
+                                    <span class="plato-precio">S/ 55</span>
+                                </div>
+                                <p>Crujiente chicharrón dorado a la leña, servido con mote, cancha y salsa criolla.</p>
+                                <div class="plato-card-footer">
+                                    <span>Receta familiar tradicional</span>
+                                </div>
+                            </div>
+                        </article>
+                    </a>
                 </div>
 
-                <div class="col-lg-4 col-md-12">
-
-                    <article class="experiencia-tarjeta">
-
-                        <div class="experiencia-icono">
-
-                            <i class="bi bi-people"></i>
-
-                        </div>
-
-                        <div class="experiencia-contenido">
-
-                            <h3>Reserva tu mesa</h3>
-
-                            <p>
-                                Asegura tu lugar para disfrutar
-                                nuestro Almuerzo Show.
-                            </p>
-
-                            <a th:href="@{/reservas}">
-
-                                Reservar
-
-                                <i class="bi bi-arrow-right"></i>
-                            </a>
-
-                        </div>
-
-                    </article>
-
+                <!-- Plato 3 -->
+                <div class="col-lg-4 col-md-6">
+                    <a th:href="@{/carta}" class="text-decoration-none">
+                        <article class="plato-card">
+                            <div class="plato-card-imagen">
+                                <!-- Cambia 'caja-china.jpg' por el nombre real de tu imagen -->
+                                <img th:src="@{/img/caja-china.jpg}" alt="Caja China">
+                            </div>
+                            <div class="plato-card-cuerpo">
+                                <div class="plato-card-titulo">
+                                    <h3>Caja China</h3>
+                                    <span class="plato-precio">S/ 55</span>
+                                </div>
+                                <p>Crujiente cerdo cocido lentamente al calor de la caja china con leña de algarrobo.</p>
+                                <div class="plato-card-footer">
+                                    <span>Cocción lenta campestre</span>
+                                </div>
+                            </div>
+                        </article>
+                    </a>
                 </div>
-
             </div>
-
         </div>
-
     </section>
 
 </main>
