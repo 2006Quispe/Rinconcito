@@ -131,6 +131,7 @@
     </nav>
 
     <a th:href="@{/carrito}"
+       th:if="${mostrarCarritoFlotante == null or mostrarCarritoFlotante}"
        class="carrito-flotante"
        aria-label="Abrir carrito"
        title="Mi carrito">

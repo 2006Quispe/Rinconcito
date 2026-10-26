@@ -61,7 +61,7 @@
                     WhatsApp:
                     <a class="text-light text-decoration-none"
                        th:if="${configuracion != null and configuracion.whatsapp != null}"
-                       th:href="${configuracion.enlaceWhatsapp}"
+                       th:href="${'https://wa.me/' + configuracion.whatsapp}"
                        target="_blank" rel="noopener"
                        th:text="${configuracion.whatsapp}">WhatsApp</a>
                     <span th:if="${configuracion == null or configuracion.whatsapp == null}">Por confirmar</span>

@@ -24,4 +24,29 @@ public class CarritoGlobalControllerAdvice {
         return carritoService.contarUnidades(session);
     }
 
+    /*
+     * El botón flotante no debe mostrarse dentro del
+     * carrito ni durante el proceso de completar el pedido.
+     */
+    @ModelAttribute("mostrarCarritoFlotante")
+    public boolean mostrarCarritoFlotante(
+            HttpServletRequest request
+    ) {
+        String ruta = request.getRequestURI();
+        String contexto = request.getContextPath();
+
+        if (
+                contexto != null
+                        && !contexto.isBlank()
+                        && ruta.startsWith(contexto)
+        ) {
+            ruta = ruta.substring(contexto.length());
+        }
+
+        return !ruta.equals("/carrito")
+                && !ruta.startsWith("/carrito/")
+                && !ruta.equals("/pedidos")
+                && !ruta.startsWith("/pedidos/");
+    }
+
 }

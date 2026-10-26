@@ -120,7 +120,8 @@
                             <input type="radio"
                                    id="tipoDelivery"
                                    th:field="*{tipoEntrega}"
-                                   value="DELIVERY">
+                                   value="DELIVERY"
+                                   onchange="actualizarModalidadPedido()">
 
                             <span class="pedido-modalidad-contenido">
 
@@ -150,7 +151,8 @@
                             <input type="radio"
                                    id="tipoRecojo"
                                    th:field="*{tipoEntrega}"
-                                   value="RECOJO_LOCAL">
+                                   value="RECOJO_LOCAL"
+                                   onchange="actualizarModalidadPedido()">
 
                             <span class="pedido-modalidad-contenido">
 
@@ -629,25 +631,32 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    function actualizarModalidadPedido() {
+
+        const seleccionado =
+            document.querySelector(
+                'input[name="tipoEntrega"]:checked'
+            );
+
+        const esDelivery =
+            !seleccionado
+                || seleccionado.value === "DELIVERY";
 
         const formularioPedido =
             document.getElementById("formularioPedido");
 
-        const tipoDelivery =
-            document.getElementById("tipoDelivery");
-
-        const tipoRecojo =
-            document.getElementById("tipoRecojo");
-
-        const seccionInformacionPersonal =
-            document.getElementById("seccionInformacionPersonal");
+        const clienteLogueado =
+            formularioPedido
+                && formularioPedido.dataset
+                    .clienteLogueado === "true";
 
         const seccionDireccion =
             document.getElementById("seccionDireccion");
 
-        const camposDireccion =
-            document.querySelectorAll(".campo-direccion");
+        const seccionInformacionPersonal =
+            document.getElementById(
+                "seccionInformacionPersonal"
+            );
 
         const avisoDelivery =
             document.getElementById("avisoDelivery");
@@ -661,88 +670,68 @@
         const filaServicio =
             document.getElementById("filaServicio");
 
-        const clienteLogueado =
-            formularioPedido &&
-            formularioPedido.dataset.clienteLogueado === "true";
+        if (seccionDireccion) {
+            seccionDireccion.hidden = !esDelivery;
+            seccionDireccion.style.display =
+                esDelivery ? "" : "none";
+        }
 
-        function actualizarModalidad() {
-
-            const esDelivery =
-                tipoDelivery && tipoDelivery.checked;
-
-            /*
-             * La dirección solo aparece cuando el pedido
-             * será enviado por delivery.
-             */
-            if (seccionDireccion) {
-                seccionDireccion.style.display =
-                    esDelivery ? "block" : "none";
-            }
-
-            /*
-             * La información personal se mantiene visible para
-             * invitados. Si el cliente inició sesión y selecciona
-             * recojo, se oculta porque sus datos ya están registrados.
-             */
-            if (seccionInformacionPersonal) {
-                seccionInformacionPersonal.style.display =
-                    !esDelivery && clienteLogueado
-                        ? "none"
-                        : "block";
-            }
-
-            /*
-             * Los campos de dirección solamente son obligatorios
-             * para delivery.
-             */
-            camposDireccion.forEach(function (campo) {
-
+        document.querySelectorAll(".campo-direccion")
+            .forEach(function (campo) {
                 campo.required = esDelivery;
 
                 if (!esDelivery) {
                     campo.setCustomValidity("");
+                    campo.value = "";
                 }
             });
 
-            if (avisoDelivery) {
-                avisoDelivery.style.display =
-                    esDelivery ? "flex" : "none";
-            }
+        if (seccionInformacionPersonal) {
+            const ocultar =
+                !esDelivery && clienteLogueado;
 
-            if (avisoRecojo) {
-                avisoRecojo.style.display =
-                    esDelivery ? "none" : "flex";
-            }
+            seccionInformacionPersonal.hidden =
+                ocultar;
 
-            if (resumenModalidad) {
-                resumenModalidad.textContent =
-                    esDelivery
-                        ? "Delivery"
-                        : "Recojo en local";
-            }
-
-            if (filaServicio) {
-                filaServicio.style.display =
-                    esDelivery ? "flex" : "none";
-            }
+            seccionInformacionPersonal.style.display =
+                ocultar ? "none" : "";
         }
 
-        if (tipoDelivery) {
-            tipoDelivery.addEventListener(
-                "change",
-                actualizarModalidad
-            );
+        if (avisoDelivery) {
+            avisoDelivery.hidden = !esDelivery;
+            avisoDelivery.style.display =
+                esDelivery ? "flex" : "none";
         }
 
-        if (tipoRecojo) {
-            tipoRecojo.addEventListener(
-                "change",
-                actualizarModalidad
-            );
+        if (avisoRecojo) {
+            avisoRecojo.hidden = esDelivery;
+            avisoRecojo.style.display =
+                esDelivery ? "none" : "flex";
         }
 
-        actualizarModalidad();
-    });
+        if (resumenModalidad) {
+            resumenModalidad.textContent =
+                esDelivery
+                    ? "Delivery"
+                    : "Recojo en local";
+        }
+
+        if (filaServicio) {
+            filaServicio.hidden = !esDelivery;
+            filaServicio.style.display =
+                esDelivery ? "flex" : "none";
+        }
+    }
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        actualizarModalidadPedido
+    );
+
+    window.addEventListener(
+        "pageshow",
+        actualizarModalidadPedido
+    );
 </script>
 
 <script>
