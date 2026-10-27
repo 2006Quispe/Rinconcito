@@ -62,12 +62,14 @@
                     Ver galería pública
                 </a>
 
-                <a th:href="@{/admin/galeria/nueva}"
-                   class="btn-nueva-imagen">
+                <button type="button"
+                        class="btn-nueva-imagen"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalNuevaImagen">
 
                     <i class="bi bi-plus-lg"></i>
                     Nueva imagen
-                </a>
+                </button>
 
             </div>
 
@@ -97,12 +99,14 @@
                 en la página pública del restaurante.
             </p>
 
-            <a th:href="@{/admin/galeria/nueva}"
-               class="btn-nueva-imagen">
+            <button type="button"
+                    class="btn-nueva-imagen"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalNuevaImagen">
 
                 <i class="bi bi-plus-lg"></i>
                 Publicar primera imagen
-            </a>
+            </button>
 
         </section>
 
@@ -262,7 +266,153 @@
 
 </div>
 
+
+<!-- Modal: nueva imagen -->
+<div class="modal fade admin-creacion-modal"
+     id="modalNuevaImagen"
+     tabindex="-1"
+     aria-labelledby="tituloModalNuevaImagen"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form th:action="@{/admin/galeria/guardar}"
+                  method="post"
+                  enctype="multipart/form-data">
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+                <input type="hidden"
+                       name="estado"
+                       value="ACTIVO">
+
+                <div class="admin-modal-cabecera">
+                    <span class="admin-modal-etiqueta">
+                        GALERÍA DEL RESTAURANTE
+                    </span>
+                    <h2 id="tituloModalNuevaImagen">
+                        Publicar nueva imagen
+                    </h2>
+                    <p>
+                        Agrega una fotografía del restaurante, sus platos o eventos.
+                    </p>
+                </div>
+
+                <div class="admin-modal-cuerpo">
+                    <label for="modalGaleriaArchivo"
+                           class="admin-modal-subir"
+                           id="modalGaleriaZona">
+                        <input type="file"
+                               id="modalGaleriaArchivo"
+                               name="archivoImagen"
+                               accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                               required>
+                        <img id="modalGaleriaPreview"
+                             class="admin-modal-preview d-none"
+                             alt="Vista previa">
+                        <span id="modalGaleriaIndicacion"
+                              class="admin-modal-subir-contenido">
+                            <i class="bi bi-cloud-arrow-up"></i>
+                            <strong>Arrastra una imagen o selecciónala</strong>
+                            <small>JPG, PNG o WEBP · máximo 5 MB</small>
+                        </span>
+                    </label>
+
+                    <div class="row g-3 mt-1">
+                        <div class="col-12">
+                            <label for="modalGaleriaTitulo"
+                                   class="form-label">
+                                Título
+                            </label>
+                            <input type="text"
+                                   id="modalGaleriaTitulo"
+                                   name="titulo"
+                                   class="form-control"
+                                   maxlength="150"
+                                   placeholder="Ej. Presentación musical">
+                        </div>
+
+                        <div class="col-12">
+                            <label for="modalGaleriaDescripcion"
+                                   class="form-label">
+                                Descripción
+                            </label>
+                            <textarea id="modalGaleriaDescripcion"
+                                      name="descripcion"
+                                      class="form-control"
+                                      rows="3"
+                                      maxlength="300"
+                                      placeholder="Escribe una breve descripción de la fotografía"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="admin-modal-aviso">
+                        <i class="bi bi-eye"></i>
+                        <span>
+                            La imagen se publicará visible en la galería del restaurante.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="admin-modal-acciones">
+                    <button type="button"
+                            class="admin-boton-secundario"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="admin-modal-guardar">
+                        <i class="bi bi-check-circle"></i>
+                        Publicar imagen
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const archivo =
+            document.getElementById("modalGaleriaArchivo");
+        const preview =
+            document.getElementById("modalGaleriaPreview");
+        const indicacion =
+            document.getElementById("modalGaleriaIndicacion");
+        const modal =
+            document.getElementById("modalNuevaImagen");
+
+        if (!archivo || !preview || !indicacion) {
+            return;
+        }
+
+        archivo.addEventListener("change", function () {
+            const imagen = archivo.files[0];
+
+            if (!imagen) {
+                preview.src = "";
+                preview.classList.add("d-none");
+                indicacion.classList.remove("d-none");
+                return;
+            }
+
+            preview.src = URL.createObjectURL(imagen);
+            preview.classList.remove("d-none");
+            indicacion.classList.add("d-none");
+        });
+
+        if (modal) {
+            modal.addEventListener("hidden.bs.modal", function () {
+                archivo.value = "";
+                preview.src = "";
+                preview.classList.add("d-none");
+                indicacion.classList.remove("d-none");
+            });
+        }
+    });
 </script>
 
 </body>
