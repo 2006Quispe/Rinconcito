@@ -1299,3 +1299,11 @@ textarea.form-control {
         width: 100%;
     }
 }
+
+
+button.btn-categoria-principal,
+button.btn-nueva-imagen {
+    font-family: inherit;
+    border: 0;
+    cursor: pointer;
+}
