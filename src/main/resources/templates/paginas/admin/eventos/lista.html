@@ -98,8 +98,10 @@
                     Registra el primer evento del restaurante.
                 </p>
 
-                <a th:href="@{/admin/eventos/nuevo}"
-                   class="admin-boton-principal">
+                <button type="button"
+                        class="admin-boton-principal"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalNuevoEvento">
 
                     Crear evento
 
