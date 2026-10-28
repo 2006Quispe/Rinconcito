@@ -29,7 +29,7 @@ public class OutlookOAuthTokenService {
         if (token != null && Instant.now().isBefore(vence)) return token;
         Properties autorizacion = leerAutorizacion();
         String formulario = "client_id=" + URLEncoder.encode(autorizacion.getProperty("client_id"), StandardCharsets.UTF_8)
-                + "&grant_type=refresh_token&refresh_token="
+                + "&scope=https%3A%2F%2Fgraph.microsoft.com%2FMail.Send%20offline_access&grant_type=refresh_token&refresh_token="
                 + URLEncoder.encode(autorizacion.getProperty("refresh_token"), StandardCharsets.UTF_8);
         byte[] contenido = formulario.getBytes(StandardCharsets.UTF_8);
         Map<?, ?> respuesta;

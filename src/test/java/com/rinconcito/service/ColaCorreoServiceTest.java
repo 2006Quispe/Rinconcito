@@ -38,6 +38,17 @@ class ColaCorreoServiceTest {
         transaccion = new TransactionTemplate(new JdbcTransactionManager(source));
     }
 
+    @Test void deshabilitadoNoRequiereTablaNiAccedeALaBase() {
+        var sinBase = mock(JdbcTemplate.class);
+        var sinDetalles = mock(DetallePedidoRepository.class);
+        var deshabilitada = new ColaCorreoService(sinBase, sinDetalles, false);
+        deshabilitada.pedido(null, "cliente@example.test");
+        deshabilitada.reserva(null, "cliente@example.test");
+        deshabilitada.nota(null, false);
+        assertTrue(deshabilitada.listar().isEmpty());
+        verifyNoInteractions(sinBase, sinDetalles);
+    }
+
     Reserva reserva() {
         var piso = new Piso(); piso.setNombre("Primer piso");
         var reserva = new Reserva(); reserva.setIdReserva(10); reserva.setCodigoReserva("RES-10");

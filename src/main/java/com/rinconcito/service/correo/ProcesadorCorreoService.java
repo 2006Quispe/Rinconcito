@@ -68,12 +68,12 @@ public class ProcesadorCorreoService {
                     }
                     sender.send(mensaje);
                     jdbc.update("UPDATE correo_salida SET estado='ENVIADO',error=NULL,enviado=CURRENT_TIMESTAMP WHERE id=?",id);
-                    log.info("Correo de la cola {} aceptado por el servidor SMTP",id);
+                    log.info("Correo de la cola {} aceptado por el proveedor de correo",id);
                 } catch (Exception error) {
                     jdbc.update("""
                             UPDATE correo_salida SET estado='ERROR',error=?,
                             proximo_intento=DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 1 MINUTE) WHERE id=?
-                            ""","No se pudo generar o entregar el correo. Comprueba SMTP y el documento.",id);
+                            ""","No se pudo generar o entregar el correo. Comprueba la autorizacion del proveedor y el documento.",id);
                     log.warn("Fallo el correo de la cola {} ({})",id,error.getClass().getSimpleName());
                 }
             }

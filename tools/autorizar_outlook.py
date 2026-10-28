@@ -10,7 +10,7 @@ import uuid
 from pathlib import Path
 
 BASE = 'https://login.microsoftonline.com/consumers/oauth2/v2.0/'
-SCOPE = 'https://outlook.office.com/SMTP.Send offline_access'
+SCOPE = 'https://graph.microsoft.com/Mail.Send offline_access'
 
 
 def post(endpoint, data):
@@ -43,7 +43,7 @@ def main():
         raise SystemExit('Microsoft no pudo iniciar la autorizacion (' + str(device.get('error', 'desconocido'))
                          + '). Revisa las cuentas personales y los flujos de cliente publico de la aplicacion.')
     print('Autoriza SOLO tu aplicacion Rinconcito Demo y la cuenta ' + args.cuenta, flush=True)
-    print('Abre https://microsoft.com/devicelogin y escribe este codigo: ' + device['user_code'], flush=True)
+    print('Abre ' + device['verification_uri'] + ' y escribe este codigo: ' + device['user_code'], flush=True)
     print('La contrasena se introduce unicamente en Microsoft; este programa no la solicita.', flush=True)
     intervalo = max(5, int(device.get('interval', 5)))
     limite = time.monotonic() + int(device.get('expires_in', 900))

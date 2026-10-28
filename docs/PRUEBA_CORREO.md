@@ -76,30 +76,18 @@ No ejecutes estos comandos si las mismas instancias ya están escuchando en sus
 puertos. Los mensajes capturados se guardan en `.local/correos/*.eml` y el PDF
 verificado en `.local/nota-ejemplo.pdf`; ninguno se sube a Git.
 
-## Para correo real después
+## Correo real
 
-El cliente es el **destinatario**. El restaurante necesita además una cuenta
-**remitente** con acceso SMTP. La dependencia `spring-boot-starter-mail` ya está
-añadida al `pom.xml`; Maven la descarga al compilar. H2 se utiliza solo en pruebas.
-
-El archivo de prueba fija SMTP en `127.0.0.1:1025`. Para un proveedor real se usará
-otra configuración local con `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`,
-`SMTP_PASSWORD`, `SMTP_FROM`, `SMTP_AUTH` y `SMTP_STARTTLS`. No basta con cambiar el
-correo del cliente ni con dejar las propiedades fijas del buzón de pruebas.
-
-No pongas credenciales en el código o en un commit. Si se elige Gmail mediante
-contraseña de aplicación, la cuenta debe tener verificación en dos pasos y esa
-opción debe estar disponible; no se usa la contraseña normal. Referencia:
-[Ayuda de Google](https://support.google.com/accounts/answer/185833?hl=es).
-
-Antes de integrar, aplicar `migration_correo_salida.sql` a la base correspondiente
-y habilitar `CORREO_HABILITADO=true` solo cuando esté configurado el remitente.
+El remitente del equipo usa Microsoft Graph. Sigue [CORREO_HOTMAIL.md](CORREO_HOTMAIL.md)
+y la [guia para otra PC](EJECUTAR_EN_OTRA_PC.md). No uses la configuracion del buzon
+simulado para enviar mensajes reales. Maven descarga spring-boot-starter-mail;
+H2 solo se usa en pruebas.
 
 ## Validación
 
-Resultado: **57 pruebas aprobadas**, sin fallos ni errores. Tambi?n se verificaron
-por HTTP los correos y PDF de un pedido y una reserva pagada, adem?s del fallo
-y reenv?o de SMTP.
+Se verificaron por HTTP las confirmaciones y PDF de pedidos y reservas con el
+buzon simulado, incluyendo fallo y reintento. La integracion Graph tiene pruebas
+de envio MIME con PDF, errores de autorizacion y renovacion de tokens.
 
 Las pruebas unitarias comprueban rollback, deduplicación, contactos inválidos,
 resumen de pedido, notas sin pago aprobado, reintentos y reenvíos. Las regresiones

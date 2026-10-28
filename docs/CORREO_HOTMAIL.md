@@ -1,81 +1,58 @@
-# Remitente de Hotmail para el demo
+# Correo Hotmail del demo
 
-Hotmail/Outlook.com requiere autenticación moderna OAuth2. Esta integración usa
-SMTP por `smtp-mail.outlook.com:587`, STARTTLS y XOAUTH2. No usa ni guarda la
-contraseña normal del correo. La cuenta que autoriza el envío debe ser la misma
-que se configura como remitente.
+El perfil `hotmail` usa Microsoft Graph por HTTPS con OAuth2 y el permiso delegado
+`Mail.Send`. El buzon del demo rechazo SMTP con `535 5.7.139` (SMTP deshabilitado).
+Se reutiliza el mensaje MIME y su PDF; no se necesita otra dependencia ni hosting en Azure.
 
-## 1. Registrar la aplicación una vez
+Guia para el equipo: [Ejecutar en otra PC](EJECUTAR_EN_OTRA_PC.md).
 
-En [Microsoft Entra](https://entra.microsoft.com/), abre **Registros de aplicaciones
-→ Nuevo registro**. Nombre: `Rinconcito Demo`. Elige un tipo de cuenta que incluya
-**cuentas personales de Microsoft**. No hace falta un URI de redirección para el
-flujo de código de dispositivo utilizado aquí.
+## Configuracion en cada laptop
 
-En **Autenticación**, habilita los flujos de cliente público. En **Permisos de API**,
-añade **Office 365 Exchange Online → Permisos delegados → SMTP.Send**. No elijas
-permisos de aplicación ni crees un secreto de cliente para este flujo de demo.
-
-Copia el **Id. de aplicación (cliente)** de Información general. Ese ID es público;
-la contraseña y los tokens de autorización no lo son. Si tu cuenta no permite
-registrar aplicaciones, hace falta resolver ese acceso en Microsoft antes de
-poder habilitar este remitente.
-
-## 2. Autorizar en cada laptop que enviará mensajes
-
-Desde la carpeta del proyecto:
+1. En Microsoft Entra, registra `Rinconcito Demo` para cuentas personales de Microsoft.
+   Se requiere acceso a un directorio y permiso para registrar aplicaciones.
+2. En Autenticacion habilita los flujos de clientes publicos.
+3. Ejecuta desde la carpeta del proyecto:
 
 ```powershell
-python tools/autorizar_outlook.py --client-id TU_ID_PUBLICO --cuenta rinconcitodemo@hotmail.com
+python tools/autorizar_outlook.py --client-id TU_ID_PUBLICO --cuenta rinconcito.demo@hotmail.com
 ```
 
-El programa muestra un código y te dirige a `https://microsoft.com/devicelogin`.
-Inicia sesión allí con la cuenta del negocio y acepta el permiso de envío de tu
-aplicación. La contraseña se introduce solo en Microsoft. Si el código vence,
-ejecuta otra vez el programa.
+Abre la direccion que devuelve Microsoft (para esta cuenta, `https://www.microsoft.com/link`),
+introduce el codigo y acepta el permiso de enviar correos de Rinconcito Demo.
+El programa solicita `https://graph.microsoft.com/Mail.Send` y `offline_access`.
+No hace falta agregar Exchange Online en el portal ni crear un secreto de cliente.
+Si antes autorizaste SMTP.Send, vuelve a ejecutar el comando para consentir Mail.Send.
+La contrasena se introduce solo en Microsoft.
 
-La autorización queda en `.local/outlook-oauth.properties`, ignorada por Git. No
-copies ese archivo en el repositorio ni lo compartas por chat. En la otra laptop
-se hace su propia autorización. El programa renueva automáticamente los tokens;
-si Microsoft revoca el acceso, vuelve a ejecutar el comando.
+La autorizacion se guarda en `.local/outlook-oauth.properties`, ignorado por Git.
+Cada laptop debe autorizarse por separado; no subas ni compartas ese archivo.
+Los tokens se renuevan automaticamente. Si Microsoft revoca el acceso, autoriza de nuevo.
 
-## 3. Preparar la base y habilitar el envío
-
-Aplica `src/main/resources/db/migration_correo_salida.sql` en la base del demo.
-En este equipo la tabla ya fue preparada en `rinconcito_demo_mozo`.
-
-Crea `.local/hotmail.properties` con las tres propiedades locales de conexión
-`spring.datasource.url`, `spring.datasource.username` y
-`spring.datasource.password`, copiadas de tu configuración actual. No subas este
-archivo a Git. Si necesitas otro puerto, añade `server.port`.
-
-Detén la instancia que use ese puerto **y la copia de prueba en 8082**. Ambas
-comparten la cola: debe haber un solo procesador activo para evitar que el buzón
-simulado capture mensajes destinados a Hotmail. Después ejecuta:
+4. Aplica `src/main/resources/db/migration_correo_salida.sql` a la base de demostracion.
+   La base demo incluida ya contiene esta tabla.
+5. Crea `.local/application.properties` con `spring.datasource.url`,
+   `spring.datasource.username` y `spring.datasource.password` de tu MySQL local.
+6. Deten la instancia anterior en 8081 y la copia de pruebas en 8082.
+   Revisa que la cola no contenga mensajes de prueba pendientes.
+7. Ejecuta:
 
 ```powershell
 .\tools\Iniciar-Hotmail.ps1
 ```
 
-El script configura el remitente, habilita el correo y arranca con el perfil
-`hotmail`. **No usa `.local/correo.properties`**, que pertenece al buzón simulado.
-No se activa si falta la autorización. Antes de habilitarlo, revisa la cola del
-demo para no reenviar operaciones de prueba por accidente.
+El correo esta deshabilitado por defecto. El script lo habilita solo para ese proceso.
+No usa `.local/correo.properties`, que pertenece al buzon simulado.
 
-Los destinatarios se obtienen del cliente, independientemente de si tienen Gmail,
-Hotmail u otro proveedor. Prueba inicialmente con un correo propio: registra una
-operación y aprueba su pago para comprobar el PDF. La aceptación por SMTP no
-garantiza que el mensaje llegue a la bandeja principal.
+## Comprobacion
 
-## Estado y alcance
+La confirmacion se encola al registrar el pedido o reserva. La nota con PDF se
+encola al emitirla con un pago aprobado. Los destinatarios salen de los datos del cliente,
+sea Gmail, Outlook u otro proveedor.
+En `/caja/correos` se revisan los errores y se reintenta un envio fallido.
+`ENVIADO` significa que el proveedor acepto el mensaje, no confirma su entrega a la bandeja principal.
+Graph tambien guarda el mensaje aceptado en Elementos enviados del remitente.
+Esta configuracion sirve para el demo en una laptop; no despliega el sitio en Internet.
 
-La autenticación y renovación se comprueban con un servidor HTTP simulado en las
-pruebas. El envío real no queda verificado hasta registrar la aplicación,
-autorizarla y recibir un mensaje en un correo real. Esta configuración habilita
-el envío en el demo de una laptop; no despliega el sitio en un servicio de hosting.
+Referencia: [Microsoft Graph sendMail](https://learn.microsoft.com/en-us/graph/api/user-sendmail?view=graph-rest-1.0).
 
-Referencias oficiales:
-
-- [Configuración SMTP de Outlook.com](https://support.microsoft.com/es-es/outlook/pop-imap-and-smtp-settings-for-outlook-com).
-- [OAuth para SMTP y permisos necesarios](https://learn.microsoft.com/en-us/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth).
-- [Autorización por código de dispositivo](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code).
+El envio real se verifico recibiendo una nota con PDF en Gmail.
