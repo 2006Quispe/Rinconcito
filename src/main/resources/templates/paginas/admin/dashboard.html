@@ -1,54 +1,32 @@
 <!DOCTYPE html>
-<html lang="es"
-      xmlns:th="http://www.thymeleaf.org"
+<html lang="es"xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport"content="width=device-width, initial-scale=1.0">
     <title th:text="${titulo} + ' - El Rinconcito Ayacuchano'">
         Panel administrador
     </title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
-          rel="stylesheet">
-
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600;700&amp;display=swap"
-          rel="stylesheet">
-
-    <link th:href="@{/css/admin.css}"
-          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600;700&amp;display=swap"rel="stylesheet">
+    <link th:href="@{/css/admin.css}"rel="stylesheet">
 </head>
-
 <body>
-
 <div class="admin-layout">
-
     <aside th:replace="~{fragments/admin-sidebar :: sidebar('inicio')}">
     </aside>
-
     <main class="admin-contenido">
-
         <header class="admin-encabezado">
-
             <div>
                 <span class="admin-etiqueta">
                     PANEL GENERAL
                 </span>
-
                 <h1>Panel administrador</h1>
-
                 <p>
                     Gestiona todos los módulos del restaurante.
                 </p>
             </div>
-
             <div class="admin-encabezado-acciones">
 
                 <a th:href="@{/}"
@@ -63,15 +41,6 @@
                 <div class="admin-bienvenida">
 
                     <i class="bi bi-person-circle"></i>
-
-                    <div>
-                        <span>Administrador</span>
-
-                        <strong sec:authentication="name">
-                            admin@rinconcito.pe
-                        </strong>
-                    </div>
-
                 </div>
 
             </div>
