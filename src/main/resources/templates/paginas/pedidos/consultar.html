@@ -22,6 +22,8 @@
         <div th:if="${exito}" class="alert alert-success" th:text="${exito}"></div>
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
+        <div th:replace="~{fragments/aviso-correo :: aviso('pedido', true)}"></div>
+
         <form th:action="@{/pedidos/consultar}" method="get" class="card shadow-sm mb-4">
             <div class="card-body">
                 <label class="form-label">Codigo de pedido</label>

@@ -2,18 +2,21 @@ package com.rinconcito.controller;
 
 import com.rinconcito.dto.PedidoFormDTO;
 import com.rinconcito.entity.ConfiguracionRestaurante;
-import com.rinconcito.entity.Pago;
 import com.rinconcito.entity.Pago.MetodoPago;
-import com.rinconcito.entity.Pedido;
+import com.rinconcito.entity.Pago;
 import com.rinconcito.entity.Pedido.EstadoPedido;
 import com.rinconcito.entity.Pedido.TipoPedido;
+import com.rinconcito.entity.Pedido;
 import com.rinconcito.entity.Usuario;
 import com.rinconcito.repository.UsuarioRepository;
 import com.rinconcito.service.CarritoService;
 import com.rinconcito.service.ConfiguracionRestauranteService;
 import com.rinconcito.service.PagoPedidoService;
 import com.rinconcito.service.PedidoService;
+import com.rinconcito.service.correo.ColaCorreoService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -27,6 +30,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class PedidoController {
+
+    @Autowired
+    private ColaCorreoService colaCorreoService;
+
+    @Value("${app.correo.habilitado:false}")
+    private boolean correoHabilitado;
+
+    @ModelAttribute("correoHabilitado")
+    public boolean correoHabilitado() {
+        return correoHabilitado;
+    }
+
 
     private final PedidoService pedidoService;
     private final PagoPedidoService pagoPedidoService;
@@ -194,6 +209,8 @@ public class PedidoController {
                 .map(pedido -> {
 
                     inicializarPedido(pedido);
+                    model.addAttribute("estadoCorreo",
+                            colaCorreoService.estadoConfirmacion("PEDIDO", pedido.getIdPedido()));
 
                     model.addAttribute(
                             "pedido",
@@ -368,6 +385,8 @@ public class PedidoController {
                 .map(pedido -> {
 
                     inicializarPedido(pedido);
+                    model.addAttribute("estadoCorreo",
+                            colaCorreoService.estadoConfirmacion("PEDIDO", pedido.getIdPedido()));
 
                     model.addAttribute(
                             "pedido",

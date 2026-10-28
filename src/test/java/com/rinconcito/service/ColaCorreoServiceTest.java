@@ -46,7 +46,23 @@ class ColaCorreoServiceTest {
         deshabilitada.reserva(null, "cliente@example.test");
         deshabilitada.nota(null, false);
         assertTrue(deshabilitada.listar().isEmpty());
+        assertNull(deshabilitada.estadoConfirmacion("PEDIDO", 1));
         verifyNoInteractions(sinBase, sinDetalles);
+    }
+
+    @Test void avisoConsultaElContactoOriginalYElEstadoRealDelEnvio() {
+        assertNull(cola.estadoConfirmacion("RESERVA", 10));
+        cola.reserva(reserva(), "cliente@example.test");
+        assertEquals("PENDIENTE", cola.estadoConfirmacion("RESERVA", 10));
+        jdbc.update("UPDATE correo_salida SET estado='ERROR'");
+        assertEquals("ERROR", cola.estadoConfirmacion("RESERVA", 10));
+        jdbc.update("UPDATE correo_salida SET estado='ENVIADO'");
+        assertEquals("ENVIADO", cola.estadoConfirmacion("RESERVA", 10));
+    }
+
+    @Test void noMuestraUnAvisoSinDestinatarioValido() {
+        cola.reserva(reserva(), null);
+        assertNull(cola.estadoConfirmacion("RESERVA", 10));
     }
 
     Reserva reserva() {

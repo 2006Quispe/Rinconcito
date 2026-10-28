@@ -62,6 +62,8 @@
             <span th:text="${info}"></span>
         </div>
 
+        <div th:replace="~{fragments/aviso-correo :: aviso('pedido', true)}"></div>
+
         <!-- PEDIDO NO ENCONTRADO -->
 
         <section th:if="${pedido == null}"

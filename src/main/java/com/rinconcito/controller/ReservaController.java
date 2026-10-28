@@ -7,7 +7,9 @@ import com.rinconcito.entity.Usuario;
 import com.rinconcito.repository.PisoRepository;
 import com.rinconcito.repository.UsuarioRepository;
 import com.rinconcito.service.ReservaService;
+import com.rinconcito.service.correo.ColaCorreoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -18,6 +20,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class ReservaController {
+
+    @Autowired
+    private ColaCorreoService colaCorreoService;
+
+    @Value("${app.correo.habilitado:false}")
+    private boolean correoHabilitado;
+
+    @ModelAttribute("correoHabilitado")
+    public boolean correoHabilitado() {
+        return correoHabilitado;
+    }
+
 
     @Autowired
     private ReservaService reservaService;
@@ -52,6 +66,8 @@ public class ReservaController {
             Reserva reserva = reservaService.crearReserva(reservaForm, cliente);
             model.addAttribute("exito", true);
             model.addAttribute("reserva", reserva);
+            model.addAttribute("estadoCorreo",
+                    colaCorreoService.estadoConfirmacion("RESERVA", reserva.getIdReserva()));
         } catch (IllegalStateException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("reservaForm", reservaForm);

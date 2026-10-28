@@ -264,9 +264,12 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="correo" class="pedido-label">Correo para la confirmación (opcional)</label>
+                            <label for="correo" class="pedido-label">Correo (opcional)</label>
                             <input type="email" id="correo" class="pedido-input" th:field="*{correo}"
                                    maxlength="120" placeholder="cliente@ejemplo.com">
+                            <small th:if="${correoHabilitado}" class="d-block text-muted mt-1">
+                                Recibirás el resumen de tu pedido por correo. Si ingresaste con tu cuenta, usaremos el correo de esa cuenta.
+                            </small>
                         </div>
                         <!-- NOMBRES -->
                         <div class="col-md-6">

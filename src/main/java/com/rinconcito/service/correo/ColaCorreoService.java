@@ -106,6 +106,16 @@ public class ColaCorreoService {
         } catch (Exception e) { return false; }
     }
 
+    @Transactional(readOnly = true)
+    public String estadoConfirmacion(String tipo, Integer referencia) {
+        if (!habilitado || referencia == null) return null;
+        var filas = jdbc.queryForList(
+                "SELECT destinatario,estado FROM correo_salida WHERE clave=?", tipo + ":" + referencia);
+        if (filas.isEmpty() || !correoValido((String) filas.getFirst().get("destinatario"))) return null;
+        String estado = (String) filas.getFirst().get("estado");
+        return "OMITIDO".equals(estado) ? null : estado;
+    }
+
     public List<Map<String,Object>> listar() {
         if (!habilitado) return List.of();
         return jdbc.queryForList("SELECT id,tipo,id_referencia,destinatario,asunto,estado,intentos,error,creado,enviado FROM correo_salida ORDER BY id DESC LIMIT 100");

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="aviso(tipo, requierePago)" th:if="${estadoCorreo != null}"
+     class="alert alert-info mt-3" role="status">
+    <i class="bi bi-envelope" aria-hidden="true"></i>
+    <span th:if="${estadoCorreo == 'ENVIADO'}"
+          th:text="|El resumen de tu ${tipo} fue enviado al correo indicado.|"></span>
+    <span th:if="${estadoCorreo == 'PENDIENTE' or estadoCorreo == 'ENVIANDO'}"
+          th:text="|Enviaremos el resumen de tu ${tipo} al correo indicado.|"></span>
+    <span th:if="${estadoCorreo == 'ERROR'}">El envío del resumen está pendiente. Puedes seguir consultando el estado con tu código.</span>
+    <span th:if="${pago != null and pago.estado.name() == 'PENDIENTE_VALIDACION'}">Tu pago está pendiente de validación.</span>
+    <span th:if="${requierePago}">La nota de venta se envía en PDF cuando Caja aprueba el pago y la emite.</span>
+    <span>Revisa también la carpeta de spam.</span>
+</div>
+</body>
+</html>
