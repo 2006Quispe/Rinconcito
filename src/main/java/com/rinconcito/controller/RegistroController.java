@@ -4,6 +4,7 @@ import com.rinconcito.dto.RegistroFormDTO;
 import com.rinconcito.entity.Usuario;
 import com.rinconcito.service.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,6 +29,9 @@ public class RegistroController {
 
     private final UsuarioService usuarioService;
     private final UserDetailsService userDetailsService;
+    private final SecurityContextRepository
+            securityContextRepository =
+            new HttpSessionSecurityContextRepository();
 
     public RegistroController(
             UsuarioService usuarioService,
@@ -63,7 +68,8 @@ public class RegistroController {
             BindingResult bindingResult,
             Model model,
             RedirectAttributes redirectAttributes,
-            HttpServletRequest request
+            HttpServletRequest request,
+            HttpServletResponse response
     ) {
         model.addAttribute(
                 "titulo",
@@ -95,7 +101,8 @@ public class RegistroController {
 
             iniciarSesion(
                     usuarioCreado.getCorreo(),
-                    request
+                    request,
+                    response
             );
 
             redirectAttributes.addFlashAttribute(
@@ -117,7 +124,8 @@ public class RegistroController {
 
     private void iniciarSesion(
             String correo,
-            HttpServletRequest request
+            HttpServletRequest request,
+            HttpServletResponse response
     ) {
         UserDetails usuario =
                 userDetailsService.loadUserByUsername(
@@ -148,11 +156,10 @@ public class RegistroController {
                 contexto
         );
 
-        request.getSession(true)
-                .setAttribute(
-                        HttpSessionSecurityContextRepository
-                                .SPRING_SECURITY_CONTEXT_KEY,
-                        contexto
-                );
+        securityContextRepository.saveContext(
+                contexto,
+                request,
+                response
+        );
     }
 }
