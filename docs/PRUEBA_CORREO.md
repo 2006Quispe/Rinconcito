@@ -1,7 +1,9 @@
 # Prueba local de correos
 
-Esta copia está en `rinconcito-correo-local`, rama `prueba/correo-local`.
-No está integrada en `C:\Users\jeand\Rinconcito` ni publicada en GitHub.
+La funcionalidad se desarrolló y probó en `rinconcito-correo-local`, rama
+`prueba/correo-local`. La integración para el demo se prepara en la rama local
+`correo/hotmail-demo`, sin publicar en GitHub. Para el remitente real consulta
+[CORREO_HOTMAIL.md](CORREO_HOTMAIL.md).
 
 ## Abrir la prueba
 
