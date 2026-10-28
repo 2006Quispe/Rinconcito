@@ -23,6 +23,8 @@
         <div th:if="${exito}" class="alert alert-success" th:text="${exito}"></div>
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
+        <div th:replace="~{fragments/aviso-correo :: aviso('reserva', ${reserva != null and reserva.requierePago})}"></div>
+
         <form th:action="@{/reservas/consultar}" method="get" class="card shadow-sm mb-4">
             <div class="card-body">
                 <label class="form-label">Código de reserva</label>

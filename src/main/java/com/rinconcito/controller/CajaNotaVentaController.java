@@ -16,6 +16,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/caja/notas-venta")
 public class CajaNotaVentaController {
+    @org.springframework.beans.factory.annotation.Value("${app.correo.habilitado:false}")
+    private boolean correoHabilitado;
 
     private final NotaVentaService notaVentaService;
 
@@ -128,6 +130,7 @@ public class CajaNotaVentaController {
                 totalVendido
         );
 
+        model.addAttribute("correoHabilitado", correoHabilitado);
         return "paginas/caja/notas-venta";
     }
 

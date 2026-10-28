@@ -30,6 +30,7 @@
             <h5 class="alert-heading" th:if="${reserva.estado.name() == 'PENDIENTE_PAGO'}">Reserva registrada — requiere pago</h5>
             <h5 class="alert-heading" th:unless="${reserva.estado.name() == 'CONFIRMADA' or reserva.estado.name() == 'PENDIENTE_PAGO'}">Reserva registrada</h5>
 
+            <div th:replace="~{fragments/aviso-correo :: aviso('reserva', ${reserva.requierePago})}"></div>
             <p class="mb-1">Código: <strong th:text="${reserva.codigoReserva}">RES-2026-000001</strong></p>
             <p class="mb-1">Piso: <strong th:text="${reserva.pisoSolicitado.nombre}">Piso 1</strong></p>
             <p class="mb-1">
@@ -117,6 +118,9 @@
                 <input type="email"
                        class="form-control"
                        th:field="*{correo}">
+                <small th:if="${correoHabilitado}" class="form-text text-muted">
+                    Recibirás el resumen de tu reserva por correo. Si ingresaste con tu cuenta, usaremos el correo de esa cuenta.
+                </small>
             </div>
 
             <div class="row">

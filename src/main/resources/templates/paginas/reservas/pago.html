@@ -54,6 +54,8 @@
              th:text="${info}">
         </div>
 
+        <div th:replace="~{fragments/aviso-correo :: aviso('reserva', ${reserva != null and reserva.requierePago})}"></div>
+
         <div th:if="${reserva != null}">
 
             <!-- DATOS DE LA RESERVA -->

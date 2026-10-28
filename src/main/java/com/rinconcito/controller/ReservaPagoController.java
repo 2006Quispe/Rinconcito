@@ -1,16 +1,19 @@
 package com.rinconcito.controller;
 
 import com.rinconcito.entity.ConfiguracionRestaurante;
-import com.rinconcito.entity.Pago;
 import com.rinconcito.entity.Pago.MetodoPago;
-import com.rinconcito.entity.Reserva;
+import com.rinconcito.entity.Pago;
 import com.rinconcito.entity.Reserva.EstadoReserva;
+import com.rinconcito.entity.Reserva;
 import com.rinconcito.service.ConfiguracionRestauranteService;
 import com.rinconcito.service.PagoReservaService;
+import com.rinconcito.service.correo.ColaCorreoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +21,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ReservaPagoController {
+
+    @Autowired
+    private ColaCorreoService colaCorreoService;
+
+    @Value("${app.correo.habilitado:false}")
+    private boolean correoHabilitado;
+
+    @ModelAttribute("correoHabilitado")
+    public boolean correoHabilitado() {
+        return correoHabilitado;
+    }
+
 
     @Autowired
     private PagoReservaService pagoReservaService;
@@ -37,6 +52,8 @@ public class ReservaPagoController {
         return pagoReservaService.buscarPorCodigo(codigo.trim())
                 .map(reserva -> {
                     model.addAttribute("reserva", reserva);
+                    model.addAttribute("estadoCorreo",
+                            colaCorreoService.estadoConfirmacion("RESERVA", reserva.getIdReserva()));
                     if (reserva.getEvento() != null) {
                         reserva.getEvento().getTitulo();
                     }
@@ -97,6 +114,8 @@ public class ReservaPagoController {
                         reserva.getMesa().getNumero();
                     }
                     model.addAttribute("reserva", reserva);
+                    model.addAttribute("estadoCorreo",
+                            colaCorreoService.estadoConfirmacion("RESERVA", reserva.getIdReserva()));
                     Pago pago = pagoReservaService.ultimoPagoDe(reserva).orElse(null);
                     if (pago != null) {
                         model.addAttribute("pago", pago);

@@ -36,3 +36,8 @@ build/
 /logs/
 *.log
 *.log.*
+
+# Configuracion y mensajes de la prueba de correo local.
+/.local/
+
+__pycache__/

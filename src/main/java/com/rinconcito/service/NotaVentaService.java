@@ -1,5 +1,7 @@
 package com.rinconcito.service;
 
+import com.rinconcito.service.correo.ColaCorreoService;
+
 import com.rinconcito.entity.DetallePedido;
 import com.rinconcito.entity.NotaVenta;
 import com.rinconcito.entity.NotaVenta.EstadoNotaVenta;
@@ -18,6 +20,9 @@ import java.util.List;
 
 @Service
 public class NotaVentaService {
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private ColaCorreoService colaCorreoService;
 
     private static final String SERIE_NOTA =
             "NV01";
@@ -155,9 +160,9 @@ public class NotaVentaService {
                 EstadoNotaVenta.EMITIDA
         );
 
-        return notaVentaRepository.save(
-                notaVenta
-        );
+        notaVenta = notaVentaRepository.save(notaVenta);
+        colaCorreoService.nota(notaVenta, false);
+        return notaVenta;
     }
 
     @Transactional(readOnly = true)

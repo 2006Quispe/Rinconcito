@@ -1,0 +1,5 @@
+# Copiar a .local/application.properties y completar con el MySQL de esta laptop.
+# Para usar la base propia, cambia rinconcito_demo_mozo por el nombre correspondiente.
+spring.datasource.url=jdbc:mysql://localhost:3306/rinconcito_demo_mozo?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Lima&characterEncoding=utf8
+spring.datasource.username=root
+spring.datasource.password=CAMBIA_POR_TU_CLAVE_MYSQL
