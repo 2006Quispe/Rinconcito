@@ -6,11 +6,11 @@ import com.rinconcito.service.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
@@ -28,17 +28,17 @@ import java.util.Objects;
 public class RegistroController {
 
     private final UsuarioService usuarioService;
-    private final UserDetailsService userDetailsService;
+    private final AuthenticationManager authenticationManager;
     private final SecurityContextRepository
             securityContextRepository =
             new HttpSessionSecurityContextRepository();
 
     public RegistroController(
             UsuarioService usuarioService,
-            UserDetailsService userDetailsService
+            AuthenticationManager authenticationManager
     ) {
         this.usuarioService = usuarioService;
-        this.userDetailsService = userDetailsService;
+        this.authenticationManager = authenticationManager;
     }
 
     @GetMapping("/registro")
@@ -101,6 +101,7 @@ public class RegistroController {
 
             iniciarSesion(
                     usuarioCreado.getCorreo(),
+                    registroForm.getContrasena(),
                     request,
                     response
             );
@@ -124,25 +125,27 @@ public class RegistroController {
 
     private void iniciarSesion(
             String correo,
+            String contrasena,
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        UserDetails usuario =
-                userDetailsService.loadUserByUsername(
-                        correo
-                );
+        UsernamePasswordAuthenticationToken
+                solicitudAutenticacion =
+                UsernamePasswordAuthenticationToken
+                        .unauthenticated(
+                                correo,
+                                contrasena
+                        );
 
-        UsernamePasswordAuthenticationToken autenticacion =
-                new UsernamePasswordAuthenticationToken(
-                        usuario,
-                        null,
-                        usuario.getAuthorities()
-                );
-
-        autenticacion.setDetails(
+        solicitudAutenticacion.setDetails(
                 new WebAuthenticationDetailsSource()
                         .buildDetails(request)
         );
+
+        Authentication autenticacion =
+                authenticationManager.authenticate(
+                        solicitudAutenticacion
+                );
 
         SecurityContext contexto =
                 SecurityContextHolder
