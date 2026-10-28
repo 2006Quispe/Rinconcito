@@ -1,8 +1,17 @@
 package com.rinconcito.controller;
 
 import com.rinconcito.dto.RegistroFormDTO;
+import com.rinconcito.entity.Usuario;
 import com.rinconcito.service.UsuarioService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,11 +26,14 @@ import java.util.Objects;
 public class RegistroController {
 
     private final UsuarioService usuarioService;
+    private final UserDetailsService userDetailsService;
 
     public RegistroController(
-            UsuarioService usuarioService
+            UsuarioService usuarioService,
+            UserDetailsService userDetailsService
     ) {
         this.usuarioService = usuarioService;
+        this.userDetailsService = userDetailsService;
     }
 
     @GetMapping("/registro")
@@ -50,7 +62,8 @@ public class RegistroController {
             RegistroFormDTO registroForm,
             BindingResult bindingResult,
             Model model,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request
     ) {
         model.addAttribute(
                 "titulo",
@@ -75,8 +88,14 @@ public class RegistroController {
         }
 
         try {
-            usuarioService.registrar(
-                    registroForm
+            Usuario usuarioCreado =
+                    usuarioService.registrar(
+                            registroForm
+                    );
+
+            iniciarSesion(
+                    usuarioCreado.getCorreo(),
+                    request
             );
 
             redirectAttributes.addFlashAttribute(
@@ -94,5 +113,46 @@ public class RegistroController {
 
             return "paginas/registro";
         }
+    }
+
+    private void iniciarSesion(
+            String correo,
+            HttpServletRequest request
+    ) {
+        UserDetails usuario =
+                userDetailsService.loadUserByUsername(
+                        correo
+                );
+
+        UsernamePasswordAuthenticationToken autenticacion =
+                new UsernamePasswordAuthenticationToken(
+                        usuario,
+                        null,
+                        usuario.getAuthorities()
+                );
+
+        autenticacion.setDetails(
+                new WebAuthenticationDetailsSource()
+                        .buildDetails(request)
+        );
+
+        SecurityContext contexto =
+                SecurityContextHolder
+                        .createEmptyContext();
+
+        contexto.setAuthentication(
+                autenticacion
+        );
+
+        SecurityContextHolder.setContext(
+                contexto
+        );
+
+        request.getSession(true)
+                .setAttribute(
+                        HttpSessionSecurityContextRepository
+                                .SPRING_SECURITY_CONTEXT_KEY,
+                        contexto
+                );
     }
 }
