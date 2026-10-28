@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><title>Correos - El Rinconcito</title>
+<style>body{font:16px Arial;background:#f8f4ed;color:#38271e;margin:40px}main{max-width:1400px;margin:auto}a{color:#8b301d}table{width:100%;border-collapse:collapse;background:white}td,th{padding:12px;text-align:left;border-bottom:1px solid #ddd}button{padding:9px;border:0;border-radius:5px;background:#8b301d;color:white;cursor:pointer}.aviso{padding:12px;background:#e4f0dc}.error{padding:12px;background:#ffe3de}</style></head>
+<body><main><a th:href="@{/caja/notas-venta}">Volver a notas de venta</a><h1>Correos a clientes</h1>
+<p>Los envíos se procesan automáticamente. Actualiza la página para consultar su estado.</p>
+<p>Enviado significa que el servidor de correo aceptó el mensaje; no confirma su lectura.</p>
+<p class="aviso" th:if="${mensaje}" th:text="${mensaje}"></p><p class="error" th:if="${error}" th:text="${error}"></p>
+<table><thead><tr><th>Fecha</th><th>Destino</th><th>Asunto</th><th>Estado</th><th>Intentos</th><th>Acción</th></tr></thead><tbody>
+<tr th:each="correo : ${correos}"><td th:text="${correo.creado}"></td><td th:text="${correo.destinatario}"></td><td th:text="${correo.asunto}"></td><td><strong th:text="${correo.estado}"></strong><p th:if="${correo.error}" th:text="${correo.error}"></p></td><td th:text="${correo.intentos}"></td><td>
+<form th:if="${correo.estado == 'ERROR'}" th:action="@{/caja/correos/{id}/reintentar(id=${correo.id})}" method="post"><button>Reintentar</button></form>
+</td></tr><tr th:if="${#lists.isEmpty(correos)}"><td colspan="6">Todavía no se han generado correos.</td></tr></tbody></table></main></body></html>

@@ -1,5 +1,7 @@
 package com.rinconcito.service;
 
+import com.rinconcito.service.correo.ColaCorreoService;
+
 import com.rinconcito.dto.CarritoItemDTO;
 import com.rinconcito.dto.PedidoFormDTO;
 import com.rinconcito.entity.DetallePedido;
@@ -26,6 +28,9 @@ import java.util.Optional;
 
 @Service
 public class PedidoService {
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private ColaCorreoService colaCorreoService;
 
     public static final int COSTO_DELIVERY = 0;
 
@@ -197,6 +202,10 @@ public class PedidoService {
             pedido.getDireccion().getDireccion();
         }
 
+        colaCorreoService.pedido(pedido,
+                clienteLogueado != null && clienteLogueado.getRol() != null
+                        && "CLIENTE".equals(clienteLogueado.getRol().getNombre())
+                        ? clienteLogueado.getCorreo() : dto.getCorreo());
         return pedido;
     }
 
@@ -219,6 +228,7 @@ public class PedidoService {
     private void normalizarDatos(
             PedidoFormDTO dto
     ) {
+        dto.setCorreo(limpiarTexto(dto.getCorreo()));
         dto.setTipoEntrega(
                 limpiarTexto(dto.getTipoEntrega())
         );
@@ -318,6 +328,10 @@ public class PedidoService {
             );
         }
 
+        if (dto.getCorreo() != null && !dto.getCorreo().isBlank()
+                && (dto.getCorreo().length() > 120 || !ColaCorreoService.correoValido(dto.getCorreo()))) {
+            throw new IllegalStateException("El correo no tiene un formato valido.");
+        }
         if (tipoPedido == TipoPedido.DELIVERY) {
             validarDireccionDelivery(dto);
         }
@@ -512,7 +526,8 @@ public class PedidoService {
                 dto.getDni(),
                 dto.getNombres(),
                 dto.getApellidos(),
-                dto.getTelefono()
+                dto.getTelefono(),
+                dto.getCorreo()
         );
     }
 

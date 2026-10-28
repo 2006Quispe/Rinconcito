@@ -355,6 +355,10 @@
 
                             <div class="nota-acciones">
 
+                                <form th:if="${correoHabilitado and nota.estado.name() == 'EMITIDA'}"
+                                      th:action="@{/caja/notas-venta/{id}/correo(id=${nota.idNota})}" method="post">
+                                    <button type="submit" class="nota-accion" title="Enviar o reenviar nota al correo del cliente">Enviar correo</button>
+                                </form>
                                 <!-- VISUALIZAR -->
                                 <a th:href="@{/caja/notas-venta/{id}/pdf(id=${nota.idNota})}"
                                    target="_blank"

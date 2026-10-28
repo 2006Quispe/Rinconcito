@@ -30,6 +30,8 @@ import java.util.Optional;
 
 @Service
 public class PedidoPresencialService {
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.rinconcito.service.correo.ColaCorreoService colaCorreoService;
 
     private static final ZoneId ZONA_PERU =
             ZoneId.of("America/Lima");
@@ -203,6 +205,7 @@ public class PedidoPresencialService {
                 lineas
         );
 
+        colaCorreoService.pedido(pedido, cliente.getCorreo());
         return pedido;
     }
 

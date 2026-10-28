@@ -7,6 +7,7 @@ public class PedidoFormDTO {
 
     private String tipoEntrega = "DELIVERY";
 
+    private String correo;
     private String dni;
     private String nombres;
     private String apellidos;
@@ -31,6 +32,9 @@ public class PedidoFormDTO {
     public void setTipoEntrega(String tipoEntrega) {
         this.tipoEntrega = tipoEntrega;
     }
+
+    public String getCorreo() { return correo; }
+    public void setCorreo(String correo) { this.correo = correo; }
 
     public String getDni() {
         return dni;

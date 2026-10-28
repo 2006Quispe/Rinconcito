@@ -485,6 +485,7 @@ public class PedidoController {
                 cliente.getApellidos()
         );
 
+        formulario.setCorreo(cliente.getCorreo());
         formulario.setTelefono(
                 cliente.getTelefono()
         );

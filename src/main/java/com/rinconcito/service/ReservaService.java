@@ -1,5 +1,7 @@
 package com.rinconcito.service;
 
+import com.rinconcito.service.correo.ColaCorreoService;
+
 import com.rinconcito.dto.ReservaFormDTO;
 import com.rinconcito.entity.Evento;
 import com.rinconcito.entity.Evento.EstadoEvento;
@@ -26,6 +28,9 @@ import java.util.Optional;
 
 @Service
 public class ReservaService {
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private ColaCorreoService colaCorreoService;
 
     private static final int DURACION_HORAS = 2;
     private static final int MAX_RESERVAS_POR_DIA = 1;
@@ -144,6 +149,10 @@ public class ReservaService {
         if (reserva.getEvento() != null) {
             reserva.getEvento().getTitulo();
         }
+        colaCorreoService.reserva(reserva,
+                clienteLogueado != null && clienteLogueado.getRol() != null
+                        && "CLIENTE".equals(clienteLogueado.getRol().getNombre())
+                        ? clienteLogueado.getCorreo() : dto.getCorreo());
         return reserva;
     }
 
