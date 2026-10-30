@@ -136,6 +136,11 @@ public class PedidoController {
                             authentication
                     );
 
+            aplicarIdentidadDelCliente(
+                    pedidoForm,
+                    cliente
+            );
+
             Pedido pedido =
                     pedidoService.crearPedido(
                             pedidoForm,
@@ -473,6 +478,20 @@ public class PedidoController {
             return;
         }
 
+        aplicarIdentidadDelCliente(
+                formulario,
+                cliente
+        );
+    }
+
+    private void aplicarIdentidadDelCliente(
+            PedidoFormDTO formulario,
+            Usuario cliente
+    ) {
+        if (cliente == null) {
+            return;
+        }
+
         formulario.setDni(
                 cliente.getDni()
         );
@@ -485,9 +504,14 @@ public class PedidoController {
                 cliente.getApellidos()
         );
 
-        formulario.setTelefono(
-                cliente.getTelefono()
-        );
+        if (
+                formulario.getTelefono() == null
+                        || formulario.getTelefono().isBlank()
+        ) {
+            formulario.setTelefono(
+                    cliente.getTelefono()
+            );
+        }
     }
 
     private String mensajePedidoRegistrado(

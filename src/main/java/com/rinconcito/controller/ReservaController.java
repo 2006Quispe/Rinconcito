@@ -49,6 +49,7 @@ public class ReservaController {
 
         try {
             Usuario cliente = obtenerClienteLogueado(authentication);
+            aplicarIdentidadDelCliente(reservaForm, cliente);
             Reserva reserva = reservaService.crearReserva(reservaForm, cliente);
             model.addAttribute("exito", true);
             model.addAttribute("reserva", reserva);
@@ -65,12 +66,23 @@ public class ReservaController {
         if (cliente == null) {
             return;
         }
+        aplicarIdentidadDelCliente(form, cliente);
+    }
+
+    private void aplicarIdentidadDelCliente(ReservaFormDTO form, Usuario cliente) {
+        if (cliente == null) {
+            return;
+        }
         form.setDni(cliente.getDni());
         form.setNombres(cliente.getNombres());
         form.setApellidos(cliente.getApellidos());
-        form.setTelefono(cliente.getTelefono());
+        if (form.getTelefono() == null || form.getTelefono().isBlank()) {
+            form.setTelefono(cliente.getTelefono());
+        }
         if (cliente.getCorreo() != null && !cliente.getCorreo().endsWith("@invitado.rinconcito.pe")) {
-            form.setCorreo(cliente.getCorreo());
+            if (form.getCorreo() == null || form.getCorreo().isBlank()) {
+                form.setCorreo(cliente.getCorreo());
+            }
         }
     }
 

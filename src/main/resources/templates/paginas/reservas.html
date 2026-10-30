@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600&amp;display=swap" rel="stylesheet">
     <link th:href="@{/css/estilos.css}" rel="stylesheet">
+    <link th:href="@{/css/dni-consulta.css}" rel="stylesheet">
 </head>
 <body>
 
@@ -77,6 +78,7 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Nombres</label>
                     <input type="text"
+                           id="reservaNombres"
                            class="form-control"
                            th:field="*{nombres}"
                            th:readonly="${clienteLogueado}"
@@ -85,6 +87,7 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Apellidos</label>
                     <input type="text"
+                           id="reservaApellidos"
                            class="form-control"
                            th:field="*{apellidos}"
                            th:readonly="${clienteLogueado}"
@@ -93,18 +96,47 @@
             </div>
 
             <div class="row">
-                <div class="col-md-6 mb-3">
+                <div class="col-md-6 mb-3"
+                     data-dni-consulta
+                     data-dni-campo="reservaDni"
+                     data-nombres-campo="reservaNombres"
+                     data-apellidos-campo="reservaApellidos"
+                     data-siguiente-campo="reservaTelefono">
                     <label class="form-label">DNI</label>
-                    <input type="text"
-                           class="form-control"
-                           th:field="*{dni}"
-                           maxlength="8"
-                           th:readonly="${clienteLogueado}"
-                           required>
+                    <div class="dni-consulta-fila">
+                        <input type="text"
+                               id="reservaDni"
+                               class="form-control"
+                               th:field="*{dni}"
+                               inputmode="numeric"
+                               minlength="8"
+                               maxlength="8"
+                               pattern="[0-9]{8}"
+                               th:readonly="${clienteLogueado}"
+                               required>
+
+                        <button th:unless="${clienteLogueado}"
+                                type="button"
+                                class="btn-consultar-dni"
+                                data-dni-boton
+                                th:attr="data-consulta-url=@{/api/dni/consultar}">
+                            <i class="bi bi-search"></i>
+                            <span>Consultar</span>
+                        </button>
+                    </div>
+
+                    <div th:unless="${clienteLogueado}"
+                         class="dni-consulta-estado"
+                         data-dni-estado
+                         role="status"
+                         aria-live="polite"
+                         hidden>
+                    </div>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Teléfono</label>
                     <input type="text"
+                           id="reservaTelefono"
                            class="form-control"
                            th:field="*{telefono}"
                            maxlength="9"
@@ -192,6 +224,7 @@
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/dni-consulta.js}"></script>
 
 </body>
 </html>

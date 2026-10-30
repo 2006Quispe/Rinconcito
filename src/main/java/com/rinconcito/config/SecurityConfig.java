@@ -137,6 +137,7 @@ public class SecurityConfig {
                                 "/galeria/**",
                                 "/registro",
                                 "/registro/**",
+                                "/api/dni/consultar",
                                 "/login",
                                 "/css/**",
                                 "/js/**",

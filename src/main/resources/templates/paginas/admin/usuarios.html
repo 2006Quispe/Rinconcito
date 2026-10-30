@@ -23,6 +23,9 @@
 
     <link th:href="@{/css/admin-usuarios.css}"
           rel="stylesheet">
+
+    <link th:href="@{/css/dni-consulta.css}"
+          rel="stylesheet">
 </head>
 
 <body>
@@ -630,20 +633,45 @@
                                        required>
                             </div>
 
-                            <div>
+                            <div id="modalConsultaDniContenedor"
+                                 data-dni-consulta
+                                 data-dni-campo="modalDni"
+                                 data-nombres-campo="modalNombres"
+                                 data-apellidos-campo="modalApellidos"
+                                 data-siguiente-campo="modalTelefono">
                                 <label for="modalDni" class="form-label">
                                     DNI <span>*</span>
                                 </label>
-                                <input type="text"
-                                       id="modalDni"
-                                       th:field="*{dni}"
-                                       class="form-control"
-                                       inputmode="numeric"
-                                       minlength="8"
-                                       maxlength="8"
-                                       pattern="[0-9]{8}"
-                                       title="El DNI debe contener exactamente 8 números."
-                                       required>
+                                <div class="dni-consulta-fila">
+                                    <input type="text"
+                                           id="modalDni"
+                                           th:field="*{dni}"
+                                           class="form-control"
+                                           inputmode="numeric"
+                                           minlength="8"
+                                           maxlength="8"
+                                           pattern="[0-9]{8}"
+                                           title="El DNI debe contener exactamente 8 números."
+                                           required>
+
+                                    <button type="button"
+                                            id="modalConsultarDni"
+                                            class="btn-consultar-dni"
+                                            data-dni-boton
+                                            th:attr="data-consulta-url=@{/api/dni/consultar}"
+                                            th:hidden="${usuarioForm != null and usuarioForm.idUsuario != null}">
+                                        <i class="bi bi-search"></i>
+                                        <span>Consultar</span>
+                                    </button>
+                                </div>
+
+                                <div id="modalDniEstado"
+                                     class="dni-consulta-estado"
+                                     data-dni-estado
+                                     role="status"
+                                     aria-live="polite"
+                                     hidden>
+                                </div>
                             </div>
 
                             <div>
@@ -783,6 +811,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
 </script>
+<script th:src="@{/js/dni-consulta.js}"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -794,6 +823,12 @@
         const nombres = document.getElementById("modalNombres");
         const apellidos = document.getElementById("modalApellidos");
         const dni = document.getElementById("modalDni");
+        const consultaDniContenedor =
+            document.getElementById("modalConsultaDniContenedor");
+        const botonConsultarDni =
+            document.getElementById("modalConsultarDni");
+        const estadoConsultaDni =
+            document.getElementById("modalDniEstado");
         const telefono = document.getElementById("modalTelefono");
         const correo = document.getElementById("modalCorreo");
         const rol = document.getElementById("modalRol");
@@ -835,6 +870,11 @@
             correo.value = "";
             rol.value = "";
             estado.value = "ACTIVO";
+            botonConsultarDni.hidden = false;
+            estadoConsultaDni.hidden = true;
+            consultaDniContenedor.dispatchEvent(
+                new CustomEvent("dni:actualizar")
+            );
             titulo.textContent = "Registrar nuevo personal";
             textoGuardar.textContent = "Registrar personal";
             configurarContrasena(true);
@@ -850,6 +890,11 @@
             correo.value = datos.correo || "";
             rol.value = datos.rol || "";
             estado.value = datos.estado || "ACTIVO";
+            botonConsultarDni.hidden = true;
+            estadoConsultaDni.hidden = true;
+            consultaDniContenedor.dispatchEvent(
+                new CustomEvent("dni:actualizar")
+            );
             titulo.textContent = "Editar personal";
             textoGuardar.textContent = "Guardar cambios";
             configurarContrasena(false);
@@ -890,6 +935,10 @@
                 : "Guardar cambios";
 
             configurarContrasena(esNuevo);
+            botonConsultarDni.hidden = !esNuevo;
+            consultaDniContenedor.dispatchEvent(
+                new CustomEvent("dni:actualizar")
+            );
             modal.show();
         }
     });

@@ -1,0 +1,75 @@
+.dni-consulta-fila {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.dni-consulta-fila > :first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.btn-consultar-dni {
+    min-width: 112px;
+    padding: 0 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 1px solid #a83420;
+    border-radius: 8px;
+    background-color: #fff7f2;
+    color: #8c2f1b;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.btn-consultar-dni:hover:not(:disabled),
+.btn-consultar-dni:focus-visible:not(:disabled) {
+    border-color: #8c2f1b;
+    background-color: #8c2f1b;
+    color: #fff;
+}
+
+.btn-consultar-dni:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.dni-consulta-estado {
+    margin-top: 7px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.dni-consulta-estado[hidden] {
+    display: none;
+}
+
+.dni-consulta-estado.exito {
+    color: #3f6b36;
+}
+
+.dni-consulta-estado.error {
+    color: #a1372a;
+}
+
+.dato-dni-autocompletado {
+    border-color: #7aa16f !important;
+    background-color: #f5faf3 !important;
+}
+
+@media (max-width: 575.98px) {
+    .dni-consulta-fila {
+        flex-direction: column;
+    }
+
+    .btn-consultar-dni {
+        min-height: 42px;
+        width: 100%;
+    }
+}
