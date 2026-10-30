@@ -50,7 +50,7 @@ class RegistroFormDTOValidationTest {
             "Billy123",
             "María@",
             "Jo",
-            "Nombre Demasiado Extenso Para Registro"
+            "Nombre Demasiado Extenso Que Supera Claramente Los Cincuenta Caracteres"
     })
     void rechazaNombresInvalidos(
             String nombres

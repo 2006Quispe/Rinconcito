@@ -1043,3 +1043,77 @@ body.auth-page > footer {
         font-size: 22px;
     }
 }
+
+.auth-dni-fila {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.55rem;
+    align-items: stretch;
+}
+
+.auth-dni-boton {
+    min-width: 108px;
+    padding: 0.55rem 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border: 1px solid var(--auth-vino);
+    border-radius: 10px;
+    color: var(--auth-vino);
+    background: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    transition:
+        color 0.18s ease,
+        background-color 0.18s ease,
+        opacity 0.18s ease;
+}
+
+.auth-dni-boton:hover:not(:disabled),
+.auth-dni-boton:focus-visible:not(:disabled) {
+    color: #ffffff;
+    background: var(--auth-vino);
+}
+
+.auth-dni-boton:disabled {
+    cursor: not-allowed;
+    opacity: 0.48;
+}
+
+.auth-dni-estado {
+    margin-top: 0.38rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.38rem;
+    font-size: 0.66rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.auth-dni-estado[hidden] {
+    display: none;
+}
+
+.auth-dni-estado.exito {
+    color: #397044;
+}
+
+.auth-dni-estado.error {
+    color: #b02a37;
+}
+
+.auth-dato-autocompletado {
+    border-color: #75a77e !important;
+    background-color: #f4faf4 !important;
+}
+
+@media (max-width: 400px) {
+    .auth-dni-fila {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-dni-boton {
+        min-height: 42px;
+    }
+}
