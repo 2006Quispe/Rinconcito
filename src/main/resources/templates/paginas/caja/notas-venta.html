@@ -28,7 +28,7 @@
     <link th:href="@{/css/caja.css(v=2)}"
           rel="stylesheet">
 
-    <link th:href="@{/css/notas-venta.css(v=3)}"
+    <link th:href="@{/css/notas-venta.css(v=4)}"
           rel="stylesheet">
 </head>
 
@@ -355,40 +355,48 @@
 
                             <div class="nota-acciones">
 
-                                <form th:if="${correoHabilitado and nota.estado.name() == 'EMITIDA'}"
-                                      th:action="@{/caja/notas-venta/{id}/correo(id=${nota.idNota})}" method="post">
-                                    <button type="submit" class="nota-accion" title="Enviar o reenviar nota al correo del cliente">Enviar correo</button>
-                                </form>
-                                <!-- VISUALIZAR -->
                                 <a th:href="@{/caja/notas-venta/{id}/pdf(id=${nota.idNota})}"
                                    target="_blank"
                                    rel="noopener"
                                    class="nota-accion nota-ver"
-                                   title="Visualizar PDF">
+                                   title="Ver nota en PDF">
 
                                     <i class="bi bi-eye"></i>
+                                    <span>Ver PDF</span>
                                 </a>
 
-                                <!-- DESCARGAR -->
-                                <a th:href="@{/caja/notas-venta/{id}/pdf(
-                                        id=${nota.idNota},
-                                        descargar=true
-                                   )}"
-                                   class="nota-accion nota-descargar"
-                                   title="Descargar PDF">
+                                <div class="dropdown nota-menu"
+                                     th:if="${correoHabilitado
+                                         and nota.estado != null
+                                         and nota.estado.name() == 'EMITIDA'}">
 
-                                    <i class="bi bi-download"></i>
-                                </a>
+                                    <button type="button"
+                                            class="nota-menu-boton"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                            aria-label="Más acciones"
+                                            title="Más acciones">
 
-                                <!-- IMPRIMIR -->
-                                <a th:href="@{/caja/notas-venta/{id}/pdf(id=${nota.idNota})}"
-                                   target="_blank"
-                                   rel="noopener"
-                                   class="nota-accion nota-imprimir"
-                                   title="Abrir para imprimir">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
 
-                                    <i class="bi bi-printer"></i>
-                                </a>
+                                    <ul class="dropdown-menu dropdown-menu-end nota-menu-lista">
+
+                                        <li>
+                                            <form th:action="@{/caja/notas-venta/{id}/correo(id=${nota.idNota})}"
+                                                  method="post"
+                                                  class="nota-menu-formulario">
+
+                                                <button type="submit"
+                                                        class="nota-menu-opcion">
+
+                                                    <i class="bi bi-envelope-arrow-up"></i>
+                                                    <span>Reenviar correo</span>
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </td>
                     </tr>
