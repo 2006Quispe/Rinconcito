@@ -1,0 +1,2 @@
+ALTER TABLE usuarios
+    MODIFY COLUMN correo VARCHAR(120) NULL;
