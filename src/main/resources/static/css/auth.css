@@ -564,7 +564,7 @@ body.auth-page > footer {
             rgba(25, 9, 6, 0.18),
             rgba(25, 9, 6, 0.72)
         ),
-        url("../img/auth-campestre.webp") center center / cover no-repeat;
+        url("../img/auth-campestre.png") center center / cover no-repeat;
 }
 
 .auth-page .auth-brand::before {

@@ -31,8 +31,6 @@ public class ReservaController {
     public boolean correoHabilitado() {
         return correoHabilitado;
     }
-
-
     @Autowired
     private ReservaService reservaService;
 
