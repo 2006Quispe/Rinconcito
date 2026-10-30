@@ -120,7 +120,7 @@
                                        th:classappend="${#fields.hasErrors('nombres')} ? ' is-invalid' : ''"
                                        th:field="*{nombres}"
                                        minlength="3"
-                                       maxlength="25"
+                                       maxlength="50"
                                        pattern="[A-Za-zÁÉÍÓÚáéíóúÑñÜü]+(?:[ '\-][A-Za-zÁÉÍÓÚáéíóúÑñÜü]+)*"
                                        placeholder="Tus nombres"
                                        autocomplete="given-name"
@@ -148,7 +148,7 @@
                                        th:classappend="${#fields.hasErrors('apellidos')} ? ' is-invalid' : ''"
                                        th:field="*{apellidos}"
                                        minlength="3"
-                                       maxlength="25"
+                                       maxlength="50"
                                        pattern="[A-Za-zÁÉÍÓÚáéíóúÑñÜü]+(?:[ '\-][A-Za-zÁÉÍÓÚáéíóúÑñÜü]+)*"
                                        placeholder="Tus apellidos"
                                        autocomplete="family-name"
@@ -167,21 +167,38 @@
                                 DNI
                             </label>
 
-                            <div class="auth-input">
-                                <i class="bi bi-credit-card-2-front"></i>
+                            <div class="auth-dni-fila">
+                                <div class="auth-input">
+                                    <i class="bi bi-credit-card-2-front"></i>
 
-                                <input type="text"
-                                       id="dni"
-                                       class="form-control"
-                                       th:classappend="${#fields.hasErrors('dni')} ? ' is-invalid' : ''"
-                                       th:field="*{dni}"
-                                       inputmode="numeric"
-                                       minlength="8"
-                                       maxlength="8"
-                                       pattern="[0-9]{8}"
-                                       placeholder="8 números"
-                                       autocomplete="off"
-                                       required>
+                                    <input type="text"
+                                           id="dni"
+                                           class="form-control"
+                                           th:classappend="${#fields.hasErrors('dni')} ? ' is-invalid' : ''"
+                                           th:field="*{dni}"
+                                           inputmode="numeric"
+                                           minlength="8"
+                                           maxlength="8"
+                                           pattern="[0-9]{8}"
+                                           placeholder="8 números"
+                                           autocomplete="off"
+                                           required>
+                                </div>
+
+                                <button type="button"
+                                        id="consultarDni"
+                                        class="btn auth-dni-boton"
+                                        th:attr="data-consulta-url=@{/registro/consultar-dni}">
+                                    <i class="bi bi-search"></i>
+                                    <span>Consultar</span>
+                                </button>
+                            </div>
+
+                            <div id="dniConsultaEstado"
+                                 class="auth-dni-estado"
+                                 role="status"
+                                 aria-live="polite"
+                                 hidden>
                             </div>
 
                             <div class="auth-error"
@@ -421,6 +438,201 @@
                 );
             });
         });
+</script>
+
+<script>
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+            const boton =
+                document.getElementById("consultarDni");
+            const campoDni =
+                document.getElementById("dni");
+            const campoNombres =
+                document.getElementById("nombres");
+            const campoApellidos =
+                document.getElementById("apellidos");
+            const estado =
+                document.getElementById(
+                    "dniConsultaEstado"
+                );
+
+            if (
+                !boton
+                    || !campoDni
+                    || !campoNombres
+                    || !campoApellidos
+                    || !estado
+            ) {
+                return;
+            }
+
+            const formulario =
+                boton.closest("form");
+            const campoCsrf =
+                formulario.querySelector(
+                    'input[name="_csrf"]'
+                );
+            const icono =
+                boton.querySelector("i");
+            const textoBoton =
+                boton.querySelector("span");
+
+            function mostrarEstado(
+                mensaje,
+                tipo
+            ) {
+                const iconoEstado =
+                    document.createElement("i");
+
+                iconoEstado.className =
+                    tipo === "exito"
+                        ? "bi bi-check-circle-fill"
+                        : "bi bi-exclamation-circle-fill";
+
+                estado.className =
+                    "auth-dni-estado " + tipo;
+                estado.replaceChildren(
+                    iconoEstado,
+                    document.createTextNode(
+                        mensaje
+                    )
+                );
+                estado.hidden = false;
+            }
+
+            function actualizarBoton() {
+                boton.disabled =
+                    campoDni.value.length !== 8;
+            }
+
+            campoDni.addEventListener(
+                "input",
+                function () {
+                    campoDni.value =
+                        campoDni.value
+                            .replace(/\D/g, "")
+                            .slice(0, 8);
+
+                    estado.hidden = true;
+                    campoNombres.classList.remove(
+                        "auth-dato-autocompletado"
+                    );
+                    campoApellidos.classList.remove(
+                        "auth-dato-autocompletado"
+                    );
+                    actualizarBoton();
+                }
+            );
+
+            boton.addEventListener(
+                "click",
+                async function () {
+                    if (
+                        !/^[0-9]{8}$/.test(
+                            campoDni.value
+                        )
+                    ) {
+                        mostrarEstado(
+                            "Ingresa un DNI válido de 8 números.",
+                            "error"
+                        );
+                        return;
+                    }
+
+                    boton.disabled = true;
+                    icono.className =
+                        "spinner-border spinner-border-sm";
+                    textoBoton.textContent =
+                        "Consultando";
+
+                    const cuerpo =
+                        new URLSearchParams();
+
+                    cuerpo.append(
+                        "dni",
+                        campoDni.value
+                    );
+
+                    if (campoCsrf) {
+                        cuerpo.append(
+                            campoCsrf.name,
+                            campoCsrf.value
+                        );
+                    }
+
+                    try {
+                        const respuesta =
+                            await fetch(
+                                boton.dataset.consultaUrl,
+                                {
+                                    method: "POST",
+                                    headers: {
+                                        "Accept":
+                                            "application/json",
+                                        "Content-Type":
+                                            "application/x-www-form-urlencoded;charset=UTF-8"
+                                    },
+                                    body: cuerpo
+                                }
+                            );
+
+                        const datos =
+                            await respuesta
+                                .json()
+                                .catch(
+                                    function () {
+                                        return {};
+                                    }
+                                );
+
+                        if (!respuesta.ok) {
+                            throw new Error(
+                                datos.mensaje
+                                    || "No se pudo consultar el DNI."
+                            );
+                        }
+
+                        campoNombres.value =
+                            datos.nombres;
+                        campoApellidos.value =
+                            datos.apellidos;
+                        campoNombres.classList.add(
+                            "auth-dato-autocompletado"
+                        );
+                        campoApellidos.classList.add(
+                            "auth-dato-autocompletado"
+                        );
+
+                        mostrarEstado(
+                            "Datos encontrados correctamente.",
+                            "exito"
+                        );
+
+                        document
+                            .getElementById("telefono")
+                            .focus();
+
+                    } catch (error) {
+                        mostrarEstado(
+                            error.message
+                                + " Puedes completar los datos manualmente.",
+                            "error"
+                        );
+
+                    } finally {
+                        icono.className =
+                            "bi bi-search";
+                        textoBoton.textContent =
+                            "Consultar";
+                        actualizarBoton();
+                    }
+                }
+            );
+
+            actualizarBoton();
+        }
+    );
 </script>
 
 

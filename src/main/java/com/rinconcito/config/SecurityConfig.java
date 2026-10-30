@@ -123,27 +123,28 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         /*Recursos y páginas públicas.*/
-                		.requestMatchers(
-                		        "/",
-                		        "/nosotros",
-                		        "/carta",
-                		        "/eventos",
-                		        "/reservas",
-                		        "/reservas/**",
-                		        "/pedidos",
-                		        "/pedidos/**",
-                		        "/carrito",
-                		        "/carrito/**",
-                		        "/galeria/**",
-                		        "/registro",
-                		        "/login",
-                		        "/css/**",
-                		        "/js/**",
-                		        "/img/**",
-                		        "/webjars/**",
-                		        "/configuracion/qr/**",
-                		        "/error"
-                		).permitAll()
+                        .requestMatchers(
+                                "/",
+                                "/nosotros",
+                                "/carta",
+                                "/eventos",
+                                "/reservas",
+                                "/reservas/**",
+                                "/pedidos",
+                                "/pedidos/**",
+                                "/carrito",
+                                "/carrito/**",
+                                "/galeria/**",
+                                "/registro",
+                                "/registro/**",
+                                "/login",
+                                "/css/**",
+                                "/js/**",
+                                "/img/**",
+                                "/webjars/**",
+                                "/configuracion/qr/**",
+                                "/error"
+                        ).permitAll()
 
                         /*El administrador únicamente entra a las rutas de administración.*/
                         .requestMatchers("/admin/**")
