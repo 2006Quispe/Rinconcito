@@ -48,8 +48,8 @@ public class RegistroFormDTO {
     @NotBlank(message = "El correo es obligatorio.")
     @Size(
             min = 6,
-            max = 30,
-            message = "El correo debe tener entre 6 y 30 caracteres."
+            max = 120,
+            message = "El correo debe tener entre 6 y 120 caracteres."
     )
     @Email(message = "Ingresa un correo electrónico válido.")
     private String correo;
