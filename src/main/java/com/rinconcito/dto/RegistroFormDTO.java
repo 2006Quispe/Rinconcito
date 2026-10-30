@@ -10,8 +10,8 @@ public class RegistroFormDTO {
     @NotBlank(message = "Los nombres son obligatorios.")
     @Size(
             min = 3,
-            max = 50,
-            message = "Los nombres deben tener entre 3 y 50 caracteres."
+            max = 25,
+            message = "Los nombres deben tener entre 3 y 25 caracteres."
     )
     @Pattern(
             regexp = "^[\\p{L}]+(?:[ '\\-][\\p{L}]+)*$",
@@ -22,8 +22,8 @@ public class RegistroFormDTO {
     @NotBlank(message = "Los apellidos son obligatorios.")
     @Size(
             min = 3,
-            max = 50,
-            message = "Los apellidos deben tener entre 3 y 50 caracteres."
+            max = 25,
+            message = "Los apellidos deben tener entre 3 y 25 caracteres."
     )
     @Pattern(
             regexp = "^[\\p{L}]+(?:[ '\\-][\\p{L}]+)*$",
@@ -48,8 +48,8 @@ public class RegistroFormDTO {
     @NotBlank(message = "El correo es obligatorio.")
     @Size(
             min = 6,
-            max = 30,
-            message = "El correo debe tener entre 6 y 30 caracteres."
+            max = 120,
+            message = "El correo debe tener entre 6 y 120 caracteres."
     )
     @Email(message = "Ingresa un correo electrónico válido.")
     private String correo;
