@@ -21,6 +21,9 @@ public class Producto {
     @Column(name = "descripcion", length = 300)
     private String descripcion;
 
+    @Column(name = "ingredientes", length = 1000)
+    private String ingredientes;
+
     @Column(name = "precio", nullable = false)
     private Integer precio;
 
@@ -75,6 +78,26 @@ public class Producto {
 
     public Integer getPrecio() {
         return precio;
+    }
+
+    public String getIngredientes() {
+        return ingredientes;
+    }
+
+    public void setIngredientes(String ingredientes) {
+        this.ingredientes = ingredientes;
+    }
+
+    @Transient
+    public java.util.List<String> getListaIngredientes() {
+        if (ingredientes == null || ingredientes.isBlank()) {
+            return java.util.List.of();
+        }
+        return java.util.Arrays.stream(ingredientes.split("[,\\r\\n]+"))
+                .map(String::trim)
+                .filter(ingrediente -> !ingrediente.isEmpty())
+                .distinct()
+                .toList();
     }
 
     public void setPrecio(Integer precio) {

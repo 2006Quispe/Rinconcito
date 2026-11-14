@@ -116,6 +116,17 @@
 
                     </div>
 
+                    <div class="col-12">
+                        <label for="ingredientes" class="form-label">Ingredientes (opcional)</label>
+                        <textarea id="ingredientes" name="ingredientes" class="form-control"
+                                  rows="3" maxlength="1000" th:text="${producto.ingredientes}"
+                                  aria-describedby="ayudaIngredientes"
+                                  placeholder="Ej. Pollo, papas nativas, habas"></textarea>
+                        <div class="form-text" id="ayudaIngredientes">
+                            Separa cada ingrediente con una coma o un salto de línea. Máximo 1000 caracteres.
+                        </div>
+                    </div>
+
                     <div class="col-md-5">
 
                         <label for="precio"

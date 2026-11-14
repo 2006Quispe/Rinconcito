@@ -126,6 +126,8 @@ public class AdminCartaController {
             @RequestParam("nombre")String nombre,
             @RequestParam(value = "descripcion",required = false)
             String descripcion,
+            @RequestParam(value = "ingredientes", required = false)
+            String ingredientes,
             @RequestParam("precio")Integer precio,
             @RequestParam("idCategoria")Integer idCategoria,
             @RequestParam(value = "disponible",defaultValue = "false")
@@ -156,6 +158,7 @@ public class AdminCartaController {
 
             producto.setNombre(nombre);
             producto.setDescripcion(descripcion);
+            producto.setIngredientes(ingredientes);
             producto.setPrecio(precio);
             producto.setDisponible(disponible);
             producto.setEstado(estado);

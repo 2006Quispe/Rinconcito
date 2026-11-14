@@ -269,6 +269,7 @@
                                                 data-id=${producto.idProducto},
                                                 data-nombre=${producto.nombre},
                                                 data-descripcion=${producto.descripcion},
+                                                data-ingredientes=${producto.ingredientes},
                                                 data-categoria=${producto.categoria != null
                                                     ? producto.categoria.idCategoria
                                                     : ''},
@@ -353,6 +354,7 @@
         data-id=${productoEditar.idProducto},
         data-nombre=${productoEditar.nombre},
         data-descripcion=${productoEditar.descripcion},
+        data-ingredientes=${productoEditar.ingredientes},
         data-categoria=${productoEditar.categoria != null
             ? productoEditar.categoria.idCategoria
             : ''},
@@ -437,6 +439,16 @@
 
                         <small class="modal-ayuda">
                             Máximo 300 caracteres.
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="modalIngredientes" class="form-label">Ingredientes (opcional)</label>
+                        <textarea id="modalIngredientes" name="ingredientes" class="form-control"
+                                  maxlength="1000" rows="3" aria-describedby="ayudaIngredientes"
+                                  placeholder="Ej. Pollo, papas nativas, habas"></textarea>
+                        <small class="modal-ayuda" id="ayudaIngredientes">
+                            Separa cada ingrediente con una coma o un salto de línea. Máximo 1000 caracteres.
                         </small>
                     </div>
 
@@ -553,6 +565,7 @@
         const idProducto = document.getElementById("modalIdProducto");
         const nombre = document.getElementById("modalNombre");
         const descripcion = document.getElementById("modalDescripcion");
+        const ingredientes = document.getElementById("modalIngredientes");
         const categoria = document.getElementById("modalCategoria");
         const precio = document.getElementById("modalPrecio");
         const disponible = document.getElementById("modalDisponible");
@@ -599,6 +612,7 @@
             idProducto.value = datos.id || "";
             nombre.value = datos.nombre || "";
             descripcion.value = datos.descripcion || "";
+            ingredientes.value = datos.ingredientes || "";
             categoria.value = datos.categoria || "";
             precio.value = datos.precio || "";
             disponible.value = datos.disponible || "false";
