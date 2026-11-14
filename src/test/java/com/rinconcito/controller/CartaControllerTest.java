@@ -65,24 +65,29 @@ class CartaControllerTest {
     }
 
     @Test
-    void detalleMuestraSoloRelacionadosDisponiblesSinRepetirElPrincipal() throws Exception {
+    void detalleIncluyeRecomendacionesDeOtraCategoriaYConservaFiltros() throws Exception {
         Producto principal = producto(1, true);
         Producto relacionado = producto(2, true);
+        Categoria otraCategoria = new Categoria();
+        otraCategoria.setIdCategoria(2);
+        otraCategoria.setNombre("Bebidas");
+        relacionado.setCategoria(otraCategoria);
         when(productos.buscarPublicoPorId(1)).thenReturn(Optional.of(principal));
-        when(productos.buscarPublicos(null, 1)).thenReturn(List.of(principal, relacionado, producto(3, false)));
+        when(productos.recomendarPublicos(1)).thenReturn(List.of(relacionado));
         web.perform(get("/carta/1").param("q", "pacha").param("categoria", "1"))
                 .andExpect(status().isOk()).andExpect(view().name("paginas/producto-detalle"))
                 .andExpect(model().attribute("producto", principal))
                 .andExpect(model().attribute("relacionados", List.of(relacionado)))
                 .andExpect(model().attribute("q", "pacha"))
                 .andExpect(model().attribute("categoriaSeleccionada", 1));
+        verify(productos).recomendarPublicos(1);
     }
 
     @Test
     void unProductoAgotadoConservaSuDetalle() throws Exception {
         Producto agotado = producto(1, false);
         when(productos.buscarPublicoPorId(1)).thenReturn(Optional.of(agotado));
-        when(productos.buscarPublicos(null, 1)).thenReturn(List.of());
+        when(productos.recomendarPublicos(1)).thenReturn(List.of());
         web.perform(get("/carta/1")).andExpect(status().isOk())
                 .andExpect(model().attribute("producto", agotado));
     }
@@ -92,6 +97,7 @@ class CartaControllerTest {
         when(productos.buscarPublicoPorId(99)).thenReturn(Optional.empty());
         web.perform(get("/carta/99")).andExpect(status().isNotFound());
         verify(productos, never()).buscarPublicos(any(), any());
+        verify(productos, never()).recomendarPublicos(any());
     }
 
     @Test

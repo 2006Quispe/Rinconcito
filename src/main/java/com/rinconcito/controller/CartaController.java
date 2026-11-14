@@ -66,12 +66,7 @@ public class CartaController {
         Producto producto = productoService.buscarPublicoPorId(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado."));
 
-        List<Producto> relacionados = productoService
-                .buscarPublicos(null, producto.getCategoria().getIdCategoria())
-                .stream()
-                .filter(otro -> !otro.getIdProducto().equals(id) && otro.isDisponible())
-                .limit(3)
-                .toList();
+        List<Producto> relacionados = productoService.recomendarPublicos(id);
 
         model.addAttribute("titulo", producto.getNombre());
         model.addAttribute("producto", producto);

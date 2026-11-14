@@ -88,6 +88,16 @@ public class ProductoService {
     }
 
     @Transactional(readOnly = true)
+    public List<Producto> recomendarPublicos(Integer idActual) {
+        List<Producto> candidatos = new java.util.ArrayList<>(buscarPublicos(null, null)
+                .stream()
+                .filter(producto -> !producto.getIdProducto().equals(idActual) && producto.isDisponible())
+                .toList());
+        java.util.Collections.shuffle(candidatos);
+        return List.copyOf(candidatos.subList(0, Math.min(3, candidatos.size())));
+    }
+
+    @Transactional(readOnly = true)
     public List<Producto> buscarPublicos(
             String q,
             Integer idCategoria

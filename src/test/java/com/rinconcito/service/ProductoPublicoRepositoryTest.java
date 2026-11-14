@@ -50,12 +50,16 @@ class ProductoPublicoRepositoryTest {
             sesion.flush();
             assertTrue(repositorio.buscarPublicoPorId(id,
                     Producto.EstadoProducto.ACTIVO, Categoria.EstadoCategoria.ACTIVO).isEmpty());
+            assertTrue(repositorio.buscarPublicos(Producto.EstadoProducto.ACTIVO,
+                    Categoria.EstadoCategoria.ACTIVO, null, null).isEmpty());
 
             visible.setEstado(Producto.EstadoProducto.ACTIVO);
             sesion.find(Categoria.class, idCategoria).setEstado(Categoria.EstadoCategoria.INACTIVO);
             sesion.flush();
             assertTrue(repositorio.buscarPublicoPorId(id,
                     Producto.EstadoProducto.ACTIVO, Categoria.EstadoCategoria.ACTIVO).isEmpty());
+            assertTrue(repositorio.buscarPublicos(Producto.EstadoProducto.ACTIVO,
+                    Categoria.EstadoCategoria.ACTIVO, null, null).isEmpty());
             assertTrue(repositorio.buscarPublicoPorId(-1,
                     Producto.EstadoProducto.ACTIVO, Categoria.EstadoCategoria.ACTIVO).isEmpty());
             sesion.getTransaction().rollback();

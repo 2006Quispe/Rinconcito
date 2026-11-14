@@ -95,6 +95,7 @@ class CartaVistaTest {
         when(categorias.listarActivas()).thenReturn(List.of(categoria));
         when(productos.buscarPublicos(any(), any())).thenReturn(carta);
         when(productos.buscarPublicoPorId(1)).thenReturn(Optional.of(principal));
+        when(productos.recomendarPublicos(1)).thenReturn(carta.subList(1, 4));
         when(carrito.obtenerItems(any())).thenReturn(List.of());
     }
 
@@ -120,8 +121,12 @@ class CartaVistaTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Papas nativas")))
                 .andExpect(content().string(containsString("/carta?q=pacha&amp;categoria=1")))
+                .andExpect(content().string(containsString("Acompaña tu mesa con:")))
+                .andExpect(content().string(containsString("class=\"carta-relacionado-acciones\"")))
+                .andExpect(content().string(containsString("Agregar Chicharrón de cerdo al carrito")))
                 .andExpect(content().string(not(containsString("Ver en 3D"))))
                 .andReturn().getResponse().getContentAsString();
+        org.junit.jupiter.api.Assertions.assertEquals(4, detalle.split("data-agregar-carrito", -1).length - 1);
         Path destino = Path.of("target", "carta-vistas-prueba");
         Files.createDirectories(destino);
         Files.writeString(destino.resolve("carta.html"), carta);
@@ -135,8 +140,18 @@ class CartaVistaTest {
         web.perform(get("/carta/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Agotado por hoy")))
-                .andExpect(content().string(not(containsString("data-agregar-carrito"))))
+                .andExpect(content().string(not(containsString("class=\"carta-detalle-compra\""))))
+                .andExpect(content().string(containsString("class=\"carta-relacionado-acciones\"")))
                 .andExpect(content().string(not(containsString("id=\"tituloIngredientes\""))));
+    }
+
+    @Test
+    void ocultaRecomendacionesSoloSiNoHayOtrasOpcionesDisponibles() throws Exception {
+        when(productos.recomendarPublicos(1)).thenReturn(List.of());
+        web.perform(get("/carta/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(containsString("id=\"tituloRelacionados\""))))
+                .andExpect(content().string(containsString("class=\"carta-detalle-compra\"")));
     }
 
     @Test

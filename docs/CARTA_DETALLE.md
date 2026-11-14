@@ -37,12 +37,24 @@ Con `spring.jpa.hibernate.ddl-auto=validate`, omitir el paso SQL impide el inici
 
 No se agregan observaciones ni controles 3D. No cambia el procesamiento de pedidos, pagos o correos.
 
+## Ajuste del detalle y recomendaciones
+
+- Foto horizontal 4:3 con altura máxima de 400 px y contenido centrado de hasta 1120 px en escritorio.
+- “Acompaña tu mesa con:” muestra hasta tres productos aleatorios de toda la carta pública,
+  sin repetir el producto abierto y excluyendo agotados, productos inactivos y categorías inactivas.
+  Si hay menos de tres opciones, muestra las existentes; si no hay ninguna, oculta la sección.
+- Cada tarjeta permite ver el detalle o agregar una unidad al carrito sin recargar.
+- Las recomendaciones se seleccionan al cargar el detalle; agregar al carrito no las cambia.
+
+Este ajuste no añade columnas ni requiere otro SQL. Si ya aplicaste la migración de ingredientes,
+solo actualiza la rama, reinicia la aplicación y recarga con Ctrl+F5.
+
 ## Pruebas automatizadas de este cambio
 
 En Git Bash, con Java 21 y acceso a las dependencias Maven:
 
 ```bash
-bash mvnw -Dtest=ProductoIngredientesTest,ProductoPublicoRepositoryTest,CartaControllerTest,AdminCartaIngredientesTest,CartaVistaTest test
+bash mvnw -Dtest=ProductoIngredientesTest,ProductoPublicoRepositoryTest,ProductoRecomendacionesTest,CartaControllerTest,AdminCartaIngredientesTest,CartaVistaTest test
 ```
 
 Estas pruebas usan dobles de los servicios y una base H2 temporal para comprobar la consulta pública.
@@ -52,8 +64,8 @@ No necesitan la base MySQL personal ni envían correos.
 
 ### Resultado de verificación de esta entrega
 
-- Compilación y 15 pruebas específicas: correctas (Java 21).
-- Suite completa: 89 pruebas; conserva los mismos cuatro casos que fallaban antes del cambio
+- Compilación y 20 pruebas específicas: correctas (Java 21).
+- Suite completa: 94 pruebas; conserva los mismos cuatro casos que fallaban antes del cambio
   (la versión base tenía 74 pruebas y esos mismos cuatro casos).
   Tres pertenecen a `AdminReporteControllerTest`, cuyo contexto de prueba no proporciona
   `UserDetailsService`. El otro pertenece a `RegistroFormDTOValidationTest.rechazaCorreoInvalido`.
