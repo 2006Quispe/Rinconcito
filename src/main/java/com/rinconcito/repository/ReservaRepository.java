@@ -67,10 +67,8 @@ public interface ReservaRepository
     List<Reserva> buscarConFiltros(
             @Param("fecha")
             LocalDate fecha,
-
             @Param("piso")
             Piso piso,
-
             @Param("estado")
             EstadoReserva estado
     );

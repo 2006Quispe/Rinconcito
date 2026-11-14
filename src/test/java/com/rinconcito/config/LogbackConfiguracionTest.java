@@ -26,7 +26,7 @@ class LogbackConfiguracionTest {
     void escribeEnArchivoConLaConfiguracionDeLaAplicacion() throws Exception {
         Path archivo = directorio.resolve("rinconcito.log");
 
-        // Solo arrancamos un contexto vacio: esta comprobacion no necesita MySQL.
+        // Solo arrancamos un contexto vacio
         try (ConfigurableApplicationContext contexto =
                      new SpringApplicationBuilder(ContextoDePrueba.class)
                              .web(WebApplicationType.NONE)

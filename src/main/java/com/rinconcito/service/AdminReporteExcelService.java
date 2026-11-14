@@ -1,3 +1,4 @@
+
 package com.rinconcito.service;
 
 import com.rinconcito.dto.AdminReporteDTO;
@@ -28,7 +29,7 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 public class AdminReporteExcelService implements ExportadorReporte {
-
+ 
     @Override
     public String formato() { return "excel"; }
 
@@ -53,31 +54,26 @@ public class AdminReporteExcelService implements ExportadorReporte {
         try (
                 Workbook workbook =
                         new XSSFWorkbook();
-
                 ByteArrayOutputStream salida =
                         new ByteArrayOutputStream()
         ) {
             EstilosExcel estilos =
                     crearEstilos(workbook);
-
             crearHojaResumen(
                     workbook,
                     reporte,
                     estilos
             );
-
             crearHojaOperaciones(
                     workbook,
                     reporte,
                     estilos
             );
-
             crearHojaVentasDiarias(
                     workbook,
                     reporte,
                     estilos
             );
-
             crearHojaMetodosPago(
                     workbook,
                     reporte,

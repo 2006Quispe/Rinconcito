@@ -345,21 +345,16 @@ public class AdminReporteService {
                 acumulados =
                 new LinkedHashMap<>();
 
-        // Contadores long por producto: conservar el rango del reporte.
         AtomicLongMap<Integer> unidadesVendidas = AtomicLongMap.create();
-
         for (DetallePedido detalle : detalles) {
-
             Producto producto =
                     detalle.getProducto();
-
             if (
                     producto == null
                             || producto.getIdProducto() == null
             ) {
                 continue;
             }
-
             ProductoAcumulado acumulado =
                     acumulados.computeIfAbsent(
                             producto.getIdProducto(),
@@ -367,20 +362,18 @@ public class AdminReporteService {
                                     producto.getNombre()
                             )
                     );
-
+            
             unidadesVendidas.addAndGet(
                     producto.getIdProducto(),
                     valorSeguro(
                             detalle.getCantidad()
                     )
             );
-
             acumulado.monto +=
                     valorSeguro(
                             detalle.getSubtotal()
                     );
         }
-
         List<ReporteProductoDTO> resultado =
                 acumulados.entrySet()
                         .stream()
@@ -398,7 +391,6 @@ public class AdminReporteService {
                                                     segundo.getCantidad(),
                                                     primero.getCantidad()
                                             );
-
                                     if (compararCantidad != 0) {
                                         return compararCantidad;
                                     }

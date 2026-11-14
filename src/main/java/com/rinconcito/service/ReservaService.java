@@ -1,7 +1,6 @@
 package com.rinconcito.service;
 
 import com.rinconcito.service.correo.ColaCorreoService;
-
 import com.rinconcito.dto.ReservaFormDTO;
 import com.rinconcito.entity.Evento;
 import com.rinconcito.entity.Evento.EstadoEvento;
@@ -18,9 +17,7 @@ import com.rinconcito.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import org.apache.commons.lang3.StringUtils;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;

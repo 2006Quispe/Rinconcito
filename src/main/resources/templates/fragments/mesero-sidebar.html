@@ -57,16 +57,13 @@
 
             <span class="mesero-sidebar-enlace-texto">
                 <strong>Control de mesas</strong>
-                <small>Disponibilidad y ocupación</small>
             </span>
 
         </a>
 
         <a th:href="@{/mesero/pedidos/nuevo}"
            class="mesero-sidebar-enlace"
-           th:classappend="${seccionActiva == 'nuevo-pedido'}
-                ? ' activo'
-                : ''">
+           th:classappend="${seccionActiva == 'nuevo-pedido'}? ' activo': ''">
 
             <span class="mesero-sidebar-enlace-icono">
                 <i class="bi bi-plus-circle-fill"></i>
@@ -74,7 +71,6 @@
 
             <span class="mesero-sidebar-enlace-texto">
                 <strong>Nuevo pedido</strong>
-                <small>Registrar pedido presencial</small>
             </span>
 
         </a>
@@ -84,18 +80,13 @@
            th:classappend="${seccionActiva == 'pedidos'}
                 ? ' activo'
                 : ''">
-
             <span class="mesero-sidebar-enlace-icono">
                 <i class="bi bi-receipt-cutoff"></i>
             </span>
-
             <span class="mesero-sidebar-enlace-texto">
                 <strong>Pedidos activos</strong>
-                <small>Pedidos de las mesas</small>
             </span>
-
         </a>
-
         <a th:href="@{/mesero/carta}"
            class="mesero-sidebar-enlace"
            th:classappend="${seccionActiva == 'carta'} ? ' activo' : ''">
@@ -104,10 +95,8 @@
             </span>
             <span class="mesero-sidebar-enlace-texto">
                 <strong>Disponibilidad de carta</strong>
-                <small>Disponible o agotado</small>
             </span>
         </a>
-
         <a th:href="@{/mesero/reservas}"
            class="mesero-sidebar-enlace"
            th:classappend="${seccionActiva == 'reservas'}
@@ -116,35 +105,21 @@
             <span class="mesero-sidebar-enlace-icono">
                 <i class="bi bi-calendar-check-fill"></i>
             </span>
-
             <span class="mesero-sidebar-enlace-texto">
                 <strong>Reservas del día</strong>
-                <small>Llegadas y atenciones</small>
             </span>
-
         </a>
+		<a th:href="@{/mesero/historial}"
+		   class="mesero-sidebar-enlace"
+		   th:classappend="${seccionActiva == 'historial'} ? ' activo' : ''">
 
-        <p class="mesero-sidebar-etiqueta mesero-sidebar-etiqueta-separada">
-            CONSULTAS
-        </p>
-
-        <a th:href="@{/mesero/historial}"
-           class="mesero-sidebar-enlace"
-           th:classappend="${seccionActiva == 'historial'}
-                ? ' activo'
-                : ''">
-
-            <span class="mesero-sidebar-enlace-icono">
-                <i class="bi bi-clock-history"></i>
-            </span>
-
-            <span class="mesero-sidebar-enlace-texto">
-                <strong>Historial</strong>
-                <small>Atenciones realizadas</small>
-            </span>
-
-        </a>
-
+		    <span class="mesero-sidebar-enlace-icono">
+		        <i class="bi bi-clock-history"></i>
+		    </span>
+		    <span class="mesero-sidebar-enlace-texto">
+		        <strong>Historial</strong>
+		    </span>
+		</a>
     </nav>
 
     <div class="mesero-sidebar-inferior">
