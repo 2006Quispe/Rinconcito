@@ -116,6 +116,10 @@ class CartaVistaTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("/carta/1?q=pacha&amp;categoria=1")))
                 .andExpect(content().string(containsString("name=\"_csrf\"")))
+                .andExpect(content().string(containsString("Los favoritos de la casa")))
+                .andExpect(content().string(not(containsString("Tu pedido"))))
+                .andExpect(content().string(not(containsString("carta-resumen"))))
+                .andExpect(content().string(not(containsString("Ver en 3D"))))
                 .andReturn().getResponse().getContentAsString();
         String detalle = web.perform(get("/carta/1").param("q", "pacha").param("categoria", "1"))
                 .andExpect(status().isOk())

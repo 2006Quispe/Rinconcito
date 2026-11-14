@@ -12,7 +12,7 @@
         avisoTimer = setTimeout(() => aviso.classList.remove('visible'), error ? 6500 : 3000);
     }
 
-    function actualizarResumen(datos) {
+    function actualizarContador(datos) {
         const flotante = document.querySelector('.carrito-flotante');
         if (flotante) {
             let contador = flotante.querySelector('.carrito-contador');
@@ -25,23 +25,9 @@
             contador.hidden = datos.cantidadCarrito === 0;
             flotante.setAttribute('aria-label', `Abrir carrito, ${datos.cantidadCarrito} unidades`);
         }
-        const lista = document.querySelector('[data-resumen-items]');
-        if (!lista || !Array.isArray(datos.itemsCarrito)) return;
-        lista.replaceChildren();
-        datos.itemsCarrito.forEach(item => {
-            const fila = document.createElement('li');
-            const nombre = document.createElement('span');
-            nombre.textContent = `${item.cantidad} × ${item.nombre}`;
-            const importe = document.createElement('strong');
-            importe.textContent = `S/ ${item.subtotal}`;
-            fila.append(nombre, importe);
-            lista.appendChild(fila);
-        });
-        document.querySelector('[data-resumen-vacio]').hidden = datos.itemsCarrito.length > 0;
-        document.querySelector('[data-resumen-subtotal]').textContent = `S/ ${datos.subtotalCarrito}`;
     }
 
-    // Serializa las adiciones para no sobrescribir el resumen con respuestas atrasadas.
+    // Serializa las adiciones para no sobrescribir el contador con respuestas atrasadas.
     let agregando = false;
     document.querySelectorAll('[data-agregar-carrito]').forEach(formulario => {
         formulario.addEventListener('submit', async evento => {
@@ -69,7 +55,7 @@
                 if (!respuesta.ok || !datos.exito) {
                     throw new Error(datos.mensaje || 'No se pudo agregar el producto.');
                 }
-                actualizarResumen(datos);
+                actualizarContador(datos);
                 notificar(datos.mensaje || 'Producto agregado al carrito.');
             } catch (error) {
                 notificar(error instanceof TypeError

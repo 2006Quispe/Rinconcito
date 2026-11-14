@@ -15,14 +15,15 @@
 <main>
     <section class="carta-portada">
         <div class="container">
-            <p class="carta-etiqueta">TRADICIÓN PARA COMPARTIR</p>
+            <p class="carta-etiqueta">SABORES DE NUESTRA TIERRA</p>
             <h1>Nuestra carta</h1>
-            <p>Sabores de nuestra tierra, preparados para tu mesa.</p>
+            <p>Tradición ayacuchana, preparada para compartir.</p>
         </div>
     </section>
     <div class="container carta-contenido">
         <div th:if="${exito}" class="alert alert-success" role="status" th:text="${exito}"></div>
         <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+        <div class="carta-filtros">
         <form class="carta-buscador" method="get" th:action="@{/carta}" role="search">
             <label class="visually-hidden" for="buscarCarta">Buscar un producto</label>
             <i class="bi bi-search" aria-hidden="true"></i>
@@ -41,24 +42,25 @@
                th:attr="aria-current=${categoriaSeleccionada == categoria.idCategoria ? 'page' : null}"
                th:text="${categoria.nombre}">Categoría</a>
         </nav>
+        </div>
         <div class="carta-distribucion">
             <div>
+                <div class="carta-catalogo-titulo">
+                    <h2>Los favoritos de la casa</h2>
+                    <p>Elige tu plato y agrégalo a tu pedido.</p>
+                </div>
                 <p class="carta-resultados"><span th:text="${totalProductos}">0</span> productos en la carta
                     <a th:if="${!#strings.isEmpty(q) or categoriaSeleccionada != null}" th:href="@{/carta}">Limpiar filtros</a>
                 </p>
-                <section th:if="${#maps.isEmpty(menu)}" class="carta-vacio">
+                <section th:if="${#lists.isEmpty(productos)}" class="carta-vacio">
                     <i class="bi bi-search" aria-hidden="true"></i>
                     <h2>No encontramos productos</h2>
                     <p>Prueba otro nombre o explora las demás categorías.</p>
                     <a th:href="@{/carta}" class="carta-boton">Ver toda la carta</a>
                 </section>
-                <section th:each="seccion : ${menu}" class="carta-seccion">
-                    <div class="carta-seccion-titulo">
-                        <h2 th:text="${seccion.key.nombre}">Especialidades</h2>
-                        <p th:if="${!#strings.isEmpty(seccion.key.descripcion)}" th:text="${seccion.key.descripcion}"></p>
-                    </div>
+                <section th:unless="${#lists.isEmpty(productos)}" class="carta-seccion" aria-label="Productos de la carta">
                     <div class="carta-productos">
-                        <article th:each="producto : ${seccion.value}" class="carta-producto">
+                        <article th:each="producto : ${productos}" class="carta-producto">
                             <a class="carta-foto-enlace" data-guardar-posicion
                                th:href="@{/carta/{id}(id=${producto.idProducto},q=${q},categoria=${categoriaSeleccionada})}"
                                th:attr="aria-label=${'Ver detalle de ' + producto.nombre}">
@@ -70,12 +72,14 @@
                                 <span th:unless="${producto.disponible}" class="carta-agotado">Agotado por hoy</span>
                             </a>
                             <div class="carta-producto-info">
+                                <div class="carta-producto-titulo">
                                 <h3><a data-guardar-posicion
                                        th:href="@{/carta/{id}(id=${producto.idProducto},q=${q},categoria=${categoriaSeleccionada})}"
                                        th:text="${producto.nombre}">Producto</a></h3>
+                                <strong class="carta-precio" th:text="${'S/ ' + producto.precio}">S/ 0</strong>
+                                </div>
                                 <p class="carta-descripcion" th:text="${producto.descripcion}"></p>
                                 <div class="carta-producto-pie">
-                                    <strong class="carta-precio" th:text="${'S/ ' + producto.precio}">S/ 0</strong>
                                     <form th:if="${producto.disponible}" data-agregar-carrito
                                           th:action="@{/carrito/agregar}" th:attr="data-ajax-url=@{/carrito/agregar-ajax}" method="post">
                                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
@@ -94,22 +98,6 @@
                     </div>
                 </section>
             </div>
-            <aside class="carta-resumen" aria-labelledby="tituloResumen">
-                <p class="carta-etiqueta">A TU GUSTO</p>
-                <h2 id="tituloResumen"><i class="bi bi-bag" aria-hidden="true"></i> Tu pedido</h2>
-                <p class="carta-resumen-vacio" data-resumen-vacio th:hidden="${!#lists.isEmpty(itemsCarrito)}">
-                    Tu mesa empieza aquí. Agrega tus favoritos de la carta.
-                </p>
-                <ul class="carta-resumen-items" data-resumen-items>
-                    <li th:each="item : ${itemsCarrito}">
-                        <span><b th:text="${item.cantidad + ' × '}"></b><span th:text="${item.nombre}"></span></span>
-                        <strong th:text="${'S/ ' + item.subtotal}"></strong>
-                    </li>
-                </ul>
-                <div class="carta-resumen-total"><span>Subtotal</span><strong data-resumen-subtotal th:text="${'S/ ' + subtotalCarrito}">S/ 0</strong></div>
-                <p class="carta-resumen-ayuda">Revisa cantidades y continúa desde tu carrito.</p>
-                <a th:href="@{/carrito}" class="carta-boton carta-boton-ancho">Ver carrito <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-            </aside>
         </div>
     </div>
 </main>

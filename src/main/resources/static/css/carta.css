@@ -10,11 +10,15 @@
 .carta-publica main h1, .carta-publica main h2, .carta-publica main h3 { font-family: 'Merriweather', serif; }
 .carta-publica main a { text-decoration: none; }
 .carta-publica main :is(a, button, input):focus-visible { outline: 3px solid #9b701c; outline-offset: 4px; }
-.carta-portada { background: #35251d; color: #fff7e9; padding: 40px 0 36px; border-bottom: 3px solid #d4a017; }
+.carta-portada { background: linear-gradient(90deg, #faf6ef 0%, #faf6ef 32%, #faf6efdd 43%, #faf6ef00 65%), url('../img/pachamanca-expericencias.jpg') right 55% / 65% auto no-repeat; color: var(--carta-tinta); padding: 54px 0; border-bottom: 3px solid #d4a017; }
 .carta-publica .carta-etiqueta { font-size: .72rem; letter-spacing: .15em; font-weight: 800; color: var(--carta-acento); text-transform: uppercase; margin: 0 0 12px; }
-.carta-portada .carta-etiqueta { color: #edc368; }
-.carta-portada h1 { font-size: clamp(2rem, 4vw, 3rem); margin: 0 0 12px; }
-.carta-portada p:last-child { margin: 0; color: #e9d4bc; }
+.carta-portada .carta-etiqueta { color: #a86b08; }
+.carta-portada h1 { font-size: clamp(2rem, 4vw, 3.4rem); margin: 0 0 12px; font-weight: 700; }
+.carta-portada p:last-child { margin: 0; color: var(--carta-tinta); max-width: 440px; font-size: 1.15rem; }
+.carta-filtros { display: grid; grid-template-columns: minmax(280px, 2fr) minmax(0, 3fr); align-items: center; gap: 28px; margin-bottom: 34px; }
+.carta-filtros .carta-categorias { margin: 0; border-left: 1px solid #c59639; padding-left: 28px; }
+.carta-catalogo-titulo h2 { font-size: clamp(1.6rem, 3vw, 2.5rem); font-weight: 700; margin-bottom: 10px; }
+.carta-catalogo-titulo p { color: var(--carta-suave); font-size: 1.1rem; margin-bottom: 10px; }
 .carta-contenido { padding-top: 30px; padding-bottom: 30px; }
 .carta-buscador { display: flex; gap: 15px; align-items: center; background: #fff; border: 1px solid var(--carta-borde); border-radius: 14px; padding: 10px 12px 10px 22px; }
 .carta-buscador > i { color: var(--carta-suave); }
@@ -24,16 +28,16 @@
 .carta-boton:disabled { opacity: .65; cursor: wait; }
 .carta-boton-ancho { width: 100%; }
 .carta-categorias { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0 28px; }
-.carta-categoria { display: inline-flex; align-items: center; min-height: 44px; padding: 9px 20px; border: 1px solid var(--carta-borde); border-radius: 100px; background: #fff; color: var(--carta-tinta); font-weight: 700; }
+.carta-categoria { display: inline-flex; align-items: center; min-height: 44px; padding: 9px 20px; border: 1px solid #d3bcaa; border-radius: 14px; background: transparent; color: var(--carta-tinta); font-weight: 700; }
 .carta-categoria:hover { color: var(--carta-acento); border-color: var(--carta-acento); }
 .carta-categoria.seleccionada { background: var(--carta-acento); border-color: var(--carta-acento); color: #fff; }
-.carta-distribucion { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 28px; align-items: start; }
+.carta-distribucion { display: block; }
 .carta-resultados { font-size: .85rem; color: var(--carta-suave); margin: 0 0 22px; }
 .carta-resultados a { color: var(--carta-acento); margin-left: 12px; text-decoration: underline !important; }
 .carta-seccion { margin-bottom: 36px; }
 .carta-seccion-titulo h2 { font-size: 1.5rem; margin: 0 0 8px; }
 .carta-seccion-titulo p { color: var(--carta-suave); font-size: .95rem; }
-.carta-productos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; margin-top: 20px; }
+.carta-productos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin-top: 20px; }
 .carta-producto { display: flex; flex-direction: column; border: 1px solid var(--carta-borde); border-radius: 15px; background: #fff; overflow: hidden; box-shadow: 0 6px 18px #38271e05; }
 .carta-foto-enlace { display: block; position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #f0e6d8; }
 .carta-foto { width: 100%; height: 100%; object-fit: cover; transition: transform .25s; }
@@ -42,6 +46,9 @@
 .carta-sin-foto i { font-size: 2rem; }
 .carta-agotado { position: absolute; bottom: 12px; left: 12px; background: #fff9ef; color: #6f3e25; border-radius: 6px; padding: 6px 10px; font-size: .8rem; font-weight: 800; }
 .carta-producto-info { padding: 20px; display: flex; flex-direction: column; flex: 1; }
+.carta-producto-titulo { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
+.carta-producto-titulo .carta-precio { white-space: nowrap; }
+.carta-producto .carta-producto-pie form, .carta-producto .carta-boton-agregar { width: 100%; }
 .carta-producto h3 { font-size: 1.05rem; line-height: 1.55; margin-bottom: 10px; overflow-wrap: anywhere; }
 .carta-producto h3 a { color: var(--carta-tinta); }
 .carta-producto h3 a:hover { color: var(--carta-acento); text-decoration: underline; }
@@ -51,17 +58,6 @@
 .carta-precio { color: var(--carta-acento); font-size: 1.15rem; font-weight: 800; }
 .carta-boton-agregar { padding: 8px 14px; font-size: .85rem; }
 .carta-no-disponible { font-size: .8rem; color: var(--carta-suave); }
-.carta-resumen { background: #fff; border: 1px solid var(--carta-borde); border-radius: 15px; padding: 24px; position: sticky; top: 100px; }
-.carta-resumen h2 { font-size: 1.25rem; display: flex; gap: 12px; margin-bottom: 20px; }
-.carta-resumen h2 i { color: var(--carta-acento); }
-.carta-resumen-vacio { font-size: .95rem; line-height: 1.7; color: var(--carta-suave); padding: 12px 0; }
-.carta-resumen-items { padding: 0; margin: 0; list-style: none; max-height: 320px; overflow-y: auto; }
-.carta-resumen-items li { display: flex; justify-content: space-between; gap: 14px; padding: 12px 0; font-size: .85rem; border-bottom: 1px solid var(--carta-borde); }
-.carta-resumen-items li > span { overflow-wrap: anywhere; }
-.carta-resumen-items strong { white-space: nowrap; }
-.carta-resumen-total { display: flex; justify-content: space-between; gap: 16px; padding: 20px 0 8px; border-top: 1px solid var(--carta-borde); }
-.carta-resumen-total strong { font-size: 1.3rem; }
-.carta-resumen-ayuda { font-size: .78rem; color: var(--carta-suave); }
 .carta-vacio { text-align: center; padding: 55px 25px; background: #fff; border: 1px solid var(--carta-borde); border-radius: 15px; }
 .carta-vacio > i { display: block; font-size: 2rem; color: var(--carta-suave); margin-bottom: 20px; }
 .carta-vacio h2 { font-size: 1.4rem; }
@@ -107,13 +103,14 @@
 .carta-aviso.error { background: #8d3026; }
 @media (min-width: 1400px) { .carta-productos { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 991px) {
-    .carta-distribucion { grid-template-columns: 1fr; }
-    .carta-resumen { position: static; }
+    .carta-filtros { grid-template-columns: 1fr; gap: 16px; }
+    .carta-filtros .carta-categorias { border-left: 0; padding-left: 0; }
+    .carta-productos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .carta-detalle-compra { flex-wrap: wrap; }
     .carta-relacionados-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 767px) {
-    .carta-portada { padding: 28px 0; }
+    .carta-portada { padding: 36px 0; background: linear-gradient(90deg, #faf6eff5, #faf6efdb), url('../img/pachamanca-expericencias.jpg') center / cover; }
     .carta-detalle { grid-template-columns: 1fr; }
     .carta-detalle-foto { max-width: 533.33px; justify-self: center; }
     .carta-detalle-info { padding-top: 0; }

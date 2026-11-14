@@ -34,7 +34,6 @@ class CartaControllerTest {
         CartaController carta = new CartaController();
         ReflectionTestUtils.setField(carta, "productoService", productos);
         ReflectionTestUtils.setField(carta, "categoriaService", categorias);
-        ReflectionTestUtils.setField(carta, "carritoService", carrito);
         web = MockMvcBuilders.standaloneSetup(carta, new CarritoController(carrito)).build();
         categoria = new Categoria();
         categoria.setIdCategoria(1);
@@ -52,7 +51,7 @@ class CartaControllerTest {
     }
 
     @Test
-    void conservaLosFiltrosYElResumenDeLaSesion() throws Exception {
+    void conservaLosFiltrosSinResumenLateral() throws Exception {
         when(categorias.listarActivas()).thenReturn(List.of(categoria));
         when(productos.buscarPublicos("pacha", 1)).thenReturn(List.of(producto(1, true)));
         when(carrito.obtenerItems(any())).thenReturn(List.of());
@@ -61,7 +60,7 @@ class CartaControllerTest {
                 .andExpect(model().attribute("q", "pacha"))
                 .andExpect(model().attribute("categoriaSeleccionada", 1))
                 .andExpect(model().attribute("totalProductos", 1))
-                .andExpect(model().attribute("itemsCarrito", List.of()));
+                .andExpect(model().attributeDoesNotExist("itemsCarrito", "subtotalCarrito"));
     }
 
     @Test
