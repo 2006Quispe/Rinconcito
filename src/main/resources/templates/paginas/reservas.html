@@ -94,13 +94,21 @@
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">DNI</label>
+                    <label class="form-label" for="dni">DNI</label>
                     <input type="text"
                            class="form-control"
                            th:field="*{dni}"
+                           inputmode="numeric"
+                           minlength="8"
+                           pattern="[0-9]{8}"
+                           th:attr="data-dni-url=${clienteLogueado} ? null : @{/reservas/consultar-dni},aria-describedby=${clienteLogueado} ? null : 'dni-ayuda dni-estado'"
                            maxlength="8"
                            th:readonly="${clienteLogueado}"
                            required>
+                    <small id="dni-ayuda" th:unless="${clienteLogueado}" class="form-text">
+                        Al completar 8 dígitos, consultaremos el DNI en Factiliza para rellenar tus nombres y apellidos.
+                    </small>
+                    <p id="dni-estado" th:unless="${clienteLogueado}" class="form-text mb-0" role="status"></p>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Teléfono</label>
@@ -201,5 +209,6 @@
 
 
 <script th:src="@{/js/reserva-resumen.js}"></script>
+<script th:src="@{/js/reserva-dni.js}"></script>
 </body>
 </html>
