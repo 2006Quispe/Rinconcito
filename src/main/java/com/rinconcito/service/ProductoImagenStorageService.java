@@ -70,9 +70,9 @@ public class ProductoImagenStorageService {
 
         validarRuta(destino);
 
-        try {
+        try (var entrada = archivo.getInputStream()) {
             Files.copy(
-                    archivo.getInputStream(),
+                    entrada,
                     destino,
                     StandardCopyOption.REPLACE_EXISTING
             );
@@ -109,15 +109,14 @@ public class ProductoImagenStorageService {
     }
 
     public void eliminar(String rutaPublica) {
-        if (rutaPublica == null
-                || rutaPublica.isBlank()) {
+        if (rutaPublica == null || !rutaPublica.startsWith(RUTA_PUBLICA)) {
             return;
         }
 
-        String nombreArchivo =
-                Path.of(rutaPublica)
-                        .getFileName()
-                        .toString();
+        String nombreArchivo = rutaPublica.substring(RUTA_PUBLICA.length());
+        if (!nombreArchivo.matches("[a-zA-Z0-9_-]+\\.(?i:jpg|jpeg|png|webp)")) {
+            return;
+        }
 
         Path archivo = resolver(nombreArchivo);
 

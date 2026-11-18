@@ -23,6 +23,18 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
     @Query("""
             SELECT p FROM Producto p
             JOIN FETCH p.categoria c
+            WHERE p.idProducto = :id
+              AND p.estado = :estadoProducto
+              AND c.estado = :estadoCategoria
+            """)
+    java.util.Optional<Producto> buscarPublicoPorId(
+            @Param("id") Integer id,
+            @Param("estadoProducto") EstadoProducto estadoProducto,
+            @Param("estadoCategoria") EstadoCategoria estadoCategoria);
+
+    @Query("""
+            SELECT p FROM Producto p
+            JOIN FETCH p.categoria c
             WHERE p.estado = :estadoProducto
               AND c.estado = :estadoCategoria
               AND (:categoria IS NULL OR p.categoria = :categoria)
