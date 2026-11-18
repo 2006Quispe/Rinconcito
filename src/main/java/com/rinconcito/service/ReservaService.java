@@ -63,14 +63,15 @@ public class ReservaService {
 
     @Transactional
     public Reserva crearReserva(ReservaFormDTO dto, Usuario clienteLogueado) {
+        dto.setCorreo(blankToNull(dto.getCorreo()));
         validarCamposBasicos(dto);
 
         LocalDate hoy = LocalDate.now();
         if (dto.getFecha().isBefore(hoy)) {
-            throw new IllegalStateException("No puedes reservar para una fecha que ya pasó.");
+            throw new IllegalStateException("No puedes reservar para una fecha que ya pas�.");
         }
         if (dto.getFecha().isEqual(hoy) && dto.getHoraInicio().isBefore(LocalTime.now())) {
-            throw new IllegalStateException("No puedes reservar para una hora que ya pasó hoy.");
+            throw new IllegalStateException("No puedes reservar para una hora que ya pas� hoy.");
         }
 
         LocalTime horaFin = dto.getHoraInicio().plusHours(DURACION_HORAS);
@@ -79,7 +80,7 @@ public class ReservaService {
         Piso piso = pisoRepository.findById(dto.getIdPiso())
                 .orElseThrow(() -> new IllegalStateException("El piso seleccionado no existe."));
         if (piso.getEstado() != EstadoPiso.ACTIVO) {
-            throw new IllegalStateException("El piso seleccionado no está disponible.");
+            throw new IllegalStateException("El piso seleccionado no est� disponible.");
         }
 
         Usuario cliente = resolverCliente(dto, clienteLogueado);
@@ -93,14 +94,10 @@ public class ReservaService {
                 .count();
         if (reservasActivas >= MAX_RESERVAS_POR_DIA) {
             throw new IllegalStateException(
-                    "Ya tienes una reserva registrada para ese día. Si necesitas cambiarla, cancela la anterior primero.");
+                    "Ya tienes una reserva registrada para ese d�a. Si necesitas cambiarla, cancela la anterior primero.");
         }
 
-        Evento evento = null;
-        List<Evento> eventosDelDia = eventoRepository.findByFechaAndEstado(dto.getFecha(), EstadoEvento.ACTIVO);
-        if (!eventosDelDia.isEmpty()) {
-            evento = eventosDelDia.get(0);
-        }
+        Evento evento = buscarEvento(dto.getFecha()).orElse(null);
 
         boolean requierePago = evento != null
                 && evento.isRequierePago()
@@ -123,7 +120,7 @@ public class ReservaService {
         reserva.setMontoReserva(monto);
 
         if (requierePago) {
-            // No asignar ni bloquear mesa hasta validar pago (módulo aparte).
+            // No asignar ni bloquear mesa hasta validar pago (m�dulo aparte).
             reserva.setMesa(null);
             reserva.setEstado(EstadoReserva.PENDIENTE_PAGO);
         } else {
@@ -149,10 +146,7 @@ public class ReservaService {
         if (reserva.getEvento() != null) {
             reserva.getEvento().getTitulo();
         }
-        colaCorreoService.reserva(reserva,
-                clienteLogueado != null && clienteLogueado.getRol() != null
-                        && "CLIENTE".equals(clienteLogueado.getRol().getNombre())
-                        ? clienteLogueado.getCorreo() : dto.getCorreo());
+        colaCorreoService.reserva(reserva, dto.getCorreo());
         return reserva;
     }
 
@@ -165,9 +159,14 @@ public class ReservaService {
         return reservaRepository.buscarConFiltros(fecha, piso, estado);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<Evento> buscarEvento(LocalDate fecha) {
+        return eventoRepository.findByFechaAndEstado(fecha, EstadoEvento.ACTIVO).stream().findFirst();
+    }
+
     private void validarCamposBasicos(ReservaFormDTO dto) {
         if (dto.getDni() == null || !dto.getDni().matches("\\d{8}")) {
-            throw new IllegalStateException("El DNI debe tener 8 dígitos.");
+            throw new IllegalStateException("El DNI debe tener 8 d�gitos.");
         }
         if (StringUtils.isBlank(dto.getNombres())) {
         throw new IllegalStateException("Los nombres son obligatorios.");
@@ -176,7 +175,7 @@ public class ReservaService {
         throw new IllegalStateException("Los apellidos son obligatorios.");
         }
         if (dto.getTelefono() == null || !dto.getTelefono().matches("\\d{9}")) {
-            throw new IllegalStateException("El teléfono debe tener 9 dígitos.");
+            throw new IllegalStateException("El tel�fono debe tener 9 d�gitos.");
         }
         if (dto.getFecha() == null) {
             throw new IllegalStateException("La fecha es obligatoria.");
@@ -185,14 +184,13 @@ public class ReservaService {
             throw new IllegalStateException("La hora es obligatoria.");
         }
         if (dto.getNumeroPersonas() == null || dto.getNumeroPersonas() < 1) {
-            throw new IllegalStateException("El número de personas debe ser al menos 1.");
+            throw new IllegalStateException("El n�mero de personas debe ser al menos 1.");
         }
         if (dto.getIdPiso() == null) {
             throw new IllegalStateException("Debes elegir un piso.");
         }
-        if (dto.getCorreo() != null && !dto.getCorreo().isBlank()
-                && !dto.getCorreo().matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
-            throw new IllegalStateException("El correo no tiene un formato válido.");
+        if (!ColaCorreoService.correoValido(dto.getCorreo())) {
+            throw new IllegalStateException("Ingresa un correo electr�nico v�lido para recibir tu confirmaci�n.");
         }
     }
 
