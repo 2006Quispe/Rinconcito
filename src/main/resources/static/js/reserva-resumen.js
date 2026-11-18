@@ -20,7 +20,7 @@ if (reserva) {
 
         solicitud = new AbortController();
         const signal = solicitud.signal;
-        evento.textContent = 'Consultando la fecha.';
+        evento.textContent = 'Consultando la fecha…';
         try {
             const url = new URL(reserva.dataset.resumenUrl, window.location.origin);
             url.searchParams.set('fecha', fecha.value);
@@ -35,8 +35,8 @@ if (reserva) {
                 entradas.textContent = 'S/ ' + resumen.precioEntrada.toFixed(2) + ' por persona';
                 entradas.hidden = false;
                 if (Number.isInteger(cantidad) && cantidad > 0) {
-                    entradas.textContent = cantidad + ' � S/ ' + resumen.precioEntrada.toFixed(2);
-                    total.textContent = 'Total � S/ ' + (cantidad * resumen.precioEntrada).toFixed(2);
+                    entradas.textContent = cantidad + ' × S/ ' + resumen.precioEntrada.toFixed(2);
+                    total.textContent = 'Total · S/ ' + (cantidad * resumen.precioEntrada).toFixed(2);
                     total.hidden = false;
                 }
                 boton.textContent = 'Continuar al pago';
@@ -44,7 +44,7 @@ if (reserva) {
                 boton.textContent = 'Confirmar reserva';
             }
         } catch {
-            if (!signal.aborted) evento.textContent = 'El importe se verificar� al continuar.';
+            if (!signal.aborted) evento.textContent = 'El importe se verificará al continuar.';
         }
     }
 

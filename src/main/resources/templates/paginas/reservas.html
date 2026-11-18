@@ -22,11 +22,11 @@
     </section>
     <section class="container reserva-contenido">
         <div th:if="${exito}" class="alert alert-success">
-            <h5 class="alert-heading" th:if="${reserva.estado.name() == 'CONFIRMADA'}">�Reserva confirmada!</h5>
-            <h5 class="alert-heading" th:if="${reserva.estado.name() == 'PENDIENTE_PAGO'}">Reserva registrada - requiere pago</h5>
+            <h5 class="alert-heading" th:if="${reserva.estado.name() == 'CONFIRMADA'}">¡Reserva confirmada!</h5>
+            <h5 class="alert-heading" th:if="${reserva.estado.name() == 'PENDIENTE_PAGO'}">Reserva registrada — requiere pago</h5>
             <h5 class="alert-heading" th:unless="${reserva.estado.name() == 'CONFIRMADA' or reserva.estado.name() == 'PENDIENTE_PAGO'}">Reserva registrada</h5>
             <div th:replace="~{fragments/aviso-correo :: aviso('reserva', ${reserva.requierePago})}"></div>
-            <p class="mb-1">C�digo: <strong th:text="${reserva.codigoReserva}">RES-2026-000001</strong></p>
+            <p class="mb-1">Código: <strong th:text="${reserva.codigoReserva}">RES-2026-000001</strong></p>
             <p class="mb-1">Piso: <strong th:text="${reserva.pisoSolicitado.nombre}">Piso 1</strong></p>
             <p class="mb-1">
                 Fecha y hora:
@@ -42,7 +42,7 @@
                 Monto a pagar:
                 <strong th:text="'S/ ' + ${reserva.montoReserva}"></strong>
                 <span class="d-block small text-muted mt-1">
-                    Guarda tu c�digo interno. No lo uses como n�mero de operaci�n en Yape/Plin.
+                    Guarda tu código interno. No lo uses como número de operación en Yape/Plin.
                 </span>
                 <a th:if="${reserva.estado.name() == 'PENDIENTE_PAGO'}"
                    class="btn btn-sm mt-2"
@@ -52,14 +52,14 @@
                 </a>
             </p>
             <p th:unless="${reserva.requierePago}" class="mb-0 mt-2 text-muted small">
-                Mesa asignada autom�ticamente en el piso elegido.
+                Mesa asignada automáticamente en el piso elegido.
             </p>
         </div>
 
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
         <div th:if="${clienteLogueado}" class="alert alert-info py-2 small">
-            Est�s reservando con tu cuenta. Puedes ajustar tel�fono o correo si lo necesitas.
+            Estás reservando con tu cuenta. Puedes ajustar teléfono o correo si lo necesitas.
         </div>
 
         <form th:if="${exito == null}"
@@ -103,7 +103,7 @@
                            required>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Tel�fono</label>
+                    <label class="form-label">Teléfono</label>
                     <input type="text"
                            class="form-control"
                            th:field="*{telefono}"
@@ -113,11 +113,11 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Correo electr�nico</label>
+                <label class="form-label">Correo electrónico</label>
                 <input type="email"
                        class="form-control"
                        th:field="*{correo}" autocomplete="email" maxlength="120" required>
-                <small class="form-text text-muted">Te enviaremos la confirmaci�n y tu c�digo a este correo.</small>
+                <small class="form-text text-muted">Te enviaremos la confirmación y tu código a este correo.</small>
             </div>
 
             <div class="row">
@@ -137,7 +137,7 @@
                            required>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label class="form-label">N� de personas</label>
+                    <label class="form-label">N° de personas</label>
                     <input type="number"
                            min="1"
                            class="form-control"
@@ -154,11 +154,11 @@
                             th:value="${piso.idPiso}"
                             th:text="${piso.nombre}">Piso 1</option>
                 </select>
-                <div class="form-text">No eliges n�mero de mesa: el sistema asigna la m�s adecuada.</div>
+                <div class="form-text">No eliges número de mesa: el sistema asigna la más adecuada.</div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Ocasi�n especial <span class="text-muted">(opcional)</span></label>
+                <label class="form-label">Ocasión especial <span class="text-muted">(opcional)</span></label>
                 <input type="text"
                        class="form-control"
                        th:field="*{ocasionEspecial}"
@@ -174,7 +174,7 @@
             </div>
 
             <p class="small text-muted mb-3">
-                Horario: lunes cerrado � mar-s�b 11:00-18:00 � domingo 11:00-22:00.
+                Horario: lunes cerrado · mar–sáb 11:00–18:00 · domingo 11:00–22:00.
                 Cada reserva dura 2 horas.
             </p>
 
