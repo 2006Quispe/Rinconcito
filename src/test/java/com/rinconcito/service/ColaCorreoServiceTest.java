@@ -65,6 +65,27 @@ class ColaCorreoServiceTest {
         assertNull(cola.estadoConfirmacion("RESERVA", 10));
     }
 
+    @Test void pagoDemoEncolaUnaSolaConfirmacionConCodigoYTotal() {
+        var pedido = new Pedido();
+        pedido.setIdPedido(42);
+        pedido.setCodigoPedido("PED-2026-000042");
+        pedido.setTipoPedido(Pedido.TipoPedido.RECOJO_LOCAL);
+        pedido.setEstado(Pedido.EstadoPedido.CONFIRMADO);
+        pedido.setTotal(35);
+
+        cola.pedidoPagoDemo(pedido, "cliente@example.test", "PLIN");
+        cola.pedidoPagoDemo(pedido, "cliente@example.test", "PLIN");
+
+        assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM correo_salida", Integer.class));
+        assertEquals("PENDIENTE", cola.estadoConfirmacion("PEDIDO", 42));
+        assertEquals("cliente@example.test",
+                jdbc.queryForObject("SELECT destinatario FROM correo_salida", String.class));
+        String cuerpo = jdbc.queryForObject("SELECT cuerpo FROM correo_salida", String.class);
+        assertTrue(cuerpo.contains("PED-2026-000042"));
+        assertTrue(cuerpo.contains("S/ 35"));
+        assertTrue(cuerpo.contains("PLIN"));
+    }
+
     Reserva reserva() {
         var piso = new Piso(); piso.setNombre("Primer piso");
         var reserva = new Reserva(); reserva.setIdReserva(10); reserva.setCodigoReserva("RES-10");

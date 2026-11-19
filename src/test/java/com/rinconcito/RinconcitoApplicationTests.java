@@ -94,7 +94,10 @@ class RinconcitoApplicationTests {
                 .andExpect(redirectedUrl("/pedidos/consultar?codigo=" + codigo));
         assertEquals(Pedido.EstadoPedido.CONFIRMADO, pedidos.findByCodigoPedido(codigo).orElseThrow().getEstado());
         web.perform(get("/pedidos/consultar").param("codigo", codigo).session(sesion))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Pedido confirmado")))
+                .andExpect(content().string(containsString("S/ 35.00")))
+                .andExpect(content().string(containsString("Consultar otro pedido")));
     }
 
     @Test

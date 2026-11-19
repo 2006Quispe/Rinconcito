@@ -45,6 +45,11 @@ public class PedidoController {
     @Value("${app.correo.habilitado:false}")
     private boolean correoHabilitado;
 
+    @ModelAttribute("pagoDemoHabilitado")
+    public boolean pagoDemoHabilitado() {
+        return pagoDemoHabilitado;
+    }
+
     @ModelAttribute("correoHabilitado")
     public boolean correoHabilitado() {
         return correoHabilitado;
@@ -159,14 +164,19 @@ public class PedidoController {
                             authentication
                     );
 
+            String destinatario = pedidoForm.getCorreo();
+            if (cliente != null && (destinatario == null || destinatario.isBlank())) {
+                destinatario = cliente.getCorreo();
+            }
+            destinatario = destinatario == null ? null : destinatario.trim();
+            if (pagoDemoHabilitado && !ColaCorreoService.correoValido(destinatario)) {
+                throw new IllegalStateException("Ingresa un correo electrónico válido para recibir tu confirmación.");
+            }
+
             Pedido pedido = pedidoService.crearPedido(
                     pedidoForm, carritoService.obtenerItems(session), cliente, pagoDemoHabilitado);
 
             if (pagoDemoHabilitado) {
-                String destinatario = pedidoForm.getCorreo();
-                if (cliente != null && (destinatario == null || destinatario.isBlank())) {
-                    destinatario = cliente.getCorreo();
-                }
                 session.setAttribute(PEDIDO_DEMO, new CheckoutDemo(pedido.getCodigoPedido(), destinatario));
                 carritoService.vaciar(session);
                 return "redirect:/pedidos/pago-demo";

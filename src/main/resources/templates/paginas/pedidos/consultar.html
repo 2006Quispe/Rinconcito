@@ -2,67 +2,68 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${titulo} + ' - El Rinconcito Ayacuchano'">Consultar pedido</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Consultar pedido · Rinconcito Ayacuchano</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600;800&amp;display=swap" rel="stylesheet">
     <link th:href="@{/css/estilos.css}" rel="stylesheet">
+    <link th:href="@{/css/reserva-publica.css}" rel="stylesheet">
 </head>
-<body>
+<body class="carta-publica">
 <header th:replace="~{fragments/header :: header}"></header>
-<main>
-    <section class="text-center text-light py-4" style="background-color:#8C2F1B;">
+<main th:with="confirmado=${pedido != null and pedido.estado.name() == 'CONFIRMADO'}">
+    <section class="carta-portada reserva-portada">
         <div class="container">
-            <h1 class="fw-title">Consultar pedido</h1>
-            <p class="mb-0">Ingresa tu codigo para ver el estado del pago</p>
+            <h1 th:text="${confirmado ? 'Pedido confirmado' : 'Consultar pedido'}"></h1>
+            <p th:if="${pedido != null}" th:text="|Código · ${pedido.codigoPedido}|"></p>
+            <p th:unless="${pedido != null}">Ingresa tu código para consultar el estado de tu pedido.</p>
         </div>
     </section>
-    <section class="container py-5" style="max-width:640px;">
-        <div th:if="${exito}" class="alert alert-success" th:text="${exito}"></div>
-        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-
-        <div th:replace="~{fragments/aviso-correo :: aviso('pedido', ${pago != null})}"></div>
-
-        <form th:action="@{/pedidos/consultar}" method="get" class="card shadow-sm mb-4">
-            <div class="card-body">
-                <label class="form-label">Codigo de pedido</label>
-                <div class="input-group">
-                    <input type="text" name="codigo" class="form-control"
-                           th:value="${codigoBusqueda}" placeholder="PED-2026-000001" required>
-                    <button type="submit" class="btn" style="background-color:#D4A017;color:#3B2A22;">Buscar</button>
-                </div>
-            </div>
-        </form>
-
-        <div th:if="${pedido != null}" class="card shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Resultado</h5>
-                <p class="mb-1">Codigo: <strong th:text="${pedido.codigoPedido}"></strong></p>
-                <p class="mb-1">Estado pedido: <strong th:text="${pedido.estado}"></strong></p>
-                <p class="mb-1">Total: <strong th:text="'S/ ' + ${pedido.total}"></strong></p>
-                <p class="mb-1" th:if="${pago != null}">
-                    Estado pago: <strong th:text="${pago.estado}"></strong>
-                    - Medio: <span th:text="${pago.metodoPago}"></span>
-                </p>
-                <ul class="small" th:if="${detalles != null}">
-                    <li th:each="d : ${detalles}"
-                        th:text="${d.producto.nombre + ' x ' + d.cantidad + ' = S/ ' + d.subtotal}"></li>
+    <div class="container reserva-contenido">
+        <p th:if="${error}" class="alert alert-warning" role="alert" th:text="${error}"></p>
+        <div th:if="${pedido != null}" class="reserva-distribucion">
+            <section class="reserva-panel" aria-labelledby="pedido-detalle">
+                <h2 id="pedido-detalle">Detalle del pedido</h2>
+                <ul class="list-group list-group-flush" th:if="${detalles != null}">
+                    <li class="list-group-item px-0 d-flex justify-content-between gap-3" th:each="d : ${detalles}">
+                        <span th:text="|${d.cantidad} × ${d.producto.nombre}|"></span>
+                        <strong class="text-nowrap" th:text="|S/ ${#numbers.formatDecimal(d.subtotal, 1, 'POINT', 2, 'POINT')}|"></strong>
+                    </li>
                 </ul>
-                <div class="alert mt-3 mb-0"
-                     th:classappend="${pedido.estado.name() == 'CONFIRMADO'} ? 'alert-success' : (${pedido.estado.name() == 'PENDIENTE_VALIDACION'} ? 'alert-warning' : 'alert-secondary')"
-                     th:text="${mensajeEstado}"></div>
-                <p class="small text-muted mt-2 mb-0" th:if="${mensajeTraslado}" th:text="${mensajeTraslado}"></p>
-
-                <div class="mt-3" th:if="${pedido.estado.name() == 'PENDIENTE_PAGO'}">
-                    <a class="btn" style="background-color:#D4A017;color:#3B2A22;"
-                       th:href="@{/pedidos/pago(codigo=${pedido.codigoPedido})}">
-                        Ir a pagar / reenviar evidencia
-                    </a>
-                </div>
-            </div>
+                <p class="reserva-total d-flex justify-content-between gap-3 mt-3 mb-0">
+                    <span>Total</span><strong th:text="|S/ ${#numbers.formatDecimal(pedido.total, 1, 'POINT', 2, 'POINT')}|"></strong>
+                </p>
+            </section>
+            <aside class="reserva-panel reserva-resumen">
+                <h2 th:text="${pedido.tipoPedido.name() == 'DELIVERY' ? 'Delivery' : (pedido.tipoPedido.name() == 'RECOJO_LOCAL' ? 'Recojo en el local' : 'En el local')}"></h2>
+                <p th:if="${mensajeEstado}" th:text="${mensajeEstado}"></p>
+                <p th:if="${pago != null}" th:text="|Pago: ${pago.estado} · ${pago.metodoPago}|"></p>
+                <p th:if="${exito}" role="status" th:text="${exito}"></p>
+                <p th:if="${mensajeTraslado != null and !confirmado}" class="small" th:text="${mensajeTraslado}"></p>
+                <p th:if="${estadoCorreo != null}" role="status" class="small" th:switch="${estadoCorreo}">
+                    <span th:case="'ENVIADO'">Enviamos la confirmación al correo indicado.</span>
+                    <span th:case="'ERROR'">La confirmación está pendiente. El sistema reintentará el envío si quedan intentos disponibles.</span>
+                    <span th:case="*">La confirmación está en cola y se enviará automáticamente al correo indicado.</span>
+                </p>
+                <a th:if="${pedido.estado.name() == 'PENDIENTE_PAGO'}" class="carta-boton carta-boton-ancho"
+                   th:href="@{/pedidos/pago(codigo=${pedido.codigoPedido})}">Continuar al pago</a>
+                <a th:unless="${pedido.estado.name() == 'PENDIENTE_PAGO'}" class="carta-boton carta-boton-ancho"
+                   th:href="@{/carta}">Volver a la carta</a>
+            </aside>
         </div>
-    </section>
+        <details class="reserva-panel mt-4" th:open="${pedido == null}">
+            <summary th:text="${pedido == null ? 'Buscar por código' : 'Consultar otro pedido'}"></summary>
+            <form th:action="@{/pedidos/consultar}" method="get" class="mt-3">
+                <label class="form-label" for="codigo-pedido">Código de pedido</label>
+                <div class="input-group">
+                    <input id="codigo-pedido" type="text" name="codigo" class="form-control"
+                           th:value="${pedido == null ? codigoBusqueda : null}" placeholder="PED-2026-000001" required>
+                    <button type="submit" class="carta-boton">Buscar</button>
+                </div>
+            </form>
+        </details>
+    </div>
 </main>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
