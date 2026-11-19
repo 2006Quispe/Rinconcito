@@ -17,6 +17,9 @@ import java.util.Optional;
 public interface PedidoRepository
         extends JpaRepository<Pedido, Integer> {
 
+    @Query(value = "SELECT * FROM pedidos WHERE codigo_pedido = :codigo FOR UPDATE", nativeQuery = true)
+    Optional<Pedido> bloquearPorCodigo(@Param("codigo") String codigo);
+
     List<Pedido> findByCliente(
             Usuario cliente
     );

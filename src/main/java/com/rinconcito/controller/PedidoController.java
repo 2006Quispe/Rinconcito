@@ -1,6 +1,7 @@
 package com.rinconcito.controller;
 
 import com.rinconcito.dto.PedidoFormDTO;
+import com.rinconcito.service.ReservaService.MetodoDemo;
 import com.rinconcito.entity.ConfiguracionRestaurante;
 import com.rinconcito.entity.Pago.MetodoPago;
 import com.rinconcito.entity.Pago;
@@ -30,6 +31,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class PedidoController {
+
+    private static final String PEDIDO_DEMO = "pedidoPagoDemo";
+
+    @Value("${app.reservas.pago-demo.habilitado:${APP_RESERVAS_PAGO_DEMO_HABILITADO:true}}")
+    private boolean pagoDemoHabilitado;
+
+    private record CheckoutDemo(String codigo, String destinatario) {}
 
     @Autowired
     private ColaCorreoService colaCorreoService;
@@ -151,14 +159,18 @@ public class PedidoController {
                             authentication
                     );
 
-            Pedido pedido =
-                    pedidoService.crearPedido(
-                            pedidoForm,
-                            carritoService.obtenerItems(
-                                    session
-                            ),
-                            cliente
-                    );
+            Pedido pedido = pedidoService.crearPedido(
+                    pedidoForm, carritoService.obtenerItems(session), cliente, pagoDemoHabilitado);
+
+            if (pagoDemoHabilitado) {
+                String destinatario = pedidoForm.getCorreo();
+                if (cliente != null && (destinatario == null || destinatario.isBlank())) {
+                    destinatario = cliente.getCorreo();
+                }
+                session.setAttribute(PEDIDO_DEMO, new CheckoutDemo(pedido.getCodigoPedido(), destinatario));
+                carritoService.vaciar(session);
+                return "redirect:/pedidos/pago-demo";
+            }
 
             redirectAttributes.addFlashAttribute(
                     "exito",
@@ -181,6 +193,37 @@ public class PedidoController {
     /*
      * Muestra la pantalla de pago.
      */
+    @GetMapping("/pedidos/pago-demo")
+    public String mostrarPagoDemo(HttpSession sesion, Model modelo) {
+        modelo.addAttribute("titulo", "Pago del pedido");
+        if (pagoDemoHabilitado && sesion.getAttribute(PEDIDO_DEMO) instanceof CheckoutDemo checkout) {
+            pagoPedidoService.buscarPorCodigo(checkout.codigo()).ifPresent(pedido -> {
+                modelo.addAttribute("pedido", pedido);
+                modelo.addAttribute("puedePagar", pedido.getEstado() == EstadoPedido.PENDIENTE_PAGO);
+            });
+        }
+        return "paginas/pedidos/pago-demo";
+    }
+
+    @PostMapping("/pedidos/pago-demo")
+    public String procesarPagoDemo(@RequestParam String codigo, @RequestParam MetodoDemo metodo,
+                                   HttpSession sesion, RedirectAttributes redirect) {
+        if (!pagoDemoHabilitado || !(sesion.getAttribute(PEDIDO_DEMO) instanceof CheckoutDemo checkout)
+                || !checkout.codigo().equals(codigo)) {
+            redirect.addFlashAttribute("error", "Abre el pedido desde el carrito para iniciar el pago de prueba.");
+            return "redirect:/pedidos";
+        }
+        try {
+            pagoPedidoService.confirmarPagoDemo(codigo, checkout.destinatario(), metodo);
+            redirect.addFlashAttribute("exito", "Pedido confirmado con pago simulado.");
+            redirect.addAttribute("codigo", codigo);
+            return "redirect:/pedidos/consultar";
+        } catch (IllegalStateException e) {
+            redirect.addFlashAttribute("error", e.getMessage());
+            return "redirect:/pedidos/pago-demo";
+        }
+    }
+
     @GetMapping("/pedidos/pago")
     public String mostrarPago(
             @RequestParam(

@@ -103,6 +103,12 @@ public class PedidoService {
             List<CarritoItemDTO> itemsCarrito,
             Usuario clienteLogueado
     ) {
+        return crearPedido(dto, itemsCarrito, clienteLogueado, false);
+    }
+
+    @Transactional
+    public Pedido crearPedido(PedidoFormDTO dto, List<CarritoItemDTO> itemsCarrito,
+                              Usuario clienteLogueado, boolean pagoDemo) {
         if (dto == null) {
             throw new IllegalStateException(
                     "No se recibieron los datos del pedido."
@@ -202,10 +208,12 @@ public class PedidoService {
             pedido.getDireccion().getDireccion();
         }
 
-        colaCorreoService.pedido(pedido,
-                clienteLogueado != null && clienteLogueado.getRol() != null
-                        && "CLIENTE".equals(clienteLogueado.getRol().getNombre())
-                        ? clienteLogueado.getCorreo() : dto.getCorreo());
+        if (!pagoDemo) {
+            colaCorreoService.pedido(pedido,
+                    clienteLogueado != null && clienteLogueado.getRol() != null
+                            && "CLIENTE".equals(clienteLogueado.getRol().getNombre())
+                            ? clienteLogueado.getCorreo() : dto.getCorreo());
+        }
         return pedido;
     }
 

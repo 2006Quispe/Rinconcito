@@ -25,6 +25,27 @@ import java.util.Optional;
 @Service
 public class PagoPedidoService {
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.rinconcito.service.correo.ColaCorreoService colaCorreoService;
+
+    @Transactional
+    public Pedido confirmarPagoDemo(String codigo, String destinatario, ReservaService.MetodoDemo metodo) {
+        Pedido pedido = pedidoRepository.bloquearPorCodigo(codigo)
+                .orElseThrow(() -> new IllegalStateException("No se encontró el pedido."));
+        if (pedido.getTipoPedido() == TipoPedido.PRESENCIAL) {
+            throw new IllegalStateException("Este pedido se paga en Caja.");
+        }
+        if (pedido.getEstado() == EstadoPedido.CONFIRMADO) {
+            return pedido;
+        }
+        if (pedido.getEstado() != EstadoPedido.PENDIENTE_PAGO || pedido.getTotal() == null || pedido.getTotal() <= 0) {
+            throw new IllegalStateException("Este pedido ya no admite el pago de prueba.");
+        }
+        pedido.setEstado(EstadoPedido.CONFIRMADO);
+        colaCorreoService.pedidoPagoDemo(pedido, destinatario, metodo.name());
+        return pedido;
+    }
+
     private final PedidoRepository pedidoRepository;
     private final PagoRepository pagoRepository;
     private final DetallePedidoRepository detallePedidoRepository;

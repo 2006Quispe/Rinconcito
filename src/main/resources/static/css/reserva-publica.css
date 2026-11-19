@@ -35,3 +35,31 @@
 .reserva-metodo { border: 1px solid #d3bcaa; border-radius: 14px; color: var(--carta-tinta); padding: .65rem 1rem; }
 .reserva-metodo:hover { border-color: var(--carta-acento); color: var(--carta-acento); }
 .btn-check:checked + .reserva-metodo { background: var(--carta-acento); border-color: var(--carta-acento); color: #fff; }
+
+.pago-demo legend { font-family: 'Merriweather', serif; font-size: 1.15rem; margin-bottom: 1rem; }
+.pago-demo-credencial {
+    display: grid;
+    gap: .65rem;
+    max-width: 320px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #672719, #a94027 66%, #cb774a);
+    color: white;
+}
+.pago-demo-credencial i { color: #ffdd91; font-size: 1.8rem; }
+.pago-demo-credencial strong { font-size: 1.4rem; letter-spacing: .13em; }
+.pago-demo-billetera { text-align: center; }
+.pago-demo-qr {
+    display: grid;
+    place-items: center;
+    width: 150px;
+    aspect-ratio: 1;
+    margin: .5rem auto 1rem;
+    border: 9px solid #fff;
+    border-radius: 12px;
+    background: conic-gradient(currentColor 25%, transparent 0 50%, currentColor 0 75%, transparent 0) 0 0 / 20px 20px;
+}
+.pago-demo-qr-yape { color: #702283; }
+.pago-demo-qr-plin { color: #007874; }
+.pago-demo-qr strong { padding: .45rem .75rem; background: #fff; border-radius: 6px; }

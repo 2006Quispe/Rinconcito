@@ -1,6 +1,14 @@
 package com.rinconcito;
 
 import com.rinconcito.entity.Piso;
+import com.rinconcito.entity.Categoria;
+import com.rinconcito.entity.Producto;
+import com.rinconcito.entity.Rol;
+import com.rinconcito.entity.Pedido;
+import com.rinconcito.repository.CategoriaRepository;
+import com.rinconcito.repository.ProductoRepository;
+import com.rinconcito.repository.RolRepository;
+import com.rinconcito.repository.PedidoRepository;
 import com.rinconcito.entity.Evento;
 import com.rinconcito.repository.EventoRepository;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -43,6 +51,52 @@ class RinconcitoApplicationTests {
     @Autowired
     private WebApplicationContext contexto;
 
+    @Autowired private CategoriaRepository categorias;
+    @Autowired private ProductoRepository productos;
+    @Autowired private RolRepository roles;
+    @Autowired private PedidoRepository pedidos;
+
+    @Test
+    @Transactional
+    void elPedidoSeAbreEnLaPasarelaCompartidaYSeConfirma() throws Exception {
+        Rol cliente = new Rol();
+        cliente.setNombre("CLIENTE");
+        roles.saveAndFlush(cliente);
+        Categoria categoria = new Categoria();
+        categoria.setNombre("Pruebas de checkout");
+        categorias.saveAndFlush(categoria);
+        Producto producto = new Producto();
+        producto.setNombre("Pachamanca de prueba");
+        producto.setPrecio(35);
+        producto.setCategoria(categoria);
+        producto.setDisponible(true);
+        productos.saveAndFlush(producto);
+
+        var web = MockMvcBuilders.webAppContextSetup(contexto).apply(springSecurity()).build();
+        var sesion = new MockHttpSession();
+        web.perform(post("/carrito/agregar").session(sesion).with(csrf())
+                        .param("idProducto", producto.getIdProducto().toString()).param("cantidad", "1"))
+                .andExpect(redirectedUrl("/carrito"));
+        web.perform(post("/pedidos").session(sesion).with(csrf())
+                        .param("dni", "00000002").param("nombres", "Persona").param("apellidos", "Prueba")
+                        .param("telefono", "900000002").param("correo", "persona@example.test")
+                        .param("tipoEntrega", "RECOJO_LOCAL"))
+                .andExpect(redirectedUrl("/pedidos/pago-demo"));
+
+        Pedido pedido = pedidos.findAll().getFirst();
+        String codigo = pedido.getCodigoPedido();
+        web.perform(get("/pedidos/pago-demo").session(sesion))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Pagar S/ 35.00")))
+                .andExpect(content().string(containsString("Número de tarjeta")));
+        web.perform(post("/pedidos/pago-demo").session(sesion).with(csrf())
+                        .param("codigo", codigo).param("metodo", "PLIN"))
+                .andExpect(redirectedUrl("/pedidos/consultar?codigo=" + codigo));
+        assertEquals(Pedido.EstadoPedido.CONFIRMADO, pedidos.findByCodigoPedido(codigo).orElseThrow().getEstado());
+        web.perform(get("/pedidos/consultar").param("codigo", codigo).session(sesion))
+                .andExpect(status().isOk());
+    }
+
     @Test
     @Transactional
     void lasReservasConEntradaAbrenLaPasarelaPorDefecto() throws Exception {
@@ -68,7 +122,7 @@ class RinconcitoApplicationTests {
 
         web.perform(get(java.net.URI.create(envio.getResponse().getRedirectedUrl())).session(sesion))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Simular pago aprobado")))
+                .andExpect(content().string(containsString("Pagar S/ 60.00")))
                 .andExpect(content().string(containsString("S/ 60")));
     }
 

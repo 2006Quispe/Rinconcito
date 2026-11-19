@@ -29,35 +29,14 @@
             <div th:replace="~{fragments/aviso-correo :: aviso('reserva', false)}"></div>
             <a class="carta-boton" th:href="@{/reservas/consultar(codigo=${reserva.codigoReserva})}">Consultar reserva</a>
         </section>
-        <form th:if="${intento != null and reserva == null}" method="post"
-              th:action="@{/reservas/pago-demo}" class="reserva-distribucion">
-            <input type="hidden" name="intento" th:value="${intento}">
-            <fieldset class="reserva-panel">
-                <legend class="h4 mb-3">Método de pago</legend>
-                <div class="d-flex flex-wrap gap-2 mb-3">
-                    <th:block th:each="opcion : ${ {'TARJETA', 'YAPE', 'PLIN'} }">
-                        <input type="radio" class="btn-check" name="metodo" required
-                               th:id="${'demo-' + opcion}" th:value="${opcion}"
-                               th:checked="${metodo != null and metodo.name() == opcion}">
-                        <label class="btn reserva-metodo" th:for="${'demo-' + opcion}"
-                               th:text="${#strings.capitalize(#strings.toLowerCase(opcion))}"></label>
-                    </th:block>
-                </div>
-                <p class="mb-0">Elige un método para simular el pago. No necesitas ingresar datos de tarjeta ni escanear un código.</p>
-            </fieldset>
-            <aside class="reserva-panel reserva-resumen">
-                <h2>Tu reserva</h2>
-                <p th:text="${evento}"></p>
-                <p th:text="|${personas} × S/ ${precioEntrada}|"></p>
-                <p class="reserva-total" th:text="|Total · S/ ${importe}|"></p>
-                <button type="submit" name="aprobado" value="true" class="carta-boton carta-boton-ancho">Simular pago aprobado</button>
-                <button type="submit" name="aprobado" value="false" class="btn reserva-metodo w-100 mt-2">Simular rechazo</button>
-            </aside>
-        </form>
+        <div th:if="${intento != null and reserva == null}">
+            <div th:replace="~{fragments/pago-demo :: formulario(@{/reservas/pago-demo}, 'intento', ${intento}, ${evento}, |${personas} entradas × S/ ${precioEntrada}|, ${importe}, ${metodo})}"></div>
+        </div>
         <a th:if="${reserva == null}" class="btn reserva-metodo mt-3" th:href="@{/reservas}">Volver a reservas</a>
     </div>
 </main>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/pago-demo.js}"></script>
 </body>
 </html>

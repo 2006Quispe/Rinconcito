@@ -41,6 +41,20 @@ public class ColaCorreoService {
     }
 
     @Transactional
+    public void pedidoPagoDemo(Pedido pedido, String destinatario, String metodo) {
+        if (!habilitado) return;
+        StringBuilder texto = new StringBuilder("Tu pedido ").append(pedido.getCodigoPedido())
+                .append(" está confirmado.\nModalidad: ").append(pedido.getTipoPedido());
+        for (DetallePedido detalle : detalles.findByPedido(pedido)) {
+            texto.append("\n").append(detalle.getCantidad()).append(" × ").append(detalle.getProducto().getNombre());
+        }
+        texto.append("\nPago simulado: ").append(metodo).append(" · S/ ").append(pedido.getTotal())
+                .append("\nModo de prueba. Sin cobro real.");
+        guardar("PEDIDO", pedido.getIdPedido(), destinatario,
+                "Pedido confirmado - " + pedido.getCodigoPedido(), texto.toString(), false);
+    }
+
+    @Transactional
     public void reserva(Reserva reserva, String destinatario) {
         if (!habilitado) return;
         String texto = "Hemos registrado tu reserva " + reserva.getCodigoReserva()
