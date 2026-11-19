@@ -13,6 +13,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.time.LocalDate;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -52,6 +57,18 @@ public class ReservaController {
         model.addAttribute("clienteLogueado", esClienteLogueado(authentication));
         return "paginas/reservas";
     }
+
+    @GetMapping("/reservas/resumen")
+    @ResponseBody
+    public ResumenReserva resumen(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+        return reservaService.buscarEvento(fecha)
+                .map(evento -> new ResumenReserva(evento.getTitulo(),
+                        evento.isRequierePago() && evento.getPrecioEntrada() != null
+                                ? Math.max(0, evento.getPrecioEntrada()) : 0))
+                .orElseGet(() -> new ResumenReserva(null, 0));
+    }
+
+    public record ResumenReserva(String evento, int precioEntrada) {}
 
     @PostMapping("/reservas")
     public String procesarReserva(@ModelAttribute("reservaForm") ReservaFormDTO reservaForm,

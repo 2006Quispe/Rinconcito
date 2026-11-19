@@ -82,6 +82,22 @@ public class ProductoService {
     }
 
     @Transactional(readOnly = true)
+    public Optional<Producto> buscarPublicoPorId(Integer id) {
+        return productoRepository.buscarPublicoPorId(
+                id, EstadoProducto.ACTIVO, EstadoCategoria.ACTIVO);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Producto> recomendarPublicos(Integer idActual) {
+        List<Producto> candidatos = new java.util.ArrayList<>(buscarPublicos(null, null)
+                .stream()
+                .filter(producto -> !producto.getIdProducto().equals(idActual) && producto.isDisponible())
+                .toList());
+        java.util.Collections.shuffle(candidatos);
+        return List.copyOf(candidatos.subList(0, Math.min(3, candidatos.size())));
+    }
+
+    @Transactional(readOnly = true)
     public List<Producto> buscarPublicos(
             String q,
             Integer idCategoria
@@ -116,6 +132,9 @@ public class ProductoService {
             boolean eliminarImagen
     ) {
         validar(producto, idCategoria);
+
+        String ingredientes = String.join("\n", producto.getListaIngredientes());
+        producto.setIngredientes(ingredientes.isEmpty() ? null : ingredientes);
 
         Categoria categoria =
                 categoriaRepository
@@ -315,6 +334,10 @@ public class ProductoService {
         }
 
         producto.setNombre(nombre);
+
+        if (producto.getIngredientes() != null && producto.getIngredientes().length() > 1000) {
+            throw new IllegalStateException("Los ingredientes no pueden superar 1000 caracteres.");
+        }
 
         if (producto.getPrecio() == null
                 || producto.getPrecio() <= 0) {

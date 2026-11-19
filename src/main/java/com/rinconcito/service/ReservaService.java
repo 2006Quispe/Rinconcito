@@ -63,6 +63,7 @@ public class ReservaService {
 
     @Transactional
     public Reserva crearReserva(ReservaFormDTO dto, Usuario clienteLogueado) {
+        dto.setCorreo(blankToNull(dto.getCorreo()));
         validarCamposBasicos(dto);
 
         LocalDate hoy = LocalDate.now();
@@ -96,11 +97,7 @@ public class ReservaService {
                     "Ya tienes una reserva registrada para ese día. Si necesitas cambiarla, cancela la anterior primero.");
         }
 
-        Evento evento = null;
-        List<Evento> eventosDelDia = eventoRepository.findByFechaAndEstado(dto.getFecha(), EstadoEvento.ACTIVO);
-        if (!eventosDelDia.isEmpty()) {
-            evento = eventosDelDia.get(0);
-        }
+        Evento evento = buscarEvento(dto.getFecha()).orElse(null);
 
         boolean requierePago = evento != null
                 && evento.isRequierePago()
@@ -149,10 +146,7 @@ public class ReservaService {
         if (reserva.getEvento() != null) {
             reserva.getEvento().getTitulo();
         }
-        colaCorreoService.reserva(reserva,
-                clienteLogueado != null && clienteLogueado.getRol() != null
-                        && "CLIENTE".equals(clienteLogueado.getRol().getNombre())
-                        ? clienteLogueado.getCorreo() : dto.getCorreo());
+        colaCorreoService.reserva(reserva, dto.getCorreo());
         return reserva;
     }
 
@@ -163,6 +157,11 @@ public class ReservaService {
             piso = pisoRepository.findById(idPiso).orElse(null);
         }
         return reservaRepository.buscarConFiltros(fecha, piso, estado);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Evento> buscarEvento(LocalDate fecha) {
+        return eventoRepository.findByFechaAndEstado(fecha, EstadoEvento.ACTIVO).stream().findFirst();
     }
 
     private void validarCamposBasicos(ReservaFormDTO dto) {
@@ -190,9 +189,8 @@ public class ReservaService {
         if (dto.getIdPiso() == null) {
             throw new IllegalStateException("Debes elegir un piso.");
         }
-        if (dto.getCorreo() != null && !dto.getCorreo().isBlank()
-                && !dto.getCorreo().matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
-            throw new IllegalStateException("El correo no tiene un formato válido.");
+        if (!ColaCorreoService.correoValido(dto.getCorreo())) {
+            throw new IllegalStateException("Ingresa un correo electrónico válido para recibir tu confirmación.");
         }
     }
 

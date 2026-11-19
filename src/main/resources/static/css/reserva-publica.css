@@ -1,0 +1,33 @@
+.carta-publica {
+    --carta-tinta: #38271e;
+    --carta-acento: #a94027;
+    --carta-borde: #e9ddd0;
+    background: #faf6ef;
+    color: var(--carta-tinta);
+    font-family: 'Nunito', sans-serif;
+}
+.carta-publica main h1, .carta-publica main h2, .carta-publica main h3 { font-family: 'Merriweather', serif; }
+.carta-publica main a { text-decoration: none; }
+.carta-publica main :is(a, button, input):focus-visible { outline: 3px solid #9b701c; outline-offset: 4px; }
+.carta-portada h1 { font-size: clamp(2rem, 4vw, 3.4rem); margin: 0 0 12px; font-weight: 700; }
+.carta-portada p:last-child { margin: 0; color: var(--carta-tinta); max-width: 440px; font-size: 1.15rem; }
+.carta-boton { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 44px; border: 1px solid var(--carta-acento); border-radius: 9px; padding: 11px 20px; color: #fff; background: var(--carta-acento); font: inherit; font-weight: 800; text-decoration: none; transition: background .18s; }
+.carta-boton:hover { background: #87331f; border-color: #87331f; color: #fff; }
+.carta-boton-ancho { width: 100%; }
+.reserva-portada {
+    background: linear-gradient(90deg, #faf6ef 0%, #faf6ef 34%, #faf6efdd 46%, #faf6ef00 72%),
+        url('../img/auth-campestre.webp') right center / 65% auto no-repeat;
+    padding: 54px 0;
+    border-bottom: 3px solid #d4a017;
+}
+.reserva-contenido { max-width: 1120px; padding-top: 32px; padding-bottom: 48px; }
+.reserva-distribucion { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.reserva-panel { padding: clamp(18px, 3vw, 32px); border: 1px solid var(--carta-borde); border-radius: 15px; background: #fff; }
+.reserva-panel h2 { font-size: 1.4rem; margin: 0 0 22px; }
+.reserva-panel .form-label { font-weight: 700; }
+.reserva-panel .form-control, .reserva-panel .form-select { border-color: #d3bcaa; min-height: 44px; }
+.reserva-resumen { background: #f6eddf; }
+.reserva-total { border-top: 1px solid #d3bcaa; padding-top: 12px; font-weight: 800; }
+@media (max-width: 767px) {
+    .reserva-distribucion { grid-template-columns: minmax(0, 1fr); }
+}

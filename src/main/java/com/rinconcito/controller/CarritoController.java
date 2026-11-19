@@ -119,6 +119,8 @@ public class CarritoController {
                     "cantidadCarrito",
                     carritoService.contarUnidades(session)
             );
+            respuesta.put("itemsCarrito", carritoService.obtenerItems(session));
+            respuesta.put("subtotalCarrito", carritoService.subtotal(session));
 
             return ResponseEntity.ok(respuesta);
 
