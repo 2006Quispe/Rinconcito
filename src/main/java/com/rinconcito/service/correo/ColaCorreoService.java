@@ -56,6 +56,22 @@ public class ColaCorreoService {
     }
 
     @Transactional
+    public void reservaPagoDemo(Reserva reserva, String destinatario, String metodo) {
+        if (!habilitado) return;
+        String texto = "Tu reserva " + reserva.getCodigoReserva() + " está confirmada."
+                + "\nEvento: " + reserva.getEvento().getTitulo()
+                + "\nFecha: " + reserva.getFechaReserva()
+                + "\nHora: " + reserva.getHoraInicio()
+                + "\nPersonas: " + reserva.getNumeroPersonas()
+                + "\nPiso: " + reserva.getPisoSolicitado().getNombre()
+                + "\nMesa: " + reserva.getMesa().getNumero()
+                + "\nPago simulado: " + metodo + " · S/ " + reserva.getMontoReserva()
+                + "\nModo de prueba. Sin cobro real.";
+        guardar("RESERVA", reserva.getIdReserva(), destinatario,
+                "Reserva confirmada - " + reserva.getCodigoReserva(), texto, false);
+    }
+
+    @Transactional
     public void nota(NotaVenta nota, boolean reenvio) {
         if (!habilitado) return;
         if (nota.getEstado() != NotaVenta.EstadoNotaVenta.EMITIDA

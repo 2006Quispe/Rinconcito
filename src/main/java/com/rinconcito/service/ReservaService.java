@@ -18,6 +18,7 @@ import com.rinconcito.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Isolation;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -56,13 +57,25 @@ public class ReservaService {
     @Autowired
     private HorarioAtencionService horarioAtencionService;
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public Reserva crearReserva(ReservaFormDTO dto) {
         return crearReserva(dto, null);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public Reserva crearReserva(ReservaFormDTO dto, Usuario clienteLogueado) {
+        return crearReserva(dto, clienteLogueado, null, null);
+    }
+
+    public enum MetodoDemo { TARJETA, YAPE, PLIN }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public Reserva confirmarPagoDemo(ReservaFormDTO dto, Usuario cliente, int importe, MetodoDemo metodo) {
+        java.util.Objects.requireNonNull(metodo);
+        return crearReserva(dto, cliente, importe, metodo);
+    }
+
+    private Reserva crearReserva(ReservaFormDTO dto, Usuario clienteLogueado, Integer importeDemo, MetodoDemo metodo) {
         dto.setCorreo(blankToNull(dto.getCorreo()));
         validarCamposBasicos(dto);
 
@@ -77,7 +90,7 @@ public class ReservaService {
         LocalTime horaFin = dto.getHoraInicio().plusHours(DURACION_HORAS);
         horarioAtencionService.validarHorarioParaReserva(dto.getFecha(), dto.getHoraInicio(), horaFin);
 
-        Piso piso = pisoRepository.findById(dto.getIdPiso())
+        Piso piso = pisoRepository.bloquearPorId(dto.getIdPiso())
                 .orElseThrow(() -> new IllegalStateException("El piso seleccionado no existe."));
         if (piso.getEstado() != EstadoPiso.ACTIVO) {
             throw new IllegalStateException("El piso seleccionado no está disponible.");
@@ -105,6 +118,10 @@ public class ReservaService {
                 && evento.getPrecioEntrada() > 0;
         int monto = requierePago ? evento.getPrecioEntrada() * dto.getNumeroPersonas() : 0;
 
+        if (importeDemo != null && (!requierePago || importeDemo != monto)) {
+            throw new IllegalStateException("El importe del evento cambió. Vuelve al formulario para revisar el nuevo total.");
+        }
+
         Reserva reserva = new Reserva();
         reserva.setCodigoReserva(generarCodigoReserva());
         reserva.setCliente(cliente);
@@ -119,7 +136,7 @@ public class ReservaService {
         reserva.setRequierePago(requierePago);
         reserva.setMontoReserva(monto);
 
-        if (requierePago) {
+        if (requierePago && metodo == null) {
             // No asignar ni bloquear mesa hasta validar pago (módulo aparte).
             reserva.setMesa(null);
             reserva.setEstado(EstadoReserva.PENDIENTE_PAGO);
@@ -146,7 +163,11 @@ public class ReservaService {
         if (reserva.getEvento() != null) {
             reserva.getEvento().getTitulo();
         }
-        colaCorreoService.reserva(reserva, dto.getCorreo());
+        if (metodo == null) {
+            colaCorreoService.reserva(reserva, dto.getCorreo());
+        } else {
+            colaCorreoService.reservaPagoDemo(reserva, dto.getCorreo(), metodo.name());
+        }
         return reserva;
     }
 
@@ -164,7 +185,7 @@ public class ReservaService {
         return eventoRepository.findByFechaAndEstado(fecha, EstadoEvento.ACTIVO).stream().findFirst();
     }
 
-    private void validarCamposBasicos(ReservaFormDTO dto) {
+    public void validarCamposBasicos(ReservaFormDTO dto) {
         if (dto.getDni() == null || !dto.getDni().matches("\\d{8}")) {
             throw new IllegalStateException("El DNI debe tener 8 dígitos.");
         }

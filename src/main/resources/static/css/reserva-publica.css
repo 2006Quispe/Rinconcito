@@ -31,3 +31,7 @@
 @media (max-width: 767px) {
     .reserva-distribucion { grid-template-columns: minmax(0, 1fr); }
 }
+
+.reserva-metodo { border: 1px solid #d3bcaa; border-radius: 14px; color: var(--carta-tinta); padding: .65rem 1rem; }
+.reserva-metodo:hover { border-color: var(--carta-acento); color: var(--carta-acento); }
+.btn-check:checked + .reserva-metodo { background: var(--carta-acento); border-color: var(--carta-acento); color: #fff; }
