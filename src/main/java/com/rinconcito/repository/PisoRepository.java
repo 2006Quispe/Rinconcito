@@ -6,16 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
-import jakarta.persistence.LockModeType;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface PisoRepository
         extends JpaRepository<Piso, Integer> {
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select p from Piso p where p.idPiso = :id")
+    @Query(value = "SELECT * FROM pisos WHERE id_piso = :id FOR UPDATE", nativeQuery = true)
     Optional<Piso> bloquearPorId(@Param("id") Integer id);
 
     List<Piso> findByEstado(

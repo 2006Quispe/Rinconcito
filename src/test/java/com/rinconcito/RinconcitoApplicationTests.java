@@ -1,6 +1,12 @@
 package com.rinconcito;
 
+import com.rinconcito.entity.Piso;
+import com.rinconcito.repository.PisoRepository;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(properties = {
@@ -13,6 +19,20 @@ import org.springframework.boot.test.context.SpringBootTest;
     "app.correo.habilitado=false"
 })
 class RinconcitoApplicationTests {
+
+    @Autowired
+    private PisoRepository pisos;
+
+    @Test
+    @Transactional
+    void bloqueaPisoConConsultaCompatible() {
+        Piso piso = new Piso();
+        piso.setNombre("Piso de prueba");
+        piso.setEstado(Piso.EstadoPiso.ACTIVO);
+        Integer id = pisos.saveAndFlush(piso).getIdPiso();
+
+        assertEquals(id, pisos.bloquearPorId(id).orElseThrow().getIdPiso());
+    }
 
 	@Test
 	void contextLoads() {
