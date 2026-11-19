@@ -35,7 +35,7 @@ public class ReservaController {
 
     private static final String PAGO_DEMO = "reservaPagoDemo";
 
-    @Value("${app.reservas.pago-demo.habilitado:${APP_RESERVAS_PAGO_DEMO_HABILITADO:false}}")
+    @Value("${app.reservas.pago-demo.habilitado:${APP_RESERVAS_PAGO_DEMO_HABILITADO:true}}")
     private boolean pagoDemoHabilitado;
 
     @Autowired
