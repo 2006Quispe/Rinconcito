@@ -353,7 +353,9 @@
                         <!-- ACCIONES -->
                         <td>
 
-                            <div class="nota-acciones">
+                            <a th:if="${nota.pago?.pedido?.tipoPedido?.name() == 'PRESENCIAL'}"
+                               th:href="@{/caja/notas-venta/{id}/ticket(id=${nota.idNota})}">Abrir ticket</a>
+                            <div class="nota-acciones" th:unless="${nota.pago?.pedido?.tipoPedido?.name() == 'PRESENCIAL'}">
 
                                 <form th:if="${correoHabilitado and nota.estado.name() == 'EMITIDA'}"
                                       th:action="@{/caja/notas-venta/{id}/correo(id=${nota.idNota})}" method="post">

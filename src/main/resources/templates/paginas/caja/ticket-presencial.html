@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ticket de venta presencial</title>
+    <style>
+        body { font: 13px monospace; margin: 1rem; }
+        main, nav { max-width: 72mm; margin: 0 auto 1rem; }
+        header { text-align: center; }
+        h1, h2 { font-size: 1rem; margin: .5rem 0; }
+        p { margin: .3rem 0; }
+        table { width: 100%; border-collapse: collapse; margin: .6rem 0; }
+        th, td { padding: .25rem; text-align: left; vertical-align: top; }
+        th { border-bottom: 1px solid; }
+        .importe { text-align: right; white-space: nowrap; }
+        .datos, .totales { border-top: 1px dashed; padding: .5rem 0; }
+        @media print {
+            @page { margin: 4mm; }
+            body { margin: 0; }
+            nav { display: none; }
+            tr { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+<nav aria-label="Acciones del ticket">
+    <button type="button" onclick="window.print()">Imprimir ticket</button>
+    <a th:href="@{/caja/pedidos-presenciales}">Volver a cobros</a>
+</nav>
+<main>
+    <header>
+        <h1>Rinconcito Ayacuchano</h1>
+        <p>EMARINA S.A.C. · RUC 20513516143</p>
+        <p>Av. Los Frutales 576, Urb. Los Artesanos</p>
+        <p>Ate, Lima · +51 999 931 775</p>
+        <h2>Ticket de venta presencial</h2>
+        <p>Demo académica · Sin validez tributaria</p>
+        <p th:if="${nota.estado.name() == 'ANULADA'}"><strong>ANULADO</strong></p>
+    </header>
+    <section class="datos">
+        <p>Código <strong th:text="${codigo}"></strong></p>
+        <p>Fecha <span th:text="${#temporals.format(nota.fechaEmision, 'dd/MM/yyyy')}"></span>
+            · Hora <span th:text="${#temporals.format(nota.fechaEmision, 'HH:mm')}"></span></p>
+        <p>N.° de caja 01 · Caja de demostración</p>
+        <p>Cajero/a <span th:text="${nota.usuarioEmisor == null ? 'Sin registro' : nota.usuarioEmisor.nombres + ' ' + nota.usuarioEmisor.apellidos}"></span></p>
+        <p>DNI <span th:text="${nota.clienteDocumento ?: 'Sin registro'}"></span></p>
+    </section>
+    <table aria-label="Productos del pedido">
+        <thead>
+            <tr><th>Cód.</th><th>Cant.</th><th colspan="3">Descripción</th></tr>
+            <tr><th colspan="2"></th><th class="importe">Precio</th><th class="importe">Dscto.</th><th class="importe">Total</th></tr>
+        </thead>
+        <tbody th:each="linea : ${detalles}">
+            <tr>
+                <td th:text="${linea.producto?.idProducto ?: '-'}"></td>
+                <td th:text="${linea.cantidad}"></td>
+                <td colspan="3" th:text="${linea.producto?.nombre ?: 'Producto'}"></td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+                <td class="importe" th:text="${#numbers.formatDecimal(linea.precioUnitario, 1, 2)}"></td>
+                <td class="importe">0.00</td>
+                <td class="importe" th:text="${#numbers.formatDecimal(linea.subtotal, 1, 2)}"></td>
+            </tr>
+        </tbody>
+    </table>
+    <section class="totales">
+        <p>IGV 18 % incluido <span th:text="'S/ ' + ${#numbers.formatDecimal(igv, 1, 2)}"></span></p>
+        <p><strong>Total a pagar <span th:text="'S/ ' + ${#numbers.formatDecimal(nota.total, 1, 2)}"></span></strong></p>
+        <table aria-label="Pago registrado">
+            <thead><tr><th>Pago</th><th>Método</th><th class="importe">Total</th></tr></thead>
+            <tbody><tr><td th:text="${nota.pago.estado.name()}"></td>
+                <td th:text="${nota.pago.metodoPago.name()}"></td>
+                <td class="importe" th:text="'S/ ' + ${#numbers.formatDecimal(nota.pago.monto, 1, 2)}"></td></tr></tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>
