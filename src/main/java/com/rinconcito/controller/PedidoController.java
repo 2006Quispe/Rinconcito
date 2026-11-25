@@ -207,7 +207,7 @@ public class PedidoController {
     @Autowired
     private com.rinconcito.service.UbicacionEntregaService ubicaciones;
 
-    @org.springframework.beans.factory.annotation.Value("${app.delivery.demo:false}")
+    @org.springframework.beans.factory.annotation.Value("${app.delivery.demo:true}")
     private boolean deliveryDemo;
 
     @org.springframework.web.bind.annotation.ModelAttribute("deliveryDemo")

@@ -38,7 +38,7 @@ public class PedidoService {
     @org.springframework.beans.factory.annotation.Value("${app.delivery.longitud:}")
     private Double longitudLocal;
 
-    @org.springframework.beans.factory.annotation.Value("${app.delivery.demo:false}")
+    @org.springframework.beans.factory.annotation.Value("${app.delivery.demo:true}")
     private boolean deliveryDemo;
 
     public int cotizarDelivery(String distrito, Double latitud, Double longitud) {

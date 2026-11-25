@@ -20,7 +20,8 @@ GOOGLE_MAPS_GEOCODING_KEY en el proceso de Spring Boot. La ubicación del
 navegador requiere permiso del cliente y funciona en localhost o en HTTPS.
 ## Demo académica de delivery
 
-Arranca la aplicación con la variable de entorno APP_DELIVERY_DEMO=true.
+La demo está activa por defecto. Para usar ubicaciones reales, arranca con
+APP_DELIVERY_DEMO=false y configura la ubicación del restaurante y Geocoding API.
 En el formulario selecciona Delivery, elige una distancia y pulsa
 «Probar ubicación». La demo usa un origen y direcciones ficticias, sin
 consultar Google ni pedir acceso a la ubicación del navegador.
