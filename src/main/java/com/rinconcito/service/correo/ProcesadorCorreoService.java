@@ -74,7 +74,11 @@ public class ProcesadorCorreoService {
                             UPDATE correo_salida SET estado='ERROR',error=?,
                             proximo_intento=DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 1 MINUTE) WHERE id=?
                             ""","No se pudo generar o entregar el correo. Comprueba la autorizacion del proveedor y el documento.",id);
-                    log.warn("Fallo el correo de la cola {} ({})",id,error.getClass().getSimpleName());
+                    if (sender instanceof OutlookGraphMailSender && error instanceof org.springframework.mail.MailSendException) {
+                        log.warn("Fallo el correo de la cola {}: {}", id, error.getMessage());
+                    } else {
+                        log.warn("Fallo el correo de la cola {} ({})",id,error.getClass().getSimpleName());
+                    }
                 }
             }
         } catch (Exception error) {

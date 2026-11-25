@@ -517,6 +517,8 @@
 
                             <td>
 
+                                <small class="d-block" th:if="${pedido.tipoPedido.name() != 'PRESENCIAL' and (pedido.estado.name() == 'CONFIRMADO' or pedido.estado.name() == 'FINALIZADO')}"
+                                       th:text="${#strings.replace(pedido.avanceEntrega, '_', ' ')}"></small>
                                 <span class="pedido-estado"
                                       th:classappend="' estado-'
                                           + ${#strings.toLowerCase(

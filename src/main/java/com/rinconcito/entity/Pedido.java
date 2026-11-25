@@ -57,6 +57,37 @@ public class Pedido {
     @Column(name = "fecha_actualizacion", nullable = false)
     private LocalDateTime fechaActualizacion;
 
+    @Column(name = "avance_entrega", length = 24)
+    private String avanceEntrega;
+
+    @Column(name = "token_seguimiento", length = 36)
+    private String tokenSeguimiento;
+
+    public String getTokenSeguimiento() { return tokenSeguimiento; }
+
+    public void habilitarSeguimiento() {
+        if (tokenSeguimiento == null) tokenSeguimiento = java.util.UUID.randomUUID().toString();
+    }
+
+    public String getAvanceEntrega() {
+        if (estado == EstadoPedido.FINALIZADO) return "ENTREGADO";
+        return avanceEntrega == null ? "RECIBIDO" : avanceEntrega;
+    }
+
+    public void avanzarEntrega(String desde) {
+        if (tipoPedido == TipoPedido.PRESENCIAL || estado != EstadoPedido.CONFIRMADO
+                || !getAvanceEntrega().equals(desde)) {
+            throw new IllegalStateException("El pedido cambió de estado. Actualiza la página.");
+        }
+        avanceEntrega = switch (desde) {
+            case "RECIBIDO" -> "EN_PREPARACION";
+            case "EN_PREPARACION" -> tipoPedido == TipoPedido.DELIVERY ? "EN_CAMINO" : "LISTO_PARA_RECOGER";
+            case "EN_CAMINO", "LISTO_PARA_RECOGER" -> "ENTREGADO";
+            default -> throw new IllegalStateException("Este pedido ya se entregó.");
+        };
+        if ("ENTREGADO".equals(avanceEntrega)) estado = EstadoPedido.FINALIZADO;
+    }
+
     public enum TipoPedido {
         DELIVERY,
         RECOJO_LOCAL,

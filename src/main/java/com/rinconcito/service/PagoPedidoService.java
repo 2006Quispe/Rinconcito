@@ -42,8 +42,16 @@ public class PagoPedidoService {
             throw new IllegalStateException("Este pedido ya no admite el pago de prueba.");
         }
         pedido.setEstado(EstadoPedido.CONFIRMADO);
+        pedido.habilitarSeguimiento();
         colaCorreoService.pedidoPagoDemo(pedido, destinatario, metodo.name());
         return pedido;
+    }
+
+    @Transactional
+    public void avanzarEntrega(String codigo, String desde) {
+        Pedido pedido = pedidoRepository.bloquearPorCodigo(codigo)
+                .orElseThrow(() -> new IllegalStateException("Pedido no encontrado."));
+        pedido.avanzarEntrega(desde);
     }
 
     private final PedidoRepository pedidoRepository;

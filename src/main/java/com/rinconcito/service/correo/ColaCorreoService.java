@@ -16,6 +16,8 @@ public class ColaCorreoService {
     private final JdbcTemplate jdbc;
     private final DetallePedidoRepository detalles;
     private final boolean habilitado;
+    @Value("${app.url-publica:http://localhost:8081}")
+    private String urlPublica = "http://localhost:8081";
 
     public ColaCorreoService(JdbcTemplate jdbc, DetallePedidoRepository detalles,
                             @Value("${app.correo.habilitado:false}") boolean habilitado) {
@@ -48,10 +50,15 @@ public class ColaCorreoService {
         for (DetallePedido detalle : detalles.findByPedido(pedido)) {
             texto.append("\n").append(detalle.getCantidad()).append(" × ").append(detalle.getProducto().getNombre());
         }
+        if (pedido.getTokenSeguimiento() != null) {
+            texto.append("\nSeguimiento: ").append(urlPublica.replaceFirst("/+$", ""))
+                    .append("/pedidos/seguimiento/").append(pedido.getTokenSeguimiento());
+        }
+        texto.append("\nDelivery: S/ ").append(pedido.getCostoDelivery());
         texto.append("\nPago simulado: ").append(metodo).append(" · S/ ").append(pedido.getTotal())
                 .append("\nModo de prueba. Sin cobro real.");
         guardar("PEDIDO", pedido.getIdPedido(), destinatario,
-                "Pedido confirmado - " + pedido.getCodigoPedido(), texto.toString(), false);
+                "Comprobante de pedido - " + pedido.getCodigoPedido(), texto.toString(), false);
     }
 
     @Transactional

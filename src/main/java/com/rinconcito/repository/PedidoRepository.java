@@ -20,6 +20,10 @@ public interface PedidoRepository
     @Query(value = "SELECT * FROM pedidos WHERE codigo_pedido = :codigo FOR UPDATE", nativeQuery = true)
     Optional<Pedido> bloquearPorCodigo(@Param("codigo") String codigo);
 
+    Optional<Pedido> findByTokenSeguimiento(String tokenSeguimiento);
+
+    List<Pedido> findByTipoPedidoNotAndEstadoOrderByFechaRegistroAsc(TipoPedido tipo, EstadoPedido estado);
+
     List<Pedido> findByCliente(
             Usuario cliente
     );

@@ -277,6 +277,23 @@ public class MeseroPedidoController {
         return "redirect:/mesero/pedidos";
     }
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.rinconcito.repository.PedidoRepository pedidosEnLinea;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.rinconcito.service.PagoPedidoService despacho;
+
+    @PostMapping("/pedidos/{codigo}/avance")
+    public String avanzarPedidoEnLinea(@PathVariable String codigo, @RequestParam String desde,
+                                      RedirectAttributes redirect) {
+        try {
+            despacho.avanzarEntrega(codigo, desde);
+        } catch (IllegalStateException error) {
+            redirect.addFlashAttribute("error", error.getMessage());
+        }
+        return "redirect:/mesero/pedidos";
+    }
+
     @GetMapping("/pedidos")
     public String listarPedidosActivos(
             Model model
@@ -317,6 +334,12 @@ public class MeseroPedidoController {
                 detallesPorPedido
         );
 
+        var enLinea = pedidosEnLinea.findByTipoPedidoNotAndEstadoOrderByFechaRegistroAsc(
+                Pedido.TipoPedido.PRESENCIAL, Pedido.EstadoPedido.CONFIRMADO);
+        model.addAttribute("pedidosEnLinea", enLinea);
+        for (Pedido pedido : enLinea) {
+            detallesPorPedido.put(pedido.getIdPedido(), despacho.detallesDe(pedido));
+        }
         return "paginas/mesero/pedidos";
     }
 

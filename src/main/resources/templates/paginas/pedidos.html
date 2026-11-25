@@ -264,9 +264,9 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="correo" class="pedido-label">Correo electrónico <span th:unless="${pagoDemoHabilitado}">(opcional)</span></label>
+                            <label for="correo" class="pedido-label">Correo electrónico</label>
                             <input type="email" id="correo" class="pedido-input" th:field="*{correo}"
-                                   maxlength="120" placeholder="cliente@ejemplo.com" autocomplete="email" th:required="${pagoDemoHabilitado}">
+                                   maxlength="120" placeholder="cliente@ejemplo.com" autocomplete="email" required>
                             <small th:if="${correoHabilitado}" class="d-block text-muted mt-1">
                                 Te enviaremos la confirmación y el código al correo indicado.
                             </small>
@@ -447,18 +447,19 @@
                               maxlength="300"></textarea>
                 </div>
 
-                <!-- AVISO DELIVERY -->
-                <div class="pedido-aviso-delivery"
-                     id="avisoDelivery">
-
-                    <i class="bi bi-info-circle-fill"></i>
-
+                <div class="pedido-aviso-delivery" id="avisoDelivery"
+                     th:attr="data-cotizar=@{/pedidos/cotizar-delivery},data-subtotal=${subtotal}">
                     <div>
-                        <strong>Servicio de traslado</strong>
-
-                        <p th:text="${mensajeTraslado}">
-                            El servicio de delivery se coordina por separado.
-                        </p>
+                        <strong>Ubicación de entrega</strong>
+                        <p>Usa tu ubicación o copia las coordenadas del punto de entrega desde el mapa.</p>
+                        <button type="button" class="btn btn-outline-dark mb-2" id="ubicarEntrega">Usar mi ubicación</button>
+                        <div class="row g-2">
+                            <div class="col"><label for="latitud">Latitud</label>
+                                <input class="pedido-input" type="number" step="any" th:field="*{latitud}"></div>
+                            <div class="col"><label for="longitud">Longitud</label>
+                                <input class="pedido-input" type="number" step="any" th:field="*{longitud}"></div>
+                        </div>
+                        <p id="cotizacionDelivery" role="status" class="mt-2 mb-0">Indica el distrito y la ubicación para cotizar.</p>
                     </div>
                 </div>
 
@@ -594,8 +595,8 @@
 
                         <span>Servicio de delivery</span>
 
-                        <strong class="pedido-por-coordinar">
-                            Por coordinar
+                        <strong class="pedido-por-coordinar" id="importeDelivery">
+                            Por calcular
                         </strong>
                     </div>
 
@@ -603,9 +604,8 @@
 
                     <div class="pedido-resumen-total">
 
-                        <span>Total de productos</span>
-
-                        <strong th:text="'S/ ' + ${subtotal}">
+                        <span>Total a pagar</span>
+                        <strong id="importeTotal" th:text="'S/ ' + ${subtotal}">
                             S/ 0
                         </strong>
                     </div>
@@ -650,14 +650,6 @@
             !seleccionado
                 || seleccionado.value === "DELIVERY";
 
-        const formularioPedido =
-            document.getElementById("formularioPedido");
-
-        const clienteLogueado =
-            formularioPedido
-                && formularioPedido.dataset
-                    .clienteLogueado === "true";
-
         const seccionDireccion =
             document.getElementById("seccionDireccion");
 
@@ -693,17 +685,6 @@
                     campo.value = "";
                 }
             });
-
-        if (seccionInformacionPersonal) {
-            const ocultar =
-                !esDelivery && clienteLogueado;
-
-            seccionInformacionPersonal.hidden =
-                ocultar;
-
-            seccionInformacionPersonal.style.display =
-                ocultar ? "none" : "";
-        }
 
         if (avisoDelivery) {
             avisoDelivery.hidden = !esDelivery;
@@ -790,5 +771,6 @@
         }
     });
 </script>
+<script th:src="@{/js/cotizar-delivery.js}"></script>
 </body>
 </html>

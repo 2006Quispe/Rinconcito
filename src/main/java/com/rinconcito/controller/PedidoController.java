@@ -169,10 +169,11 @@ public class PedidoController {
                 destinatario = cliente.getCorreo();
             }
             destinatario = destinatario == null ? null : destinatario.trim();
-            if (pagoDemoHabilitado && !ColaCorreoService.correoValido(destinatario)) {
+            if (!ColaCorreoService.correoValido(destinatario)) {
                 throw new IllegalStateException("Ingresa un correo electrónico válido para recibir tu confirmación.");
             }
 
+            pedidoForm.setCorreo(destinatario);
             Pedido pedido = pedidoService.crearPedido(
                     pedidoForm, carritoService.obtenerItems(session), cliente, pagoDemoHabilitado);
 
@@ -203,6 +204,18 @@ public class PedidoController {
     /*
      * Muestra la pantalla de pago.
      */
+    @PostMapping("/pedidos/cotizar-delivery")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public org.springframework.http.ResponseEntity<?> cotizarDelivery(
+            @RequestParam String distrito, @RequestParam Double latitud, @RequestParam Double longitud) {
+        try {
+            return org.springframework.http.ResponseEntity.ok(java.util.Map.of(
+                    "costo", pedidoService.cotizarDelivery(distrito, latitud, longitud)));
+        } catch (IllegalStateException error) {
+            return org.springframework.http.ResponseEntity.badRequest().body(java.util.Map.of("error", error.getMessage()));
+        }
+    }
+
     @GetMapping("/pedidos/pago-demo")
     public String mostrarPagoDemo(HttpSession sesion, Model modelo) {
         modelo.addAttribute("titulo", "Pago del pedido");
@@ -224,7 +237,8 @@ public class PedidoController {
             return "redirect:/pedidos";
         }
         try {
-            pagoPedidoService.confirmarPagoDemo(codigo, checkout.destinatario(), metodo);
+            Pedido confirmado = pagoPedidoService.confirmarPagoDemo(codigo, checkout.destinatario(), metodo);
+            sesion.setAttribute("ultimoPedidoConfirmado", confirmado.getCodigoPedido());
             redirect.addFlashAttribute("exito", "Pedido confirmado con pago simulado.");
             redirect.addAttribute("codigo", codigo);
             return "redirect:/pedidos/consultar";
@@ -410,6 +424,23 @@ public class PedidoController {
      * La ruta se conserva para los enlaces
      * desde Mi cuenta.
      */
+    @Autowired
+    private com.rinconcito.repository.PedidoRepository pedidos;
+
+    @GetMapping("/pedidos/seguimiento/{token}")
+    public String seguimiento(@org.springframework.web.bind.annotation.PathVariable String token, Model modelo,
+                              jakarta.servlet.http.HttpServletResponse respuesta) {
+        respuesta.setHeader("Cache-Control", "no-store");
+        respuesta.setHeader("Referrer-Policy", "no-referrer");
+        Pedido pedido = pedidos.findByTokenSeguimiento(token)
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+                        org.springframework.http.HttpStatus.NOT_FOUND));
+        modelo.addAttribute("pedido", pedido);
+        modelo.addAttribute("detalles", pagoPedidoService.detallesDe(pedido));
+        modelo.addAttribute("seguimientoPrivado", true);
+        return "paginas/pedidos/consultar";
+    }
+
     @GetMapping("/pedidos/consultar")
     public String consultar(
             @RequestParam(
@@ -417,7 +448,7 @@ public class PedidoController {
                     required = false
             )
             String codigo,
-            Model model
+            Model model, HttpSession sesion
     ) {
         model.addAttribute(
                 "titulo",
@@ -437,6 +468,10 @@ public class PedidoController {
                 .buscarPorCodigo(codigo.trim())
                 .map(pedido -> {
 
+                    if (pedido.getCodigoPedido().equals(sesion.getAttribute("ultimoPedidoConfirmado"))
+                            && pedido.getTokenSeguimiento() != null) {
+                        model.addAttribute("tokenSeguimiento", pedido.getTokenSeguimiento());
+                    }
                     inicializarPedido(pedido);
                     model.addAttribute("estadoCorreo",
                             colaCorreoService.estadoConfirmacion("PEDIDO", pedido.getIdPedido()));
@@ -513,7 +548,7 @@ public class PedidoController {
 
         model.addAttribute(
                 "costoDelivery",
-                PedidoService.COSTO_DELIVERY
+                0
         );
 
         model.addAttribute(
@@ -670,8 +705,7 @@ public class PedidoController {
                             ? "Tu pedido está confirmado "
                             + "para recojo en el restaurante."
                             : "Tu pedido delivery está "
-                            + "confirmado. El traslado "
-                            + "se coordina por separado.";
+                            + "confirmado. El restaurante irá actualizando su avance.";
 
             case CANCELADO ->
                     "El pedido fue cancelado.";

@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(properties = {
@@ -92,10 +93,30 @@ class RinconcitoApplicationTests {
         web.perform(post("/pedidos/pago-demo").session(sesion).with(csrf())
                         .param("codigo", codigo).param("metodo", "PLIN"))
                 .andExpect(redirectedUrl("/pedidos/consultar?codigo=" + codigo));
-        assertEquals(Pedido.EstadoPedido.CONFIRMADO, pedidos.findByCodigoPedido(codigo).orElseThrow().getEstado());
+        Pedido confirmado = pedidos.findByCodigoPedido(codigo).orElseThrow();
+        assertEquals(Pedido.EstadoPedido.CONFIRMADO, confirmado.getEstado());
+        String ruta = "/pedidos/seguimiento/" + confirmado.getTokenSeguimiento();
+        web.perform(get(ruta))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Seguimiento del pedido")));
+        web.perform(get("/pedidos/seguimiento/inexistente")).andExpect(status().isNotFound());
+        web.perform(get("/mesero/pedidos").with(user("mozo").roles("MESERO")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(codigo)));
+        web.perform(post("/mesero/pedidos/{codigo}/avance", codigo)
+                        .with(user("admin").roles("ADMINISTRADOR")).with(csrf()).param("desde", "RECIBIDO"))
+                .andExpect(redirectedUrlPattern("/personal/login*"));
+        for (String etapa : new String[]{"RECIBIDO", "EN_PREPARACION", "LISTO_PARA_RECOGER"}) {
+            web.perform(post("/mesero/pedidos/{codigo}/avance", codigo)
+                            .with(user("mozo").roles("MESERO")).with(csrf()).param("desde", etapa))
+                    .andExpect(redirectedUrl("/mesero/pedidos"));
+        }
+        assertEquals(Pedido.EstadoPedido.FINALIZADO, confirmado.getEstado());
+        web.perform(get(ruta)).andExpect(status().isOk())
+                .andExpect(content().string(containsString("value=\"4\"")));
         web.perform(get("/pedidos/consultar").param("codigo", codigo).session(sesion))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Pedido confirmado")))
+                .andExpect(content().string(containsString("Detalle del pedido")))
                 .andExpect(content().string(containsString("S/ 35.00")))
                 .andExpect(content().string(containsString("Consultar otro pedido")));
     }
@@ -127,6 +148,20 @@ class RinconcitoApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Pagar S/ 60.00")))
                 .andExpect(content().string(containsString("S/ 60")));
+    }
+
+    @Test
+    void tarifaDeliveryUsaLosTresRadios() {
+        var servicio = new com.rinconcito.service.PedidoService();
+        org.springframework.test.util.ReflectionTestUtils.setField(servicio, "latitudLocal", -12.0);
+        org.springframework.test.util.ReflectionTestUtils.setField(servicio, "longitudLocal", -77.0);
+        assertEquals(5, servicio.cotizarDelivery("Ate", -12.017, -77.0));
+        assertEquals(8, servicio.cotizarDelivery("Ate", -12.030, -77.0));
+        assertEquals(12, servicio.cotizarDelivery("Lurigancho-Chosica", -12.050, -77.0));
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalStateException.class,
+                () -> servicio.cotizarDelivery("Ate", -12.060, -77.0));
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalStateException.class,
+                () -> servicio.cotizarDelivery("Miraflores", -12.017, -77.0));
     }
 
     @Test

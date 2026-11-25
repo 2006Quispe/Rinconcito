@@ -30,7 +30,12 @@ public class OutlookGraphMailSender extends JavaMailSenderImpl {
                 var salida = new ByteArrayOutputStream();
                 mensaje.writeTo(salida);
                 byte[] contenido = Base64.getEncoder().encode(salida.toByteArray());
-                String token = tokens.obtenerToken();
+                String token;
+                try {
+                    token = tokens.obtenerToken();
+                } catch (IllegalStateException error) {
+                    throw new MailSendException("No se pudo usar la autorización de Hotmail. Revisa o renueva la autorización.");
+                }
                 var respuesta = cliente.post().uri(SEND_ENDPOINT)
                         .headers(headers -> headers.setBearerAuth(token))
                         .contentType(MediaType.TEXT_PLAIN).contentLength(contenido.length)

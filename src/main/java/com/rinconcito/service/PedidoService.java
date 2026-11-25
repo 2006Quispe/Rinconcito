@@ -32,11 +32,40 @@ public class PedidoService {
     @org.springframework.beans.factory.annotation.Autowired
     private ColaCorreoService colaCorreoService;
 
-    public static final int COSTO_DELIVERY = 0;
+    @org.springframework.beans.factory.annotation.Value("${app.delivery.latitud:}")
+    private Double latitudLocal;
+
+    @org.springframework.beans.factory.annotation.Value("${app.delivery.longitud:}")
+    private Double longitudLocal;
+
+    public int cotizarDelivery(String distrito, Double latitud, Double longitud) {
+        if (distrito == null || !(distrito.equalsIgnoreCase("Ate")
+                || distrito.equalsIgnoreCase("Lurigancho-Chosica"))) {
+            throw new IllegalStateException("El delivery cubre Ate y Lurigancho-Chosica.");
+        }
+        if (!coordenada(latitudLocal, 90) || !coordenada(longitudLocal, 180)) {
+            throw new IllegalStateException("Delivery no disponible hasta configurar la ubicación del restaurante. Puedes elegir recojo.");
+        }
+        if (!coordenada(latitud, 90) || !coordenada(longitud, 180)) {
+            throw new IllegalStateException("Indica la ubicación de entrega para calcular el envío.");
+        }
+
+        double a = Math.pow(Math.sin(Math.toRadians(latitud - latitudLocal) / 2), 2)
+                + Math.cos(Math.toRadians(latitudLocal)) * Math.cos(Math.toRadians(latitud))
+                * Math.pow(Math.sin(Math.toRadians(longitud - longitudLocal) / 2), 2);
+        double km = 6371.0088 * 2 * Math.asin(Math.sqrt(Math.min(1, a)));
+        if (km <= 2) return 5;
+        if (km <= 4) return 8;
+        if (km <= 6) return 12;
+        throw new IllegalStateException("La dirección está fuera del radio de 6 km. Puedes elegir recojo.");
+    }
+
+    private boolean coordenada(Double valor, int limite) {
+        return valor != null && Double.isFinite(valor) && Math.abs(valor) <= limite;
+    }
 
     public static final String MENSAJE_TRASLADO =
-            "El servicio de delivery se coordina por separado "
-            + "mediante InDrive u otro servicio externo.";
+            "Calcula el costo de envío indicando el distrito y la ubicación de entrega.";
 
     public static final String MENSAJE_RECOJO =
             "Cuando Caja confirme el pago, podrás recoger "
@@ -146,7 +175,7 @@ public class PedidoService {
 
         int costoDelivery =
                 tipoPedido == TipoPedido.DELIVERY
-                        ? COSTO_DELIVERY
+                        ? cotizarDelivery(dto.getDistrito(), dto.getLatitud(), dto.getLongitud())
                         : 0;
 
         int total =

@@ -22,6 +22,20 @@
     </section>
     <div class="container reserva-contenido">
         <p th:if="${error}" class="alert alert-warning" role="alert" th:text="${error}"></p>
+        <section th:if="${pedido != null and pedido.tipoPedido.name() != 'PRESENCIAL' and (confirmado or pedido.estado.name() == 'FINALIZADO')}"
+                 class="reserva-panel mb-4" aria-label="Seguimiento del pedido"
+                 th:with="avance=${pedido.avanceEntrega},paso=${avance == 'RECIBIDO' ? 1 : (avance == 'EN_PREPARACION' ? 2 : (avance == 'ENTREGADO' ? 4 : 3))}">
+            <h2>Seguimiento del pedido</h2>
+            <p th:text="|Última actualización · ${#temporals.format(pedido.fechaActualizacion, 'dd/MM/yyyy HH:mm')}|"></p>
+            <progress class="w-100" th:value="${paso}" max="4" aria-label="Etapa actual"></progress>
+            <ol class="d-flex flex-wrap justify-content-between gap-3 ps-3 mb-0">
+                <li th:attr="aria-current=${paso == 1 ? 'step' : null}">Recibido</li>
+                <li th:attr="aria-current=${paso == 2 ? 'step' : null}">En preparación</li>
+                <li th:attr="aria-current=${paso == 3 ? 'step' : null}" th:text="${pedido.tipoPedido.name() == 'DELIVERY' ? 'En camino' : 'Listo para recoger'}"></li>
+                <li th:attr="aria-current=${paso == 4 ? 'step' : null}">Entregado</li>
+            </ol>
+            <a th:if="${tokenSeguimiento}" th:href="@{/pedidos/seguimiento/{token}(token=${tokenSeguimiento})}" class="d-inline-block mt-3">Abrir enlace privado</a>
+        </section>
         <div th:if="${pedido != null}" class="reserva-distribucion">
             <section class="reserva-panel" aria-labelledby="pedido-detalle">
                 <h2 id="pedido-detalle">Detalle del pedido</h2>
@@ -31,6 +45,7 @@
                         <strong class="text-nowrap" th:text="|S/ ${#numbers.formatDecimal(d.subtotal, 1, 'POINT', 2, 'POINT')}|"></strong>
                     </li>
                 </ul>
+                <p th:if="${pedido.tipoPedido.name() == 'DELIVERY'}" class="mt-3 mb-0" th:text="|Delivery · S/ ${pedido.costoDelivery}|"></p>
                 <p class="reserva-total d-flex justify-content-between gap-3 mt-3 mb-0">
                     <span>Total</span><strong th:text="|S/ ${#numbers.formatDecimal(pedido.total, 1, 'POINT', 2, 'POINT')}|"></strong>
                 </p>
@@ -52,7 +67,7 @@
                    th:href="@{/carta}">Volver a la carta</a>
             </aside>
         </div>
-        <details class="reserva-panel mt-4" th:open="${pedido == null}">
+        <details th:unless="${seguimientoPrivado}" class="reserva-panel mt-4" th:open="${pedido == null}">
             <summary th:text="${pedido == null ? 'Buscar por código' : 'Consultar otro pedido'}"></summary>
             <form th:action="@{/pedidos/consultar}" method="get" class="mt-3">
                 <label class="form-label" for="codigo-pedido">Código de pedido</label>
