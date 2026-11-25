@@ -204,47 +204,6 @@ public class PedidoController {
     /*
      * Muestra la pantalla de pago.
      */
-    @Autowired
-    private com.rinconcito.service.UbicacionEntregaService ubicaciones;
-
-    @org.springframework.beans.factory.annotation.Value("${app.delivery.demo:true}")
-    private boolean deliveryDemo;
-
-    @org.springframework.web.bind.annotation.ModelAttribute("deliveryDemo")
-    public boolean deliveryDemo() {
-        return deliveryDemo;
-    }
-
-    @PostMapping("/pedidos/ubicar-entrega")
-    @org.springframework.web.bind.annotation.ResponseBody
-    public org.springframework.http.ResponseEntity<?> ubicarEntrega(
-            @RequestParam(required = false) Double latitud,
-            @RequestParam(required = false) Double longitud,
-            @RequestParam(required = false) String direccion,
-            @RequestParam(required = false) String distrito,
-            @RequestParam(required = false) Integer distanciaDemo) {
-        try {
-            return org.springframework.http.ResponseEntity.ok(
-                    deliveryDemo ? ubicaciones.ejemplo(distanciaDemo)
-                            : ubicaciones.buscar(latitud, longitud, direccion, distrito));
-        } catch (IllegalStateException error) {
-            return org.springframework.http.ResponseEntity.badRequest()
-                    .body(java.util.Map.of("error", error.getMessage()));
-        }
-    }
-
-    @PostMapping("/pedidos/cotizar-delivery")
-    @org.springframework.web.bind.annotation.ResponseBody
-    public org.springframework.http.ResponseEntity<?> cotizarDelivery(
-            @RequestParam String distrito, @RequestParam Double latitud, @RequestParam Double longitud) {
-        try {
-            return org.springframework.http.ResponseEntity.ok(java.util.Map.of(
-                    "costo", pedidoService.cotizarDelivery(distrito, latitud, longitud)));
-        } catch (IllegalStateException error) {
-            return org.springframework.http.ResponseEntity.badRequest().body(java.util.Map.of("error", error.getMessage()));
-        }
-    }
-
     @GetMapping("/pedidos/pago-demo")
     public String mostrarPagoDemo(HttpSession sesion, Model modelo) {
         modelo.addAttribute("titulo", "Pago del pedido");
@@ -577,7 +536,7 @@ public class PedidoController {
 
         model.addAttribute(
                 "costoDelivery",
-                0
+                PedidoService.TARIFA_DELIVERY
         );
 
         model.addAttribute(

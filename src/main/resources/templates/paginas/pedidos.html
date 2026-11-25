@@ -345,23 +345,6 @@
                     <div class="row g-3">
 
                         <!-- DIRECCIÓN -->
-                        <div class="col-12" id="avisoDelivery" th:attr="data-cotizar=@{/pedidos/cotizar-delivery},data-ubicar=@{/pedidos/ubicar-entrega},data-subtotal=${subtotal}">
-                            <input type="hidden" th:field="*{latitud}">
-                            <input type="hidden" th:field="*{longitud}">
-                            <button type="button" class="btn btn-outline-dark" id="ubicarEntrega" th:unless="${deliveryDemo}">Usar mi ubicación</button>
-                            <button type="button" class="btn btn-outline-dark" id="buscarDireccionEntrega" th:unless="${deliveryDemo}">Buscar dirección</button>
-                            <div th:if="${deliveryDemo}" class="d-flex flex-wrap align-items-center gap-2">
-                                <label for="distanciaDemo">Ubicación de prueba</label>
-                                <select id="distanciaDemo" class="form-select w-auto">
-                                    <option value="1">A 1 km</option>
-                                    <option value="3">A 3 km</option>
-                                    <option value="5">A 5 km</option>
-                                    <option value="7">A 7 km</option>
-                                </select>
-                                <button type="button" class="btn btn-outline-dark" id="probarUbicacion">Probar ubicación</button>
-                            </div>
-                            <p id="cotizacionDelivery" class="small mt-2 mb-0" role="status"></p>
-                        </div>
                         <div class="col-12">
 
                             <label for="direccionTexto"
@@ -564,8 +547,8 @@
 
                         <span>Servicio de delivery</span>
 
-                        <strong class="pedido-por-coordinar" id="importeDelivery">
-                            Por calcular
+                        <strong class="pedido-por-coordinar" id="importeDelivery" th:text="'S/ ' + ${costoDelivery}">
+                            S/ 10
                         </strong>
                     </div>
 
@@ -574,7 +557,9 @@
                     <div class="pedido-resumen-total">
 
                         <span>Total a pagar</span>
-                        <strong id="importeTotal" th:text="'S/ ' + ${subtotal}">
+                        <strong id="importeTotal"
+                                th:attr="data-subtotal=${subtotal},data-con-delivery=${subtotal + costoDelivery}"
+                                th:text="'S/ ' + ${pedidoForm.tipoEntrega == 'RECOJO_LOCAL' ? subtotal : subtotal + costoDelivery}">
                             S/ 0
                         </strong>
                     </div>
@@ -627,9 +612,6 @@
                 "seccionInformacionPersonal"
             );
 
-        const avisoDelivery =
-            document.getElementById("avisoDelivery");
-
         const avisoRecojo =
             document.getElementById("avisoRecojo");
 
@@ -655,12 +637,6 @@
                 }
             });
 
-        if (avisoDelivery) {
-            avisoDelivery.hidden = !esDelivery;
-            avisoDelivery.style.display =
-                esDelivery ? "" : "none";
-        }
-
         if (avisoRecojo) {
             avisoRecojo.hidden = esDelivery;
             avisoRecojo.style.display =
@@ -672,6 +648,11 @@
                 esDelivery
                     ? "Delivery"
                     : "Recojo en local";
+        }
+
+        const total = document.getElementById("importeTotal");
+        if (total) {
+            total.textContent = "S/ " + (esDelivery ? total.dataset.conDelivery : total.dataset.subtotal);
         }
 
         if (filaServicio) {
@@ -740,6 +721,5 @@
         }
     });
 </script>
-<script th:src="@{/js/cotizar-delivery.js}"></script>
 </body>
 </html>
