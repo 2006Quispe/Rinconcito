@@ -13,3 +13,8 @@ Si el cliente abre el correo desde otro dispositivo, configura
 `app.url-publica` con la URL de Rinconcito accesible desde ese dispositivo.
 Para el envío con Hotmail usa la configuración descrita en
 [EJECUTAR_EN_OTRA_PC.md](EJECUTAR_EN_OTRA_PC.md).
+
+Para autocompletar la dirección y buscar direcciones escritas, habilita
+Geocoding API en Google Maps Platform y configura la variable de entorno
+GOOGLE_MAPS_GEOCODING_KEY en el proceso de Spring Boot. La ubicación del
+navegador requiere permiso del cliente y funciona en localhost o en HTTPS.

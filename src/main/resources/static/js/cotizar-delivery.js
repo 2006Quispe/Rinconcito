@@ -2,62 +2,119 @@
     const panel = document.getElementById('avisoDelivery');
     const form = panel?.closest('form');
     if (!form) return;
-    const {latitud, longitud, distrito} = form.elements;
+    const {latitud, longitud, distrito, direccionTexto} = form.elements;
     const aviso = document.getElementById('cotizacionDelivery');
     const costo = document.getElementById('importeDelivery');
     const total = document.getElementById('importeTotal');
     let solicitud;
+    let faltaDistritoDeUbicacion = false;
+
+    const esDelivery = () => form.elements.tipoEntrega.value === 'DELIVERY';
+
     function render(tarifa) {
-        costo.textContent = tarifa === null ? 'Por calcular' : 'S/ ' + tarifa;
-        total.textContent = tarifa === null ? 'Por calcular' : 'S/ ' + (Number(panel.dataset.subtotal) + tarifa);
+        costo.textContent = tarifa === null ? 'Por calcular' : 'S/ ' + tarifa.toFixed(2);
+        total.textContent = tarifa === null ? 'Por calcular' : 'S/ ' + (Number(panel.dataset.subtotal) + tarifa).toFixed(2);
     }
+
+    function iniciar(mensaje) {
+        solicitud?.abort();
+        solicitud = new AbortController();
+        aviso.textContent = mensaje;
+        render(null);
+        return solicitud.signal;
+    }
+
+    async function consultar(url, datos, signal) {
+        const body = new URLSearchParams(datos);
+        const csrf = form.elements._csrf;
+        if (csrf) body.set(csrf.name, csrf.value);
+        const respuesta = await fetch(url, {method: 'POST', body, signal});
+        const resultado = await respuesta.json();
+        if (!respuesta.ok) throw new Error(resultado.error || 'Intenta nuevamente.');
+        return resultado;
+    }
+
     async function cotizar() {
         solicitud?.abort();
-        if (form.elements.tipoEntrega.value !== 'DELIVERY') {
+        if (!esDelivery()) {
             render(0);
             return;
         }
-        render(null);
-        aviso.textContent = 'Indica el distrito y la ubicación para cotizar.';
-        if (!distrito.value.trim() || !latitud.value || !longitud.value) return;
-        solicitud = new AbortController();
-        const {signal} = solicitud;
-        aviso.textContent = 'Calculando envío…';
-        const datos = new URLSearchParams({
-            distrito: distrito.value.trim(), latitud: latitud.value, longitud: longitud.value
-        });
-        const csrf = form.elements._csrf;
-        if (csrf) datos.set(csrf.name, csrf.value);
-        try {
-            const respuesta = await fetch(panel.dataset.cotizar, {method: 'POST', body: datos, signal});
-            const resultado = await respuesta.json();
-            if (signal.aborted) return;
-            if (!respuesta.ok) {
-                aviso.textContent = resultado.error || 'No se pudo cotizar el envío.';
-                return;
-            }
-            render(resultado.costo);
-            aviso.textContent = 'Envío calculado · S/ ' + resultado.costo;
-        } catch {
-            if (!signal.aborted) aviso.textContent = 'No se pudo cotizar el envío. Intenta nuevamente.';
-        }
-    }
-    form.addEventListener('change', evento => {
-        if (['tipoEntrega', 'distrito', 'latitud', 'longitud'].includes(evento.target.name)) cotizar();
-    });
-    document.getElementById('ubicarEntrega').addEventListener('click', () => {
-        if (!navigator.geolocation) {
-            aviso.textContent = 'Puedes ingresar las coordenadas manualmente.';
+        if (!distrito.value.trim() || !latitud.value || !longitud.value) {
+            render(null);
+            aviso.textContent = '';
             return;
         }
-        aviso.textContent = 'Buscando ubicación…';
-        navigator.geolocation.getCurrentPosition(({coords}) => {
-            latitud.value = coords.latitude;
-            longitud.value = coords.longitude;
+        const signal = iniciar('Calculando el envío…');
+        try {
+            const resultado = await consultar(panel.dataset.cotizar, {
+                distrito: distrito.value.trim(), latitud: latitud.value, longitud: longitud.value
+            }, signal);
+            if (signal.aborted) return;
+            render(Number(resultado.costo));
+            aviso.textContent = 'Envío calculado.';
+        } catch (error) {
+            if (!signal.aborted) aviso.textContent = error instanceof SyntaxError ? 'No se pudo cotizar el envío.' : error.message;
+        }
+    }
+
+    async function ubicar(datos, signal) {
+        try {
+            const resultado = await consultar(panel.dataset.ubicar, datos, signal);
+            if (signal.aborted) return;
+            if (datos.latitud !== undefined) {
+                direccionTexto.value = resultado.direccion;
+                distrito.value = resultado.distrito || '';
+                faltaDistritoDeUbicacion = !distrito.value;
+            }
+            latitud.value = resultado.latitud;
+            longitud.value = resultado.longitud;
+            if (!distrito.value.trim()) {
+                aviso.textContent = 'Completa el distrito para calcular el envío.';
+                return;
+            }
             cotizar();
+        } catch (error) {
+            if (!signal.aborted) aviso.textContent = error instanceof SyntaxError ? 'No se pudo buscar la dirección.' : error.message;
+        }
+    }
+
+    direccionTexto.addEventListener('input', () => {
+        latitud.value = '';
+        longitud.value = '';
+        cotizar();
+    });
+    distrito.addEventListener('change', () => {
+        if (!faltaDistritoDeUbicacion) {
+            latitud.value = '';
+            longitud.value = '';
+        }
+        faltaDistritoDeUbicacion = !distrito.value.trim() && Boolean(latitud.value);
+        cotizar();
+    });
+    form.addEventListener('change', evento => {
+        if (evento.target.name === 'tipoEntrega') cotizar();
+    });
+    document.getElementById('buscarDireccionEntrega').addEventListener('click', () => {
+        ubicar({direccion: direccionTexto.value.trim(), distrito: distrito.value.trim()},
+            iniciar('Buscando la dirección…'));
+    });
+    document.getElementById('ubicarEntrega').addEventListener('click', () => {
+        const signal = iniciar('Buscando tu ubicación…');
+        if (!navigator.geolocation) {
+            aviso.textContent = 'Escribe tu dirección y selecciona Buscar dirección.';
+            return;
+        }
+        navigator.geolocation.getCurrentPosition(({coords}) => {
+            if (!signal.aborted) ubicar({latitud: coords.latitude, longitud: coords.longitude}, signal);
         }, () => {
-            aviso.textContent = 'No se pudo obtener la ubicación. Ingresa las coordenadas manualmente.';
+            if (!signal.aborted) aviso.textContent = 'Escribe tu dirección y selecciona Buscar dirección.';
         }, {timeout: 10000});
+    });
+    form.addEventListener('submit', evento => {
+        if (!esDelivery() || (latitud.value && longitud.value)) return;
+        evento.preventDefault();
+        aviso.textContent = 'Selecciona Usar mi ubicación o Buscar dirección para calcular el envío.';
     });
     cotizar();
 })();

@@ -345,6 +345,13 @@
                     <div class="row g-3">
 
                         <!-- DIRECCIÓN -->
+                        <div class="col-12" id="avisoDelivery" th:attr="data-cotizar=@{/pedidos/cotizar-delivery},data-ubicar=@{/pedidos/ubicar-entrega},data-subtotal=${subtotal}">
+                            <input type="hidden" th:field="*{latitud}">
+                            <input type="hidden" th:field="*{longitud}">
+                            <button type="button" class="btn btn-outline-dark" id="ubicarEntrega">Usar mi ubicación</button>
+                            <button type="button" class="btn btn-outline-dark" id="buscarDireccionEntrega">Buscar dirección</button>
+                            <p id="cotizacionDelivery" class="small mt-2 mb-0" role="status"></p>
+                        </div>
                         <div class="col-12">
 
                             <label for="direccionTexto"
@@ -386,7 +393,7 @@
                                        class="pedido-input campo-direccion"
                                        th:field="*{distrito}"
                                        maxlength="50"
-                                       placeholder="Ej. Ayacucho">
+                                       placeholder="Ej. Ate">
                             </div>
                         </div>
 
@@ -412,54 +419,6 @@
                                        placeholder="Ej. Frente al parque principal">
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- OBSERVACIONES -->
-                <div class="pedido-formulario-seccion">
-
-                    <div class="pedido-seccion-encabezado">
-
-                        <div class="pedido-seccion-icono">
-                            <i class="bi bi-chat-left-text"></i>
-                        </div>
-
-                        <div>
-                            <h2>Indicaciones adicionales</h2>
-
-                            <p>
-                                Puedes dejar una indicación para el pedido.
-                            </p>
-                        </div>
-                    </div>
-
-                    <label for="observaciones"
-                           class="pedido-label">
-
-                        Observaciones
-                        <small>(opcional)</small>
-                    </label>
-
-                    <textarea id="observaciones"
-                              class="pedido-textarea"
-                              th:field="*{observaciones}"
-                              rows="3"
-                              maxlength="300"></textarea>
-                </div>
-
-                <div class="pedido-aviso-delivery" id="avisoDelivery"
-                     th:attr="data-cotizar=@{/pedidos/cotizar-delivery},data-subtotal=${subtotal}">
-                    <div>
-                        <strong>Ubicación de entrega</strong>
-                        <p>Usa tu ubicación o copia las coordenadas del punto de entrega desde el mapa.</p>
-                        <button type="button" class="btn btn-outline-dark mb-2" id="ubicarEntrega">Usar mi ubicación</button>
-                        <div class="row g-2">
-                            <div class="col"><label for="latitud">Latitud</label>
-                                <input class="pedido-input" type="number" step="any" th:field="*{latitud}"></div>
-                            <div class="col"><label for="longitud">Longitud</label>
-                                <input class="pedido-input" type="number" step="any" th:field="*{longitud}"></div>
-                        </div>
-                        <p id="cotizacionDelivery" role="status" class="mt-2 mb-0">Indica el distrito y la ubicación para cotizar.</p>
                     </div>
                 </div>
 
@@ -689,7 +648,7 @@
         if (avisoDelivery) {
             avisoDelivery.hidden = !esDelivery;
             avisoDelivery.style.display =
-                esDelivery ? "flex" : "none";
+                esDelivery ? "" : "none";
         }
 
         if (avisoRecojo) {
@@ -708,7 +667,7 @@
         if (filaServicio) {
             filaServicio.hidden = !esDelivery;
             filaServicio.style.display =
-                esDelivery ? "flex" : "none";
+                esDelivery ? "" : "none";
         }
     }
 

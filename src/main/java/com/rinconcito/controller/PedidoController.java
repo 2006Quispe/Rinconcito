@@ -204,6 +204,25 @@ public class PedidoController {
     /*
      * Muestra la pantalla de pago.
      */
+    @Autowired
+    private com.rinconcito.service.UbicacionEntregaService ubicaciones;
+
+    @PostMapping("/pedidos/ubicar-entrega")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public org.springframework.http.ResponseEntity<?> ubicarEntrega(
+            @RequestParam(required = false) Double latitud,
+            @RequestParam(required = false) Double longitud,
+            @RequestParam(required = false) String direccion,
+            @RequestParam(required = false) String distrito) {
+        try {
+            return org.springframework.http.ResponseEntity.ok(
+                    ubicaciones.buscar(latitud, longitud, direccion, distrito));
+        } catch (IllegalStateException error) {
+            return org.springframework.http.ResponseEntity.badRequest()
+                    .body(java.util.Map.of("error", error.getMessage()));
+        }
+    }
+
     @PostMapping("/pedidos/cotizar-delivery")
     @org.springframework.web.bind.annotation.ResponseBody
     public org.springframework.http.ResponseEntity<?> cotizarDelivery(
