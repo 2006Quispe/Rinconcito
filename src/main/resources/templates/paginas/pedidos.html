@@ -348,8 +348,18 @@
                         <div class="col-12" id="avisoDelivery" th:attr="data-cotizar=@{/pedidos/cotizar-delivery},data-ubicar=@{/pedidos/ubicar-entrega},data-subtotal=${subtotal}">
                             <input type="hidden" th:field="*{latitud}">
                             <input type="hidden" th:field="*{longitud}">
-                            <button type="button" class="btn btn-outline-dark" id="ubicarEntrega">Usar mi ubicación</button>
-                            <button type="button" class="btn btn-outline-dark" id="buscarDireccionEntrega">Buscar dirección</button>
+                            <button type="button" class="btn btn-outline-dark" id="ubicarEntrega" th:unless="${deliveryDemo}">Usar mi ubicación</button>
+                            <button type="button" class="btn btn-outline-dark" id="buscarDireccionEntrega" th:unless="${deliveryDemo}">Buscar dirección</button>
+                            <div th:if="${deliveryDemo}" class="d-flex flex-wrap align-items-center gap-2">
+                                <label for="distanciaDemo">Ubicación de prueba</label>
+                                <select id="distanciaDemo" class="form-select w-auto">
+                                    <option value="1">A 1 km</option>
+                                    <option value="3">A 3 km</option>
+                                    <option value="5">A 5 km</option>
+                                    <option value="7">A 7 km</option>
+                                </select>
+                                <button type="button" class="btn btn-outline-dark" id="probarUbicacion">Probar ubicación</button>
+                            </div>
                             <p id="cotizacionDelivery" class="small mt-2 mb-0" role="status"></p>
                         </div>
                         <div class="col-12">

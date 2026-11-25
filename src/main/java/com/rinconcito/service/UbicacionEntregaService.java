@@ -13,6 +13,9 @@ import java.util.Map;
 
 @Service
 public class UbicacionEntregaService {
+    static final double LATITUD_DEMO = -12.01;
+    static final double LONGITUD_DEMO = -76.88;
+
     private final RestClient cliente;
     private final String clave;
 
@@ -26,6 +29,15 @@ public class UbicacionEntregaService {
     }
 
     public record Ubicacion(String direccion, String distrito, double latitud, double longitud) {}
+
+    public Ubicacion ejemplo(Integer distancia) {
+        if (distancia == null || !List.of(1, 3, 5, 7).contains(distancia)) {
+            throw new IllegalStateException("Selecciona una ubicación de prueba.");
+        }
+
+        double latitud = LATITUD_DEMO + Math.toDegrees(distancia / 6371.0088);
+        return new Ubicacion("Dirección ficticia a " + distancia + " km", "Ate", latitud, LONGITUD_DEMO);
+    }
 
     public Ubicacion buscar(Double latitud, Double longitud, String direccion, String distrito) {
         boolean inversa = latitud != null || longitud != null;

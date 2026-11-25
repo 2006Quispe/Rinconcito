@@ -18,3 +18,9 @@ Para autocompletar la dirección y buscar direcciones escritas, habilita
 Geocoding API en Google Maps Platform y configura la variable de entorno
 GOOGLE_MAPS_GEOCODING_KEY en el proceso de Spring Boot. La ubicación del
 navegador requiere permiso del cliente y funciona en localhost o en HTTPS.
+## Demo académica de delivery
+
+Arranca la aplicación con la variable de entorno APP_DELIVERY_DEMO=true.
+En el formulario selecciona Delivery, elige una distancia y pulsa
+«Probar ubicación». La demo usa un origen y direcciones ficticias, sin
+consultar Google ni pedir acceso a la ubicación del navegador.

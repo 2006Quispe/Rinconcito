@@ -207,16 +207,26 @@ public class PedidoController {
     @Autowired
     private com.rinconcito.service.UbicacionEntregaService ubicaciones;
 
+    @org.springframework.beans.factory.annotation.Value("${app.delivery.demo:false}")
+    private boolean deliveryDemo;
+
+    @org.springframework.web.bind.annotation.ModelAttribute("deliveryDemo")
+    public boolean deliveryDemo() {
+        return deliveryDemo;
+    }
+
     @PostMapping("/pedidos/ubicar-entrega")
     @org.springframework.web.bind.annotation.ResponseBody
     public org.springframework.http.ResponseEntity<?> ubicarEntrega(
             @RequestParam(required = false) Double latitud,
             @RequestParam(required = false) Double longitud,
             @RequestParam(required = false) String direccion,
-            @RequestParam(required = false) String distrito) {
+            @RequestParam(required = false) String distrito,
+            @RequestParam(required = false) Integer distanciaDemo) {
         try {
             return org.springframework.http.ResponseEntity.ok(
-                    ubicaciones.buscar(latitud, longitud, direccion, distrito));
+                    deliveryDemo ? ubicaciones.ejemplo(distanciaDemo)
+                            : ubicaciones.buscar(latitud, longitud, direccion, distrito));
         } catch (IllegalStateException error) {
             return org.springframework.http.ResponseEntity.badRequest()
                     .body(java.util.Map.of("error", error.getMessage()));

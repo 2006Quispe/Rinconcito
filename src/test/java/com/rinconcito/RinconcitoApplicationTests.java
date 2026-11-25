@@ -179,4 +179,22 @@ class RinconcitoApplicationTests {
 	void contextLoads() {
 	}
 
+    @Test
+    void ubicacionesDemoUsanLasTarifasDelPedidoSinConfigurarGoogle() {
+        var pedidos = new com.rinconcito.service.PedidoService();
+        var ubicaciones = new com.rinconcito.service.UbicacionEntregaService("");
+        org.springframework.test.util.ReflectionTestUtils.setField(pedidos, "deliveryDemo", true);
+
+        var tarifas = java.util.Map.of(1, 5, 3, 8, 5, 12);
+        tarifas.forEach((km, tarifa) -> {
+            var ubicacion = ubicaciones.ejemplo(km);
+            assertEquals(tarifa.intValue(), pedidos.cotizarDelivery(
+                    ubicacion.distrito(), ubicacion.latitud(), ubicacion.longitud()));
+        });
+
+        var fuera = ubicaciones.ejemplo(7);
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalStateException.class,
+                () -> pedidos.cotizarDelivery(fuera.distrito(), fuera.latitud(), fuera.longitud()));
+    }
+
 }

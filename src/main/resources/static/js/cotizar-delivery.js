@@ -6,12 +6,15 @@
     const aviso = document.getElementById('cotizacionDelivery');
     const costo = document.getElementById('importeDelivery');
     const total = document.getElementById('importeTotal');
+    const prueba = document.getElementById('probarUbicacion');
     let solicitud;
+    let tarifaValida = false;
     let faltaDistritoDeUbicacion = false;
 
     const esDelivery = () => form.elements.tipoEntrega.value === 'DELIVERY';
 
     function render(tarifa) {
+        tarifaValida = tarifa !== null;
         costo.textContent = tarifa === null ? 'Por calcular' : 'S/ ' + tarifa.toFixed(2);
         total.textContent = tarifa === null ? 'Por calcular' : 'S/ ' + (Number(panel.dataset.subtotal) + tarifa).toFixed(2);
     }
@@ -62,7 +65,7 @@
         try {
             const resultado = await consultar(panel.dataset.ubicar, datos, signal);
             if (signal.aborted) return;
-            if (datos.latitud !== undefined) {
+            if (datos.latitud !== undefined || datos.distanciaDemo !== undefined) {
                 direccionTexto.value = resultado.direccion;
                 distrito.value = resultado.distrito || '';
                 faltaDistritoDeUbicacion = !distrito.value;
@@ -95,11 +98,11 @@
     form.addEventListener('change', evento => {
         if (evento.target.name === 'tipoEntrega') cotizar();
     });
-    document.getElementById('buscarDireccionEntrega').addEventListener('click', () => {
+    document.getElementById('buscarDireccionEntrega')?.addEventListener('click', () => {
         ubicar({direccion: direccionTexto.value.trim(), distrito: distrito.value.trim()},
             iniciar('Buscando la dirección…'));
     });
-    document.getElementById('ubicarEntrega').addEventListener('click', () => {
+    document.getElementById('ubicarEntrega')?.addEventListener('click', () => {
         const signal = iniciar('Buscando tu ubicación…');
         if (!navigator.geolocation) {
             aviso.textContent = 'Escribe tu dirección y selecciona Buscar dirección.';
@@ -110,6 +113,12 @@
         }, () => {
             if (!signal.aborted) aviso.textContent = 'Escribe tu dirección y selecciona Buscar dirección.';
         }, {timeout: 10000});
+    });
+    prueba?.addEventListener('click', () => {
+        latitud.value = '';
+        longitud.value = '';
+        ubicar({distanciaDemo: document.getElementById('distanciaDemo').value},
+            iniciar('Cargando ubicación de prueba.'));
     });
     form.addEventListener('submit', evento => {
         if (!esDelivery() || (latitud.value && longitud.value)) return;
