@@ -339,7 +339,7 @@ public class PagoPedidoService {
     }
 
     @Transactional
-    public synchronized Pedido registrarPagoPresencial(
+    public synchronized com.rinconcito.entity.NotaVenta registrarPagoPresencial(
             Integer idPedido,
             MetodoPago metodoPago,
             String numeroOperacion,
@@ -440,14 +440,7 @@ public class PagoPedidoService {
 
         mesaRepository.save(mesa);
 
-        notaVentaService.emitir(
-                pago,
-                validador
-        );
-
-        inicializarPedido(pedido);
-
-        return pedido;
+        return notaVentaService.emitir(pago, validador);
     }
 
     @Transactional

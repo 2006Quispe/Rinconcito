@@ -203,7 +203,7 @@ public class CajaPagoPedidoController {
             Usuario validador =
                     usuarioActual(authentication);
 
-            Pedido pedido =
+            var ticket =
                     pagoPedidoService
                             .registrarPagoPresencial(
                                     idPedido,
@@ -215,14 +215,7 @@ public class CajaPagoPedidoController {
             // Con el ID podemos seguir el cobro sin guardar datos del cliente en el log.
             log.info("Cobro presencial registrado para el pedido {}", idPedido);
 
-            redirectAttributes.addFlashAttribute(
-                    "exito",
-                    "Pago del pedido "
-                            + pedido.getCodigoPedido()
-                            + " registrado correctamente. "
-                            + "La nota de venta fue emitida "
-                            + "y la mesa quedó disponible."
-            );
+            return "redirect:/caja/notas-venta/" + ticket.getIdNota() + "/ticket";
 
         } catch (IllegalStateException e) {
             log.warn("No se pudo registrar el cobro presencial del pedido {}", idPedido);

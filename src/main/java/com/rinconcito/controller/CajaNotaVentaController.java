@@ -134,6 +134,32 @@ public class CajaNotaVentaController {
         return "paginas/caja/notas-venta";
     }
 
+    @GetMapping("/{idNota}/ticket")
+    public String ticketPresencial(
+            @org.springframework.web.bind.annotation.PathVariable Integer idNota,
+            Model model
+    ) {
+        NotaVenta nota;
+        try {
+            nota = notaVentaService.obtenerParaPdf(idNota);
+        } catch (IllegalStateException e) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.NOT_FOUND, "Ticket no encontrado", e);
+        }
+        var pedido = nota.getPago().getPedido();
+        if (pedido == null || pedido.getTipoPedido() != com.rinconcito.entity.Pedido.TipoPedido.PRESENCIAL) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.NOT_FOUND, "Ticket presencial no encontrado");
+        }
+        var total = java.math.BigDecimal.valueOf(nota.getTotal());
+        var base = total.divide(new java.math.BigDecimal("1.18"), 2, java.math.RoundingMode.HALF_UP);
+        model.addAttribute("nota", nota);
+        model.addAttribute("codigo", notaVentaService.formarNumero(nota));
+        model.addAttribute("detalles", notaVentaService.obtenerDetalles(nota));
+        model.addAttribute("igv", total.subtract(base));
+        return "paginas/caja/ticket-presencial";
+    }
+
     private boolean coincideBusqueda(
             NotaVenta nota,
             String texto
