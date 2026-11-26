@@ -1056,3 +1056,194 @@ textarea.form-control {
         width: 100%;
     }
 }
+
+
+
+/* =========================================================
+   VENTANA EMERGENTE (MODAL) DE EVENTO
+   ========================================================= */
+
+.modal-evento .modal-dialog {
+    width: calc(100% - 24px);
+    max-width: 650px;
+    margin: 12px auto;
+}
+
+.modal-evento .modal-content {
+    max-height: calc(100vh - 24px);
+    overflow: hidden;
+    border: 0;
+    border-radius: 18px;
+    background-color: var(--blanco);
+    box-shadow: 0 28px 80px rgba(44, 26, 18, 0.26);
+}
+
+.modal-evento .modal-header {
+    flex: 0 0 auto;
+    padding: 19px 24px 14px;
+    align-items: flex-start;
+    border-bottom: 1px solid #eee4da;
+    background-color: var(--blanco);
+}
+
+.modal-evento-etiqueta {
+    margin: 0 0 3px;
+    color: var(--rojo);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+}
+
+.modal-evento .modal-title {
+    margin: 0;
+    color: var(--texto);
+    font-family: "Merriweather", serif;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.modal-evento form {
+    min-height: 0;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-evento .modal-body {
+    min-height: 0;
+    padding: 16px 24px 10px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.modal-evento .form-label {
+    margin-bottom: 5px;
+    color: var(--texto);
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.modal-evento .form-label span {
+    color: #b43d2a;
+}
+
+.modal-evento .form-control,
+.modal-evento .form-select,
+.modal-evento .input-group-text {
+    min-height: 40px;
+    border: 1px solid #dfd2c6;
+    border-radius: 8px;
+    color: var(--texto);
+    font-size: 12px;
+    box-shadow: none;
+}
+
+.modal-evento .input-group > .form-control {
+    border-radius: 0 8px 8px 0;
+}
+
+.modal-evento .input-group-text {
+    border-radius: 8px 0 0 8px;
+    background-color: #fffaf5;
+}
+
+.modal-evento textarea.form-control {
+    min-height: 72px;
+    resize: vertical;
+}
+
+.modal-evento .form-control:focus,
+.modal-evento .form-select:focus {
+    border-color: var(--rojo);
+    box-shadow: 0 0 0 3px rgba(140, 47, 27, 0.1);
+}
+
+.modal-evento .form-text {
+    margin-top: 4px;
+    color: var(--texto-suave);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.modal-evento .modal-footer {
+    flex: 0 0 auto;
+    padding: 13px 24px 18px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: 9px;
+    border-top: 1px solid #f0e6dc;
+    background-color: var(--blanco);
+}
+
+.btn-modal-evento-cancelar,
+.btn-modal-evento-guardar {
+    min-width: 128px;
+    min-height: 40px;
+    margin: 0;
+    padding: 8px 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 900;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-modal-evento-cancelar {
+    border: 1px solid #dfd2c6;
+    background-color: #fffaf5;
+    color: var(--texto);
+}
+
+.btn-modal-evento-cancelar:hover {
+    background-color: #f6eee6;
+    color: var(--texto);
+}
+
+.btn-modal-evento-guardar {
+    border: 1px solid var(--rojo);
+    background-color: var(--rojo);
+    color: #ffffff;
+    box-shadow: 0 8px 18px rgba(140, 47, 27, 0.18);
+}
+
+.btn-modal-evento-guardar:hover,
+.btn-modal-evento-guardar:focus {
+    border-color: var(--rojo-oscuro);
+    background-color: var(--rojo-oscuro);
+    color: #ffffff;
+}
+
+@media (max-width: 600px) {
+    .modal-evento .modal-dialog {
+        width: calc(100% - 16px);
+        margin: 8px auto;
+    }
+
+    .modal-evento .modal-content {
+        max-height: calc(100vh - 16px);
+        border-radius: 14px;
+    }
+
+    .modal-evento .modal-header,
+    .modal-evento .modal-body,
+    .modal-evento .modal-footer {
+        padding-right: 16px;
+        padding-left: 16px;
+    }
+
+    .modal-evento .modal-footer {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+
+    .btn-modal-evento-cancelar,
+    .btn-modal-evento-guardar {
+        width: 100%;
+    }
+}
