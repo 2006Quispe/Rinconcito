@@ -25,6 +25,7 @@ public interface UsuarioRepository
             String correo
     );
 
+    @EntityGraph(attributePaths = {"rol"})
     Optional<Usuario> findByDni(
             String dni
     );

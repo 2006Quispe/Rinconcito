@@ -1,5 +1,6 @@
 package com.rinconcito.service;
 
+import com.rinconcito.dto.ClubPagoResumenDTO;
 import com.rinconcito.entity.ConfiguracionRestaurante;
 import com.rinconcito.entity.DetallePedido;
 import com.rinconcito.entity.NotaVenta;
@@ -39,6 +40,8 @@ public class NotaVentaPdfService {
 
     private final NotaVentaService notaVentaService;
 
+    private final ClubPuntosService clubPuntosService;
+
     private final ConfiguracionRestauranteService
             configuracionRestauranteService;
 
@@ -54,11 +57,13 @@ public class NotaVentaPdfService {
 
     public NotaVentaPdfService(
             NotaVentaService notaVentaService,
-            ConfiguracionRestauranteService configuracionRestauranteService
+            ConfiguracionRestauranteService configuracionRestauranteService,
+            ClubPuntosService clubPuntosService
     ) {
         this.notaVentaService = notaVentaService;
         this.configuracionRestauranteService =
                 configuracionRestauranteService;
+        this.clubPuntosService = clubPuntosService;
     }
 
     public byte[] generar(Integer idNota) {
@@ -134,6 +139,11 @@ public class NotaVentaPdfService {
                         lienzo,
                         notaVenta
                 );
+            }
+
+            if (esPedido) {
+                ClubPagoResumenDTO resumenClub = clubPuntosService.obtenerResumenPago(pago.getIdPago());
+                if (resumenClub != null) dibujarResumenClub(lienzo, resumenClub);
             }
 
             dibujarInformacionPago(
@@ -823,7 +833,7 @@ public class NotaVentaPdfService {
             NotaVenta nota
     ) throws IOException {
 
-        lienzo.asegurarEspacio(130);
+        lienzo.asegurarEspacio(150);
 
         Pedido pedido =
                 nota.getPago().getPedido();
@@ -862,6 +872,31 @@ public class NotaVentaPdfService {
         );
 
         lienzo.y -= 21;
+
+        int descuentoClub =
+                pedido.getDescuentoClub() != null
+                        ? pedido.getDescuentoClub()
+                        : 0;
+
+        if (descuentoClub > 0) {
+            lienzo.texto(
+                    "Cupón Club:",
+                    inicioX,
+                    lienzo.y,
+                    10,
+                    fuenteNormal
+            );
+
+            lienzo.texto(
+                    "- S/ " + descuentoClub,
+                    490,
+                    lienzo.y,
+                    10,
+                    fuenteNegrita
+            );
+
+            lienzo.y -= 21;
+        }
 
         if (esDelivery(pedido)) {
 
@@ -937,6 +972,34 @@ public class NotaVentaPdfService {
                 lienzo,
                 total
         );
+    }
+
+    private void dibujarResumenClub(LienzoPdf lienzo, ClubPagoResumenDTO resumen) throws IOException {
+        lienzo.asegurarEspacio(190);
+        lienzo.tituloSeccion("CLUB RINCONCITO");
+        filaClub(lienzo, "Nivel al momento de la compra:", resumen.nivelNombre());
+        filaClub(lienzo, "Saldo anterior:", resumen.saldoAnterior() + " puntos");
+        filaClub(lienzo, "Puntos base obtenidos:", resumen.puntosBase() + " puntos");
+        filaClub(lienzo, "Bonificacion por nivel:", resumen.puntosBonusNivel() + " puntos");
+        String campana = resumen.campanaNombre() == null || resumen.campanaNombre().isBlank()
+                ? resumen.puntosBonusCampana() + " puntos"
+                : resumen.campanaNombre() + " - " + resumen.puntosBonusCampana() + " puntos";
+        filaClub(lienzo, "Bonificacion por campanas:", campana);
+        filaClub(lienzo, "Puntos aplicados a deuda:", resumen.puntosAplicadosDeuda() + " puntos");
+        filaClub(lienzo, "Total de puntos obtenidos:", resumen.puntosTotales() + " puntos");
+        filaClub(lienzo, "Puntos acreditados:", resumen.puntosAcreditados() + " puntos");
+        filaClub(lienzo, "Nuevo saldo:", resumen.saldoNuevo() + " puntos");
+        if (!resumen.nivelCodigo().equals(resumen.nuevoNivelCodigo())) {
+            filaClub(lienzo, "Nuevo nivel alcanzado:", resumen.nuevoNivelNombre());
+        }
+        lienzo.texto("Gracias por ser parte del Club Rinconcito.", MARGEN, lienzo.y, 9, fuenteNegrita);
+        lienzo.y -= 20;
+    }
+
+    private void filaClub(LienzoPdf lienzo, String etiqueta, String valor) throws IOException {
+        lienzo.texto(etiqueta, MARGEN, lienzo.y, 9, fuenteNormal);
+        lienzo.texto(valor, 310, lienzo.y, 9, fuenteNegrita);
+        lienzo.y -= 14;
     }
 
     private void dibujarTotalReserva(

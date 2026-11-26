@@ -18,6 +18,7 @@ import com.rinconcito.repository.PedidoRepository;
 import com.rinconcito.repository.ProductoRepository;
 import com.rinconcito.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +33,15 @@ public class PedidoService {
     @org.springframework.beans.factory.annotation.Autowired
     private ColaCorreoService colaCorreoService;
 
-    public static final int COSTO_DELIVERY = 0;
+    @org.springframework.beans.factory.annotation.Autowired
+    private ClubPuntosService clubPuntosService;
+
+    @Value("${app.delivery.costo-soles:0}")
+    private int costoDeliveryConfigurado;
+
+    public int getCostoDelivery() {
+        return Math.max(0, costoDeliveryConfigurado);
+    }
 
     public static final String MENSAJE_TRASLADO =
             "El servicio de delivery se coordina por separado "
@@ -138,19 +147,27 @@ public class PedidoService {
                         .mapToInt(linea -> linea.subtotal)
                         .sum();
 
-        int costoDelivery =
-                tipoPedido == TipoPedido.DELIVERY
-                        ? COSTO_DELIVERY
-                        : 0;
-
-        int total =
-                subtotal + costoDelivery;
+        int costoDelivery = tipoPedido == TipoPedido.DELIVERY
+                ? getCostoDelivery()
+                : 0;
 
         Usuario cliente =
                 resolverCliente(
                         dto,
                         clienteLogueado
                 );
+
+        int descuentoClub =
+                clubPuntosService.reservarCuponParaPedido(
+                        dto.getCodigoCupon(),
+                        cliente,
+                        subtotal,
+                        tipoPedido,
+                        costoDelivery
+                );
+
+        int total =
+                Math.max(0, subtotal + costoDelivery - descuentoClub);
 
         Direccion direccion = null;
 
@@ -180,6 +197,7 @@ public class PedidoService {
         );
         pedido.setSubtotal(subtotal);
         pedido.setCostoDelivery(costoDelivery);
+        pedido.setDescuentoClub(descuentoClub);
         pedido.setTotal(total);
 
         pedido.setObservaciones(
@@ -190,6 +208,12 @@ public class PedidoService {
 
         pedido =
                 pedidoRepository.save(pedido);
+
+        clubPuntosService.vincularCuponAPedido(
+                dto.getCodigoCupon(),
+                cliente.getIdUsuario(),
+                pedido.getIdPedido()
+        );
 
         registrarDetalles(
                 pedido,

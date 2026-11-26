@@ -587,6 +587,14 @@
     font-size: 25px;
 }
 
+.pedido-total-nota {
+    display: block;
+    margin-top: 6px;
+    color: var(--pedido-suave);
+    font-size: 11px;
+    text-align: right;
+}
+
 /* =====================================================
    MÉTODOS DE PAGO
    ===================================================== */

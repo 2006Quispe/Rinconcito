@@ -154,6 +154,46 @@
     font-size: 12px;
 }
 
+.cuenta-club-enlace {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-top: 16px;
+    padding: 13px;
+    color: var(--cuenta-texto);
+    background: linear-gradient(110deg, #fff8e9, #fbf1df);
+    border: 1px solid #efdfba;
+    border-radius: 12px;
+    text-decoration: none;
+}
+
+.cuenta-club-icono {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    color: #875d13;
+    background: #f3dfad;
+    border-radius: 10px;
+    font-size: 18px;
+}
+
+.cuenta-club-enlace > span:nth-child(2) {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.cuenta-club-enlace small {
+    color: #876821;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .7px;
+}
+
+.cuenta-club-enlace strong { font-size: 13px; }
+.cuenta-club-enlace > i { color: #876821; font-size: 12px; }
+
 .cuenta-seccion {
     margin-bottom: 24px;
     padding: 23px;

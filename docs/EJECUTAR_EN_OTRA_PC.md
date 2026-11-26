@@ -4,6 +4,14 @@ Se necesita JDK 21 o superior, MySQL 8 y Git. Python 3 solo es necesario
 para autorizar Hotmail o usar el buzon de pruebas. Maven descarga las dependencias;
 no se copian las carpetas target ni .m2 desde otra laptop.
 
+## Base completa actual del proyecto
+
+Para instalar el proyecto actualizado, importa una sola vez `rinconcito_db.sql` desde la raiz del repositorio en MySQL Workbench. El archivo crea `rinconcito_db` con las 28 tablas y los datos ficticios de demostracion necesarios; no ejecutes despues migraciones ni semillas individuales.
+
+La importacion requiere una base vacia; el archivo no borra tablas existentes. Si ya tienes una `rinconcito_db` con tablas, importa en otra instancia/esquema limpio o respalda y retira el esquema anterior antes de importar. Configura `.local/application.properties` con el nombre `rinconcito_db` y las credenciales MySQL de tu propia laptop.
+
+La importacion incluye cuentas demo `admin@rinconcito.test`, `mesero@rinconcito.test`, `caja@rinconcito.test` y `cliente@rinconcito.test`; la clave de prueba es `Prueba123!`. Son cuentas ficticias solo para desarrollo local.
+
 ## 1. Descargar y preparar MySQL
 
 Si ya tienes el repositorio, guarda tus cambios locales antes de actualizar:
@@ -19,15 +27,10 @@ git clone https://github.com/2006Quispe/Rinconcito.git
 cd Rinconcito
 ```
 
-Para una demo nueva, abre en MySQL Workbench
-`src/main/resources/db/demo_mozo/rinconcito_demo_mozo.sql` y ejecutalo UNA VEZ.
-Crea la base independiente `rinconcito_demo_mozo`, sin borrar tu base anterior,
-con productos, mesas, reservas, pedidos y cuentas ficticias. Ya incluye las tablas
-actuales de historial de disponibilidad y correo.
-
-Si usas una base existente, conserva tus datos. Para habilitar correo selecciona
-esa base en Workbench y ejecuta `src/main/resources/db/migration_correo_salida.sql`.
-El modo sin correo no consulta esa tabla. Esta migracion no crea el resto del sistema.
+Para una instalacion nueva, utiliza el archivo canónico `rinconcito_db.sql`; no hace
+falta importar además las semillas o migraciones históricas de `src/main/resources/db/`.
+Si usas una base existente, conserva tus datos y aplica únicamente las migraciones
+que correspondan a la función que quieras habilitar.
 
 ## 2. Configurar el MySQL de tu laptop
 
@@ -58,9 +61,9 @@ Las cuentas de la base demo son:
 
 | Rol | Correo | Clave |
 | --- | --- | --- |
-| Caja | caja@rinconcito.pe | Prueba123! |
-| Mozo | mesero@rinconcito.pe | Prueba123! |
-| Administrador | admin@rinconcito.pe | Prueba123! |
+| Caja | caja@rinconcito.test | Prueba123! |
+| Mozo | mesero@rinconcito.test | Prueba123! |
+| Administrador | admin@rinconcito.test | Prueba123! |
 
 Acceso de personal: http://localhost:8081/personal/login.
 Estas cuentas solo se crean al importar la demo.

@@ -78,6 +78,25 @@
              th:text="${error}">
         </div>
 
+        <section th:if="${resumenClub}" class="caja-club-pago-final" aria-live="polite">
+            <div class="caja-club-pago-icono"><i class="bi bi-stars"></i></div>
+            <div class="caja-club-pago-contenido">
+                <span class="caja-club-pago-etiqueta">CLUB RINCONCITO · PAGO CONFIRMADO</span>
+                <h2 th:text="'Gracias, ' + ${resumenClub.clienteNombre}">Gracias</h2>
+                <p th:text="'Importe pagado: S/ ' + ${importePagadoClub}">Importe pagado</p>
+                <div class="caja-club-pago-grid">
+                    <div><small>Nivel anterior</small><strong th:text="${resumenClub.nivelNombre}">Visitante</strong></div>
+                    <div><small>Puntos base</small><strong th:text="'+' + ${resumenClub.puntosBase}">+0</strong></div>
+                    <div><small>Bonificación por nivel</small><strong th:text="'+' + ${resumenClub.puntosBonusNivel}">+0</strong></div>
+                    <div><small>Bonificación por campaña</small><strong th:text="'+' + ${resumenClub.puntosBonusCampana}">+0</strong></div>
+                    <div><small>Aplicados a deuda</small><strong th:text="${resumenClub.puntosAplicadosDeuda}">0</strong></div>
+                    <div><small>Total obtenido</small><strong th:text="${resumenClub.puntosTotales} + ' puntos'">0 puntos</strong></div>
+                    <div><small>Saldo actualizado</small><strong th:text="${resumenClub.saldoNuevo} + ' puntos'">0 puntos</strong></div>
+                    <div th:if="${resumenClub.nivelCodigo != resumenClub.nuevoNivelCodigo}"><small>Nuevo nivel</small><strong th:text="${resumenClub.nuevoNivelNombre}">Amigo</strong></div>
+                </div>
+            </div>
+        </section>
+
         <section class="presenciales-resumen">
 
             <div class="presenciales-resumen-icono">
@@ -301,11 +320,60 @@
                       )}"
                       method="post"
                       class="formulario-cobro-presencial"
-                      data-formulario-cobro>
+                      data-formulario-cobro
+                      th:attr="data-id-pedido=${pedido.idPedido},data-club-estimacion-url=@{/caja/pedidos-presenciales/club/estimacion},data-club-consulta-url=@{/caja/club/consultar-desde-cobro},data-club-confirmacion-url=@{/caja/club/confirmar-desde-cobro}">
 
                     <input type="hidden"
                            th:name="${_csrf.parameterName}"
                            th:value="${_csrf.token}">
+
+                    <div class="campo-cobro campo-club-dni">
+                        <label th:for="'dniClub-' + ${pedido.idPedido}">
+                            DNI para acumular puntos <small>(opcional)</small>
+                        </label>
+                        <input type="text"
+                               th:id="'dniClub-' + ${pedido.idPedido}"
+                               name="dniClub"
+                               class="form-control"
+                               inputmode="numeric"
+                               pattern="[0-9]{8}"
+                               maxlength="8"
+                               autocomplete="off"
+                               placeholder="DNI de la cuenta Club">
+                        <small>Ingresa el DNI de una cuenta activa del Club antes de confirmar el pago.</small>
+                    </div>
+
+                    <section class="caja-club-estimacion" data-club-estimacion hidden aria-live="polite">
+                        <div class="caja-club-estimacion-titulo">
+                            <span class="caja-club-insignia" data-club-insignia><i class="bi bi-award-fill"></i></span>
+                            <div><small>FIDELIZACION DEL CLIENTE</small><strong data-club-nombre>Cliente del Club</strong><span data-club-nivel>Nivel</span></div>
+                        </div>
+                        <p class="caja-club-mensaje" data-club-mensaje></p>
+                        <div class="caja-club-estimacion-grid" data-club-detalle hidden>
+                            <div><small>Saldo disponible</small><strong data-club-saldo>0 pts</strong></div>
+                            <div><small>Bonificacion por nivel</small><strong data-club-porcentaje>0%</strong></div>
+                            <div><small>Puntos base estimados</small><strong data-club-base>0</strong></div>
+                            <div><small>Bonificacion por nivel</small><strong data-club-bono-nivel>0</strong></div>
+                            <div><small>Bonificacion por campana</small><strong data-club-bono-campana>0</strong></div>
+                            <div><small>Total estimado</small><strong data-club-total>0 puntos</strong></div>
+                            <div><small>Saldo nuevo estimado</small><strong data-club-nuevo-saldo>0 puntos</strong></div>
+                            <div><small>Aplicados a deuda estimada</small><strong data-club-deuda>0 puntos</strong></div>
+                        </div>
+                        <small class="caja-club-estimacion-aviso" data-club-aviso hidden>
+                            Estimacion: los puntos se acreditan solo cuando el pago se confirma.
+                        </small>
+                    </section>
+
+                    <section class="caja-club-recompensa" data-club-recompensa hidden>
+                        <label for="codigoRecompensa">Consultar recompensa del cliente</label>
+                        <div class="caja-club-recompensa-controles">
+                            <input type="text" id="codigoRecompensa" class="form-control" maxlength="32" autocomplete="off" placeholder="Codigo RIN-XXXXXXXXXX" data-club-codigo>
+                            <button type="button" class="btn-club-consultar" data-club-consultar>Consultar</button>
+                        </div>
+                        <div class="caja-club-recompensa-resultado" data-club-recompensa-resultado hidden aria-live="polite"></div>
+                        <button type="button" class="btn-club-confirmar-entrega" data-club-confirmar hidden>Confirmar entrega de recompensa</button>
+                        <small>La consulta no consume el codigo. La entrega requiere confirmacion y no aplica descuentos online a este pedido presencial.</small>
+                    </section>
 
                     <div class="campo-cobro">
 
@@ -496,6 +564,161 @@
             });
         }
     );
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("[data-formulario-cobro]").forEach(function (form) {
+        const dni = form.querySelector("[name='dniClub']");
+        const panel = form.querySelector("[data-club-estimacion]");
+        const detalle = form.querySelector("[data-club-detalle]");
+        const aviso = form.querySelector("[data-club-aviso]");
+        const mensaje = form.querySelector("[data-club-mensaje]");
+        const recompensa = form.querySelector("[data-club-recompensa]");
+        const codigo = form.querySelector("[data-club-codigo]");
+        const consultar = form.querySelector("[data-club-consultar]");
+        const resultado = form.querySelector("[data-club-recompensa-resultado]");
+        const confirmar = form.querySelector("[data-club-confirmar]");
+        let espera = null;
+        let consulta = 0;
+        let codigoConsultado = "";
+
+        function mostrarRespuestaRecompensa(datos, error) {
+            resultado.hidden = false;
+            resultado.classList.toggle("error", Boolean(error) || !datos.disponible);
+            resultado.textContent = error || datos.mensaje;
+            confirmar.hidden = !datos.disponible;
+            codigoConsultado = datos.disponible ? datos.codigo : "";
+        }
+
+        function limpiarRecompensa() {
+            codigoConsultado = "";
+            resultado.hidden = true;
+            confirmar.hidden = true;
+        }
+
+        function poner(selector, valor) {
+            const elemento = form.querySelector(selector);
+            if (elemento) elemento.textContent = valor;
+        }
+
+        async function actualizarEstimacion() {
+            const valorDni = dni.value.trim();
+            const solicitud = ++consulta;
+            limpiarRecompensa();
+            if (!/^[0-9]{8}$/.test(valorDni)) {
+                panel.hidden = true;
+                recompensa.hidden = true;
+                return;
+            }
+            panel.hidden = false;
+            detalle.hidden = true;
+            aviso.hidden = true;
+            mensaje.textContent = "Consultando cuenta del Club...";
+            try {
+                const parametros = new URLSearchParams({
+                    idPedido: form.dataset.idPedido,
+                    dni: valorDni
+                });
+                const respuesta = await fetch(form.dataset.clubEstimacionUrl + "?" + parametros,
+                    {headers: {"Accept": "application/json"}});
+                if (!respuesta.ok) throw new Error("No pudimos consultar el saldo del Club.");
+                const datos = await respuesta.json();
+                if (solicitud !== consulta) return;
+                if (!datos.clienteRegistrado) {
+                    mensaje.textContent = (datos.mensaje || "No encontramos una cuenta activa del Club con ese DNI.")
+                        + " Puedes continuar con el cobro normal.";
+                    recompensa.hidden = true;
+                    return;
+                }
+                poner("[data-club-nombre]", datos.clienteNombre);
+                poner("[data-club-nivel]", datos.nivelNombre);
+                poner("[data-club-saldo]", datos.saldoDisponible + " pts");
+                poner("[data-club-porcentaje]", datos.porcentajeBonusNivel + "%");
+                poner("[data-club-base]", "+" + datos.puntosBase);
+                poner("[data-club-bono-nivel]", "+" + datos.puntosBonusNivel);
+                poner("[data-club-bono-campana]", "+" + datos.puntosBonusCampana
+                    + (datos.campanaNombre ? " · " + datos.campanaNombre : ""));
+                poner("[data-club-total]", datos.totalPuntosEstimados + " puntos");
+                poner("[data-club-nuevo-saldo]", datos.saldoNuevoEstimado + " puntos");
+                poner("[data-club-deuda]", datos.puntosAplicadosDeuda + " pts aplicados; quedan "
+                    + datos.deudaNuevaEstimada + " pts");
+                mensaje.textContent = "Estimación calculada con las reglas vigentes del Club.";
+                const insignia = form.querySelector("[data-club-insignia]");
+                const iconos = {VISITANTE: "bi-award-fill", AMIGO: "bi-award", FAMILIA: "bi-crown-fill"};
+                insignia.className = "caja-club-insignia nivel-" + datos.nivelCodigo.toLowerCase();
+                insignia.replaceChildren(Object.assign(document.createElement("i"), {
+                    className: "bi " + (iconos[datos.nivelCodigo] || "bi-award-fill")
+                }));
+                detalle.hidden = false;
+                aviso.hidden = false;
+                recompensa.hidden = false;
+            } catch (error) {
+                if (solicitud !== consulta) return;
+                mensaje.textContent = error.message || "No se pudo consultar el Club. El cobro normal sigue disponible.";
+            }
+        }
+
+        dni.addEventListener("input", function () {
+            if (dni.readOnly) return;
+            clearTimeout(espera);
+            espera = setTimeout(actualizarEstimacion, 350);
+        });
+
+        form.addEventListener("input", function (evento) {
+            if (evento.target.matches("[data-club-importe-elegible], [data-club-descuento]")) {
+                clearTimeout(espera);
+                espera = setTimeout(actualizarEstimacion, 180);
+            }
+        });
+
+        consultar.addEventListener("click", async function () {
+            if (!/^[0-9]{8}$/.test(dni.value.trim())) {
+                mostrarRespuestaRecompensa({disponible: false, mensaje: "Ingresa un DNI válido primero."});
+                return;
+            }
+            limpiarRecompensa();
+            consultar.disabled = true;
+            try {
+                const parametros = new URLSearchParams({codigo: codigo.value.trim(), dni: dni.value.trim()});
+                const respuesta = await fetch(form.dataset.clubConsultaUrl + "?" + parametros,
+                    {headers: {"Accept": "application/json"}});
+                const datos = await respuesta.json();
+                mostrarRespuestaRecompensa(datos);
+            } catch (error) {
+                mostrarRespuestaRecompensa({disponible: false}, error.message || "No se pudo consultar el código.");
+            } finally {
+                consultar.disabled = false;
+            }
+        });
+
+        confirmar.addEventListener("click", async function () {
+            if (!codigoConsultado || !/^[0-9]{8}$/.test(dni.value.trim())) return;
+            confirmar.disabled = true;
+            const csrf = form.querySelector("input[type='hidden']");
+            const parametros = new URLSearchParams({codigo: codigoConsultado, dni: dni.value.trim()});
+            if (csrf) parametros.append(csrf.name, csrf.value);
+            try {
+                const respuesta = await fetch(form.dataset.clubConfirmacionUrl, {
+                    method: "POST",
+                    headers: {"Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"},
+                    body: parametros.toString()
+                });
+                const datos = await respuesta.json();
+                mostrarRespuestaRecompensa(datos);
+                if (datos.disponible) {
+                    confirmar.hidden = true;
+                    dni.readOnly = true;
+                    codigo.readOnly = true;
+                }
+            } catch (error) {
+                mostrarRespuestaRecompensa({disponible: false}, error.message || "No se pudo confirmar la entrega.");
+            } finally {
+                confirmar.disabled = false;
+            }
+        });
+    });
+});
 </script>
 
 </body>

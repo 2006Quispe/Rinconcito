@@ -1,0 +1,220 @@
+:root{--club-terracota:#802f21;--club-dorado:#ddae46;--club-crema:#f8f1e5;--club-verde:#52623b;--club-madera:#422b20;--club-tinta:#302821;--club-muted:#786e64;--club-linea:#e8dccb;--club-fondo:#fbf8f3}
+html{scroll-behavior:smooth;scroll-padding-top:18px}.club-pagina{min-height:80vh;background:var(--club-fondo);color:var(--club-tinta);font-family:Nunito,Arial,sans-serif}.club-hero{position:relative;overflow:hidden;color:#fff;background:linear-gradient(90deg,rgba(40,26,21,.82),rgba(57,35,25,.64) 53%,rgba(57,35,25,.27)),url('/img/pachamanca-expericencias.jpg') center 49%/cover}.club-hero:after{position:absolute;inset:0;pointer-events:none;content:"";opacity:.12;background:repeating-linear-gradient(0deg,transparent 0 13px,rgba(221,174,70,.45) 13px 14px),repeating-linear-gradient(90deg,transparent 0 29px,rgba(255,255,255,.22) 29px 30px);mask-image:linear-gradient(90deg,#000,transparent 72%)}.club-hero-contenido{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:42px;min-height:390px;padding-top:48px;padding-bottom:48px}.club-hero-copy{max-width:700px}.club-etiqueta{display:inline-flex;align-items:center;gap:8px;color:#f1c75f;font-size:11px;font-weight:900;letter-spacing:2px}.club-hero h1{max-width:680px;margin:13px 0 14px;color:#fff;font:900 clamp(34px,4.8vw,57px)/1.13 Merriweather,Georgia,serif;text-wrap:balance}.club-hero h1 em{color:#e9c572;font-style:normal}.club-hero-copy>p{max-width:595px;margin:0;color:#f7eee1;font-size:15px;line-height:1.7}.club-hero-actions{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:22px}.club-cta,.club-cta-secundario{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-size:12px;font-weight:900}.club-cta{padding:13px 17px;border-radius:7px;color:#33291c;background:#e2b548;box-shadow:0 4px 13px #20140c4a}.club-cta:hover{color:#2d2319;background:#f0ca66}.club-cta-secundario{padding:10px 2px;color:#fff;border-bottom:1px solid #e5bd5f}.club-hero-sellos{display:flex;flex-wrap:wrap;gap:18px;margin-top:19px;color:#f8e9cc;font-size:10px;font-weight:800}.club-hero-sellos i{margin-right:5px;color:#e8b53a}.club-saldo-card{position:relative;flex:0 0 256px;padding:21px 23px 18px;color:var(--club-madera);background:linear-gradient(142deg,#fffaf0,#f3e7d0);border:1px solid #fff8e8;border-radius:13px;box-shadow:0 20px 55px #23150d61}.club-saldo-card:before,.club-saldo-card:after{position:absolute;right:0;left:0;height:4px;content:"";background:repeating-linear-gradient(90deg,var(--club-terracota) 0 10px,transparent 10px 17px,var(--club-dorado) 17px 27px,transparent 27px 34px)}.club-saldo-card:before{top:0}.club-saldo-card:after{bottom:0}.club-saldo-marca{display:flex;align-items:center;gap:8px;margin-bottom:17px}.club-saldo-marca img{width:28px;height:28px;object-fit:contain}.club-saldo-marca span{font:700 14px Merriweather,Georgia,serif}.club-saldo-card>small{display:block;color:#83745f;font-size:9px;font-weight:900;letter-spacing:1.2px}.club-saldo-card>strong{display:block;margin:3px 0 -5px;color:var(--club-terracota);font:900 56px/1 Merriweather,Georgia,serif}.club-saldo-unidad{color:#796e5f;font-size:12px}.club-saldo-regla{margin-top:17px;padding-top:12px;border-top:1px solid #e5d6bd;color:#6c5a43;font-size:11px;font-weight:800}.club-saldo-regla i{margin-right:6px;color:#b78420}
+.club-contenido{padding-top:31px;padding-bottom:55px}.club-alerta{display:flex;gap:10px;align-items:flex-start;margin-bottom:18px;padding:13px 15px;border-radius:9px;font-size:13px}.club-alerta-ok{color:#36563b;background:#e8f1e4;border:1px solid #ccddc5}.club-alerta-error{color:#842f23;background:#f8e9e3;border:1px solid #ebd1c7}.club-alerta i{margin-top:2px}.club-progreso{display:flex;align-items:center;gap:18px;margin-bottom:28px;padding:21px 24px;background:linear-gradient(105deg,#f0e6d3,#f9f3e7);border:1px solid #e5d4b8;border-radius:12px}.club-progreso-icono{display:grid;place-items:center;flex:0 0 52px;height:52px;color:#fff;background:var(--club-verde);border-radius:50%;font-size:23px}.club-progreso-cuerpo{flex:1;min-width:0}.club-progreso-eyebrow{color:#8a6321;font-size:9px;font-weight:900;letter-spacing:1.25px}.club-progreso h2{margin:3px 0 2px;color:var(--club-madera);font:700 19px Merriweather,Georgia,serif}.club-progreso p{margin:0 0 8px;color:#67594b;font-size:12px}.club-barra{height:7px;overflow:hidden;background:#e1d5c1;border-radius:9px}.club-barra span{display:block;height:100%;background:linear-gradient(90deg,var(--club-verde),#8b9b59);border-radius:9px;transition:width .35s ease}.club-progreso-cuerpo>small{display:block;margin-top:5px;color:#7c6e5d;font-size:10px}.club-progreso-canjear{display:inline-flex;align-items:center;gap:9px;padding:11px 14px;color:#fff;background:var(--club-terracota);border:0;border-radius:7px;font-size:11px;font-weight:900;white-space:nowrap}.club-progreso-canjear:hover{background:#65261c}
+.club-catalogo{scroll-margin-top:18px}.club-seccion-encabezado{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:19px}.club-seccion-encabezado>div:first-child>span{color:#9b7228;font-size:9px;font-weight:900;letter-spacing:1.55px}.club-seccion-encabezado h2{margin:5px 0 4px;color:var(--club-madera);font:900 clamp(22px,2.5vw,28px)/1.2 Merriweather,Georgia,serif}.club-seccion-encabezado p{max-width:670px;margin:0;color:var(--club-muted);font-size:12px;line-height:1.55}.club-puntos-mini{display:inline-flex;gap:6px;align-items:center;padding:9px 13px;color:#7c5b1b;background:#f3ead6;border-radius:30px;font-size:11px;white-space:nowrap}.club-puntos-mini i{color:#b18428}.club-categorias{display:flex;gap:7px;overflow-x:auto;margin-bottom:18px;padding:2px 0 9px;scrollbar-width:thin}.club-categorias a{flex:0 0 auto;padding:8px 13px;color:#68594b;background:#fff;border:1px solid #e6dccf;border-radius:30px;text-decoration:none;font-size:10px;font-weight:800;transition:background .16s,color .16s,border .16s}.club-categorias a:hover,.club-categorias a.activa{color:#fff;background:var(--club-verde);border-color:var(--club-verde)}
+.club-recompensas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}.club-recompensa{display:flex;overflow:hidden;flex-direction:column;min-width:0;background:#fff;border:1px solid #e8dfd4;border-radius:12px;box-shadow:0 7px 23px #422b2009;transition:transform .2s,box-shadow .2s}.club-recompensa:hover{transform:translateY(-3px);box-shadow:0 13px 28px #422b2018}.club-recompensa.agotada{filter:saturate(.65)}.club-recompensa-foto{position:relative;height:190px;overflow:hidden;background:#eee4d5}.club-recompensa-foto:after{position:absolute;inset:45% 0 0;content:"";background:linear-gradient(transparent,#27191147)}.club-recompensa-foto img{width:100%;height:100%;object-fit:cover;transition:transform .45s}.club-recompensa:hover .club-recompensa-foto img{transform:scale(1.035)}.club-categoria-chip,.club-disponibilidad{position:absolute;z-index:1;bottom:11px;left:12px;padding:5px 8px;color:#fff;background:#422b20d9;border-radius:4px;font-size:8px;font-weight:900;letter-spacing:.7px;text-transform:uppercase}.club-disponibilidad{right:11px;bottom:auto;left:auto;top:11px;color:#fff;background:#802f21e8}.club-recompensa-contenido{display:flex;flex:1;flex-direction:column;padding:15px 16px 14px}.club-recompensa-titulo{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.club-recompensa-titulo h3{margin:1px 0 7px;color:var(--club-madera);font:700 16px/1.35 Merriweather,Georgia,serif}.club-recompensa-titulo>b{color:var(--club-terracota);font-size:15px;white-space:nowrap}.club-recompensa-titulo small{font-size:9px}.club-recompensa-contenido>p{margin:0 0 9px;color:#776c62;font-size:11px;line-height:1.55}.club-recompensa-contenido>p.club-condiciones{padding-top:7px;border-top:1px solid #f1ebe3;color:#887658;font-size:10px}.club-recompensa-accion{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:auto;padding-top:9px}.club-recompensa-accion>small{max-width:48%;color:#92702c;font-size:9px;font-weight:800;line-height:1.35}.club-recompensa-accion form{margin-left:auto}.club-canjear{display:inline-flex;align-items:center;gap:7px;padding:9px 11px;color:#fff;background:var(--club-terracota);border:0;border-radius:6px;font-size:10px;font-weight:900;white-space:nowrap}.club-canjear:hover:not(:disabled){background:#65261c}.club-canjear:disabled{cursor:not-allowed;color:#7d746a;background:#eeeae3}.club-stock{margin-top:8px;color:#887b6d;font-size:9px}.club-vacio{display:flex;align-items:center;gap:13px;padding:20px;color:#75695d;background:#fffdf9;border:1px dashed #d8c8b4;border-radius:9px}.club-vacio>i{color:#9d762a;font-size:23px}.club-vacio strong,.club-vacio span{display:block}.club-vacio strong{color:var(--club-madera);font:700 14px Merriweather,Georgia,serif}.club-vacio span{margin-top:4px;font-size:11px}
+.club-seccion{margin-top:35px;padding-top:24px;border-top:1px solid #e7ddcf;scroll-margin-top:18px}.club-mis-recompensas .club-seccion-encabezado,.club-historial .club-seccion-encabezado{margin-bottom:15px}.club-cupones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.club-cupon{position:relative;display:flex;align-items:center;gap:12px;min-width:0;padding:13px 14px;background:#fff;border:1px solid #e7dccb;border-radius:9px}.club-cupon:before,.club-cupon:after{position:absolute;top:50%;width:13px;height:13px;content:"";background:var(--club-fondo);border:1px solid #e7dccb;border-radius:50%;transform:translateY(-50%)}.club-cupon:before{left:-7px;border-left:0}.club-cupon:after{right:-7px;border-right:0}.club-cupon-sello{display:grid;place-items:center;flex:0 0 40px;height:40px;color:#966d1e;background:#f7edda;border-radius:50%;font-size:17px}.club-cupon-datos{display:flex;flex:1;flex-direction:column;min-width:0}.club-cupon-categoria{color:#8d6b2a;font-size:8px;font-weight:900;letter-spacing:.8px}.club-cupon-datos strong{margin:2px 0;color:var(--club-madera);font:700 13px Merriweather,Georgia,serif}.club-cupon-datos code{color:var(--club-terracota);font:900 11px Nunito,Arial,sans-serif;letter-spacing:1.2px}.club-cupon-datos small{margin-top:4px;color:#82776d;font-size:9px;line-height:1.4}.club-estado{flex:0 0 auto;padding:5px 8px;color:#3d5a38;background:#e8f0e2;border-radius:20px;font-size:8px;font-weight:900;text-transform:uppercase}.club-estado.estado-reservado,.club-estado.estado-pendiente_entrega{color:#80601c;background:#f8efd8}.club-estado.estado-usado,.club-estado.estado-vencido,.club-estado.estado-cancelado{color:#726a62;background:#efebe6}
+.club-movimientos{display:grid}.club-movimiento{display:flex;align-items:center;gap:11px;padding:11px 3px;border-bottom:1px solid #eae2d8}.club-movimiento:last-of-type{border-bottom:0}.club-movimiento-icono{display:grid;place-items:center;flex:0 0 33px;height:33px;color:#856126;background:#f2e9d8;border-radius:50%;font-size:14px}.club-movimiento-descripcion{display:flex;flex:1;flex-direction:column;min-width:0}.club-movimiento-descripcion strong{color:#47392e;font-size:11px}.club-movimiento-descripcion small{margin-top:2px;color:#897d70;font-size:9px}.club-movimiento>b{font-size:12px;white-space:nowrap}.club-movimiento>b.suma{color:#48643e}.club-movimiento>b.resta{color:var(--club-terracota)}.club-paginacion{display:flex;justify-content:space-between;gap:10px;margin-top:12px}.club-paginacion a{color:var(--club-terracota);font-size:10px;font-weight:900;text-decoration:none}.club-nota{display:flex;gap:8px;margin:20px 0 0;color:#7e746a;font-size:10px;line-height:1.55}.club-nota i{color:#a47a2b}
+@media(max-width:991.98px){.club-hero-contenido{min-height:355px;gap:24px}.club-saldo-card{flex-basis:225px;padding:18px}.club-recompensas{grid-template-columns:repeat(2,minmax(0,1fr))}.club-recompensa-foto{height:180px}}
+@media(max-width:767.98px){.club-hero{background-position:58% center}.club-hero-contenido{align-items:flex-start;flex-direction:column;gap:22px;padding-top:32px;padding-bottom:28px}.club-hero-copy{max-width:100%}.club-hero h1{font-size:clamp(32px,9vw,44px)}.club-hero-copy>p{font-size:13px}.club-hero-sellos{gap:8px 14px}.club-saldo-card{width:100%;flex:0 0 auto}.club-saldo-card>strong{font-size:45px}.club-contenido{padding-top:23px;padding-bottom:38px}.club-progreso{align-items:flex-start;gap:11px;padding:15px}.club-progreso-icono{flex-basis:38px;height:38px;font-size:17px}.club-progreso h2{font-size:16px}.club-progreso form{align-self:center}.club-progreso-canjear{padding:9px;font-size:0}.club-progreso-canjear i{font-size:14px}.club-seccion-encabezado{align-items:flex-start}.club-seccion-encabezado h2{font-size:22px}.club-puntos-mini{padding:7px 9px;font-size:9px}.club-recompensas{grid-template-columns:1fr;gap:13px}.club-recompensa{display:grid;grid-template-columns:38% minmax(0,1fr);align-items:stretch}.club-recompensa-foto{height:auto;min-height:220px}.club-recompensa-contenido{padding:12px}.club-recompensa-titulo{gap:5px}.club-recompensa-titulo h3{font-size:13px}.club-recompensa-titulo>b{font-size:12px}.club-recompensa-contenido>p{font-size:10px}.club-recompensa-accion{align-items:flex-start;flex-direction:column}.club-recompensa-accion>small{max-width:100%}.club-recompensa-accion form{width:100%;margin-left:0}.club-canjear{justify-content:center;width:100%;padding:8px 6px;font-size:9px}.club-stock{font-size:8px}.club-cupones{grid-template-columns:1fr}.club-cupon{align-items:flex-start;flex-wrap:wrap}.club-estado{margin-left:auto}.club-cupon-datos{flex-basis:calc(100% - 58px)}.club-nota{font-size:9px}}
+@media(max-width:400px){.club-recompensa{grid-template-columns:1fr}.club-recompensa-foto{height:170px;min-height:0}.club-recompensa-contenido{padding:13px}.club-recompensa-accion{align-items:center;flex-direction:row}.club-recompensa-accion>small{max-width:48%}.club-recompensa-accion form{width:auto;margin-left:auto}.club-canjear{width:auto;padding:9px}.club-progreso{flex-wrap:wrap}.club-progreso-cuerpo{flex-basis:calc(100% - 52px)}.club-progreso form{margin-left:49px}}
+
+/* Saldo del Club con mayor presencia */
+.club-saldo-card {
+    flex-basis: 292px;
+    padding: 24px 26px 21px;
+    border: 2px solid #dfbd6c;
+    box-shadow: 0 24px 62px #23150d75, inset 0 1px 0 #fff;
+}
+.club-saldo-card>strong { font-size: 66px; }
+.club-saldo-marca img { width: 32px; height: 32px; }
+.club-saldo-marca span { font-size: 15px; }
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .club-saldo-card { flex-basis: 238px; padding: 20px 22px 18px; }
+    .club-saldo-card>strong { font-size: 58px; }
+}
+@media (max-width: 767.98px) {
+    .club-saldo-card { padding: 18px 20px 16px; }
+    .club-saldo-card>strong { font-size: 48px; }
+}
+
+.club-saldo-regla small {
+    display: block;
+    margin-top: 4px;
+    color: #936d28;
+    font-size: 10px;
+}
+.club-saldo-nivel {
+    margin-top: 13px;
+    padding-top: 12px;
+    border-top: 1px solid #e5d6bd;
+}
+.club-saldo-nivel-titulo { display: flex; flex-direction: column; gap: 3px; }
+.club-saldo-nivel-titulo span,
+.club-modal-canje-etiqueta {
+    color: #8d682a;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 1.1px;
+}
+.club-saldo-nivel-titulo strong {
+    color: var(--club-madera);
+    font: 700 14px Merriweather, Georgia, serif;
+}
+.club-saldo-nivel-barra {
+    height: 6px;
+    margin-top: 8px;
+    overflow: hidden;
+    background: #e5d9c5;
+    border-radius: 99px;
+}
+.club-saldo-nivel-barra span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--club-terracota), var(--club-dorado));
+    border-radius: inherit;
+    transition: width .3s ease;
+}
+.club-saldo-nivel-meta { display: flex; flex-direction: column; gap: 3px; margin-top: 6px; }
+.club-saldo-nivel-meta small { color: #786a58; font-size: 9px; line-height: 1.35; }
+.club-saldo-nivel-meta b { color: var(--club-madera); }
+.club-saldo-nivel>p { margin: 7px 0 0; color: #7c5a20; font-size: 10px; font-weight: 800; }
+
+.club-modal-canje {
+    width: min(94vw, 560px);
+    max-height: 90vh;
+    margin: auto;
+    padding: 0;
+    overflow: visible;
+    color: var(--club-tinta);
+    background: transparent;
+    border: 0;
+}
+.club-modal-canje::backdrop { background: #25180ed1; backdrop-filter: blur(3px); }
+.club-modal-canje-contenido {
+    position: relative;
+    max-height: 90vh;
+    padding: 24px;
+    overflow: auto;
+    background: #fffaf2;
+    border: 1px solid #e5d6bd;
+    border-radius: 17px;
+    box-shadow: 0 24px 70px #1b100d70;
+}
+.club-modal-canje-cerrar {
+    position: absolute;
+    z-index: 1;
+    top: 12px;
+    right: 12px;
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    color: #604a35;
+    background: #fffaf2e8;
+    border: 1px solid #e4d5bd;
+    border-radius: 50%;
+    font-size: 21px;
+    line-height: 1;
+}
+.club-modal-canje-imagen {
+    display: block;
+    width: 100%;
+    height: 190px;
+    margin-bottom: 18px;
+    object-fit: cover;
+    border-radius: 11px;
+}
+.club-modal-canje-imagen[hidden] { display: none; }
+.club-modal-canje-etiqueta { display: block; margin-bottom: 7px; }
+.club-modal-canje-contenido h2 {
+    max-width: 460px;
+    margin: 0;
+    color: var(--club-madera);
+    font: 900 clamp(20px, 4vw, 27px)/1.3 Merriweather, Georgia, serif;
+}
+.club-modal-canje-contenido h3 {
+    margin: 10px 0 4px;
+    color: var(--club-terracota);
+    font: 800 17px Nunito, Arial, sans-serif;
+}
+.club-modal-canje-contenido>p { margin: 0; color: #776958; font-size: 13px; line-height: 1.55; }
+.club-modal-canje-puntos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin: 17px 0 13px;
+}
+.club-modal-canje-puntos>div {
+    min-width: 0;
+    padding: 11px 10px;
+    background: #f5eddf;
+    border: 1px solid #e8dcc8;
+    border-radius: 9px;
+}
+.club-modal-canje-puntos>div:last-child { background: #f4e5c7; border-color: #e2c98f; }
+.club-modal-canje-puntos>div>small { display: block; color: #776958; font-size: 9px; font-weight: 800; }
+.club-modal-canje-puntos strong { display: block; margin-top: 4px; color: var(--club-madera); font: 800 16px Nunito, Arial, sans-serif; }
+.club-modal-canje-puntos strong small { display: block; margin-top: 1px; color: #83745f; font-size: 9px; font-weight: 700; }
+.club-modal-canje-puntos .club-modal-canje-costo { color: var(--club-terracota); }
+.club-modal-canje-condiciones { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
+.club-modal-canje-condiciones li { position: relative; padding-left: 21px; color: #5f5345; font-size: 11px; line-height: 1.45; }
+.club-modal-canje-condiciones li::before { position: absolute; left: 1px; color: #98702b; content: "✓"; font-weight: 900; }
+.club-modal-canje-contenido>p.club-modal-canje-nota { margin-top: 12px; color: #82745f; font-size: 10px; }
+.club-modal-canje-acciones { display: flex; justify-content: flex-end; gap: 9px; margin-top: 17px; }
+.club-modal-canje-acciones button { min-height: 40px; padding: 9px 15px; border-radius: 8px; font: 800 11px Nunito, Arial, sans-serif; }
+.club-modal-canje-volver { color: #5d4a35; background: #fff; border: 1px solid #d9cbb6; }
+.club-modal-canje-confirmar { color: #fff; background: var(--club-terracota); border: 1px solid var(--club-terracota); }
+.club-modal-canje-acciones button:focus-visible,
+.club-modal-canje-cerrar:focus-visible { outline: 3px solid #d8ad4f; outline-offset: 2px; }
+@media (max-width: 480px) {
+    .club-modal-canje-contenido { padding: 19px; }
+    .club-modal-canje-imagen { height: 150px; }
+    .club-modal-canje-puntos { gap: 5px; }
+    .club-modal-canje-puntos>div { padding: 9px 7px; }
+    .club-modal-canje-puntos strong { font-size: 14px; }
+    .club-modal-canje-acciones { flex-direction: column-reverse; }
+    .club-modal-canje-acciones button { width: 100%; }
+}
+
+.club-niveles {
+    margin: 0 0 28px;
+    padding: 20px;
+    background: #faf6ee;
+    border: 1px solid #eee2cf;
+    border-radius: 14px;
+}
+.club-niveles-encabezado { margin-bottom: 13px; text-align: center; }
+.club-niveles-encabezado>span { color: #a4772a; font-size: 9px; font-weight: 900; letter-spacing: 1.4px; }
+.club-niveles-encabezado h2 { margin: 4px 0; color: var(--club-madera); font: 800 clamp(19px,2.3vw,25px)/1.2 Merriweather, Georgia, serif; }
+.club-niveles-encabezado p { margin: 0; color: var(--club-muted); font-size: 12px; }
+.club-niveles-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 9px; }
+.club-nivel-card {
+    display: flex;
+    min-width: 0;
+    min-height: 250px;
+    flex-direction: column;
+    align-items: center;
+    padding: 13px 14px 12px;
+    text-align: center;
+    border: 1px solid;
+    border-radius: 13px;
+    transition: box-shadow .18s ease, transform .18s ease;
+}
+.club-nivel-card.actual { border-width: 2px; box-shadow: 0 5px 16px #422b2018; }
+.club-nivel-card.alcanzado { opacity: .86; }
+.club-nivel-visitante { color: #9b6542; background: #f1e5d7; border-color: #a66b43; }
+.club-nivel-amigo { color: #53643e; background: #e9edde; border-color: #53643e; }
+.club-nivel-familia { color: #b17b1c; background: #f8edcf; border-color: #b17b1c; }
+.club-nivel-icono { display: grid; width: 70px; height: 70px; flex: 0 0 70px; place-items: center; margin-bottom: 7px; color: #fff; border-radius: 50%; box-shadow: 0 5px 12px #422b2026; transition: transform .2s ease, box-shadow .2s ease; }
+.club-nivel-visitante .club-nivel-icono { background: #966442; }
+.club-nivel-amigo .club-nivel-icono { background: #52623B; }
+.club-nivel-familia .club-nivel-icono { background: #AD7C25; }
+.club-nivel-card:hover .club-nivel-icono { transform: translateY(-2px); box-shadow: 0 8px 16px #422b2033; }
+.club-nivel-icono svg { display: block; width: 36px; height: 36px; color: #fff; stroke: currentColor; }
+.club-nivel-estado { min-height: 14px; color: currentColor; font-size: 9px; font-weight: 900; letter-spacing: .25px; }
+.club-nivel-card h3 { margin: 2px 0 4px; color: currentColor; font: 800 14px Nunito, Arial, sans-serif; }
+.club-nivel-umbral { margin: 0; color: #6f665c; font-size: 11px; }
+.club-nivel-beneficio { display: grid; justify-items: center; gap: 2px; width: 100%; margin-top: 10px; padding-top: 8px; border-top: 1px solid currentColor; border-color: color-mix(in srgb, currentColor 27%, transparent); }
+.club-nivel-beneficio strong { color: currentColor; font: 800 23px Nunito, Arial, sans-serif; line-height: 1.1; }
+.club-nivel-beneficio span { color: #413b34; font-size: 10px; line-height: 1.35; }
+.club-nivel-detalle { margin: 3px 0 0; color: #413b34; font-size: 10px; line-height: 1.35; }
+.club-nivel-faltan { margin-top: auto; padding-top: 8px; color: #655b4f; font-size: 9px; line-height: 1.35; }
+.club-nivel-faltan b { color: var(--club-madera); }
+.club-niveles-nota { display: flex; align-items: flex-start; gap: 8px; margin: 10px 0 0; padding: 9px 11px; color: #746653; background: #f1e9d9; border-radius: 8px; font-size: 10px; line-height: 1.4; }
+.club-niveles-nota i { flex: 0 0 auto; color: #a4772a; }
+@media (max-width: 767.98px) {
+    .club-niveles { margin-bottom: 23px; padding: 15px; }
+    .club-niveles-grid { grid-template-columns: 1fr; gap: 8px; }
+    .club-nivel-card { min-height: 0; padding: 12px; }
+}

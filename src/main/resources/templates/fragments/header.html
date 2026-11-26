@@ -82,6 +82,16 @@
                     <li class="nav-item ms-lg-2"
                         sec:authorize="hasRole('CLIENTE')">
 
+                        <a class="nav-link"
+                           th:href="@{/club}">
+                            <i class="bi bi-stars"></i>
+                            Club
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-lg-2"
+                        sec:authorize="hasRole('CLIENTE')">
+
                         <a class="btn btn-cuenta"
                            th:href="@{/mi-cuenta}">
 

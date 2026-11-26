@@ -460,12 +460,16 @@ public class PedidoController {
 
         model.addAttribute(
                 "costoDelivery",
-                PedidoService.COSTO_DELIVERY
+                pedidoService.getCostoDelivery()
         );
 
         model.addAttribute(
                 "mensajeTraslado",
-                PedidoService.MENSAJE_TRASLADO
+                pedidoService.getCostoDelivery() > 0
+                        ? PedidoService.MENSAJE_TRASLADO
+                                + " Se agrega una tarifa fija de S/ "
+                                + pedidoService.getCostoDelivery() + "."
+                        : PedidoService.MENSAJE_TRASLADO
         );
 
         model.addAttribute(
@@ -537,6 +541,13 @@ public class PedidoController {
                         == TipoPedido.RECOJO_LOCAL
         ) {
             return PedidoService.MENSAJE_RECOJO;
+        }
+
+        if (pedido.getCostoDelivery() != null
+                && pedido.getCostoDelivery() > 0) {
+            return PedidoService.MENSAJE_TRASLADO
+                    + " Tarifa fija cobrada: S/ "
+                    + pedido.getCostoDelivery() + ".";
         }
 
         return PedidoService.MENSAJE_TRASLADO;

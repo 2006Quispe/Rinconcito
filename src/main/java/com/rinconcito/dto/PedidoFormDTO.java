@@ -6,6 +6,7 @@ import java.util.List;
 public class PedidoFormDTO {
 
     private String tipoEntrega = "DELIVERY";
+    private String codigoCupon;
 
     private String correo;
     private String dni;
@@ -31,6 +32,14 @@ public class PedidoFormDTO {
 
     public void setTipoEntrega(String tipoEntrega) {
         this.tipoEntrega = tipoEntrega;
+    }
+
+    public String getCodigoCupon() {
+        return codigoCupon;
+    }
+
+    public void setCodigoCupon(String codigoCupon) {
+        this.codigoCupon = codigoCupon;
     }
 
     public String getCorreo() { return correo; }

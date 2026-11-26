@@ -47,6 +47,14 @@
             <span>Cobros presenciales</span>
         </a>
 
+        <a th:href="@{/caja/club}"
+           class="sidebar-enlace"
+           th:classappend="${activo == 'club'} ? ' activo' : ''">
+
+            <i class="bi bi-stars"></i>
+            <span>Validar Club</span>
+        </a>
+
         <a th:href="@{/caja/reservas-pendientes}"
            class="sidebar-enlace"
            th:classappend="${activo == 'reservas'} ? ' activo' : ''">
