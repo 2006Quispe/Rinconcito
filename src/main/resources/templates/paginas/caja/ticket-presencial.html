@@ -35,11 +35,10 @@
         <p>Av. Los Frutales 576, Urb. Los Artesanos</p>
         <p>Ate, Lima · +51 999 931 775</p>
         <h2>Boleta de venta electrónica</h2>
-        <p>Demo académica · Sin validez tributaria</p>
+        <p>Código <strong th:text="${codigo}"></strong></p>
         <p th:if="${nota.estado.name() == 'ANULADA'}"><strong>ANULADO</strong></p>
     </header>
     <section class="datos">
-        <p>Código <strong th:text="${codigo}"></strong></p>
         <p>Fecha <span th:text="${#temporals.format(nota.fechaEmision, 'dd/MM/yyyy')}"></span>
             · Hora <span th:text="${#temporals.format(nota.fechaEmision, 'HH:mm')}"></span></p>
         <p>N.° de caja 01 · Caja de demostración</p>
