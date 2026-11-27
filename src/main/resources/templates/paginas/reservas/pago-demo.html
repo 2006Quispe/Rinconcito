@@ -21,16 +21,83 @@
     </section>
     <div class="container reserva-contenido">
         <p th:if="${error}" class="alert alert-warning" role="alert" th:text="${error}"></p>
-        <section th:if="${reserva != null}" class="reserva-panel" aria-labelledby="confirmacion">
-            <h2 id="confirmacion">Reserva confirmada</h2>
-            <p>Tu código de reserva es <strong th:text="${reserva.codigoReserva}"></strong>.</p>
-            <p th:text="|${evento} · ${#temporals.format(reserva.fechaReserva, 'dd/MM/yyyy')} · ${#temporals.format(reserva.horaInicio, 'HH:mm')}|"></p>
-            <p th:text="|Pago simulado con ${metodo} · S/ ${importe}|"></p>
-            <div th:replace="~{fragments/aviso-correo :: aviso('reserva', false)}"></div>
-            <a class="carta-boton" th:href="@{/reservas/consultar(codigo=${reserva.codigoReserva})}">Consultar reserva</a>
-        </section>
-        <div th:if="${intento != null and reserva == null}">
-            <div th:replace="~{fragments/pago-demo :: formulario(@{/reservas/pago-demo}, 'intento', ${intento}, ${evento}, |${personas} entradas × S/ ${precioEntrada}|, ${importe}, ${metodo})}"></div>
+        <p th:if="${exito}" class="alert alert-success" role="status" th:text="${exito}"></p>
+        <!-- TARJETA CONFIRMADA -->
+<section th:if="${reserva != null
+                 and reserva.estado.name() == 'CONFIRMADA'}"
+         class="reserva-panel"
+         aria-labelledby="confirmacion">
+
+    <h2 id="confirmacion">Reserva confirmada</h2>
+
+    <p>
+        Tu código de reserva es
+        <strong th:text="${reserva.codigoReserva}"></strong>.
+    </p>
+
+    <p th:text="|${evento} · ${#temporals.format(reserva.fechaReserva, 'dd/MM/yyyy')} · ${#temporals.format(reserva.horaInicio, 'HH:mm')}|"></p>
+
+    <p th:text="|Pago simulado con ${metodo} · S/ ${importe}|"></p>
+
+    <div th:replace="~{fragments/aviso-correo :: aviso('reserva', false)}"></div>
+
+    <a class="carta-boton"
+       th:href="@{/reservas/consultar(codigo=${reserva.codigoReserva})}">
+        Consultar reserva
+    </a>
+</section>
+
+
+<!-- YAPE / PLIN PENDIENTE DE VALIDACIÓN -->
+<section th:if="${reserva != null
+                 and reserva.estado.name() == 'PENDIENTE_VALIDACION'}"
+         class="reserva-panel">
+
+    <h2>Pago pendiente de validación</h2>
+
+    <p>
+        Hemos recibido tu comprobante correctamente.
+        El personal de caja revisará tu pago.
+    </p>
+
+    <p>
+        Código de reserva:
+        <strong th:text="${reserva.codigoReserva}"></strong>
+    </p>
+
+    <p>
+        Estado:
+        <strong>PENDIENTE_VALIDACION</strong>
+    </p>
+
+    <a class="carta-boton"
+       th:href="@{/reservas/consultar(codigo=${reserva.codigoReserva})}">
+        Consultar estado de reserva
+    </a>
+</section>
+
+
+<!-- RESERVA PENDIENTE DE PAGO O VOUCHER RECHAZADO -->
+<section th:if="${reserva != null
+                 and reserva.estado.name() == 'PENDIENTE_PAGO'}"
+         class="reserva-panel">
+
+    <h2>Pago pendiente</h2>
+
+    <p>
+        Tu reserva está registrada, pero todavía debes
+        enviar un comprobante válido.
+    </p>
+
+    <p>
+        Código:
+        <strong th:text="${reserva.codigoReserva}"></strong>
+    </p>
+</section>
+        <div th:if="${intento != null
+             and (reserva == null
+                  or reserva.estado.name() == 'PENDIENTE_PAGO')}">
+            <div th:replace="~{fragments/pago-demo :: formulario(@{/reservas/pago-demo}, 'intento', ${intento}, ${evento}, |${personas} entradas × S/ ${precioEntrada}|, ${importe}, ${metodo}, true)}"></div>
         </div>
         <a th:if="${reserva == null}" class="btn reserva-metodo mt-3" th:href="@{/reservas}">Volver a reservas</a>
     </div>

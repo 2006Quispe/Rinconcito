@@ -1,23 +1,26 @@
 package com.rinconcito.controller;
 
-import com.rinconcito.dto.MeseroPisoDTO;
-import com.rinconcito.entity.Reserva;
-import com.rinconcito.entity.Reserva.EstadoReserva;
-import com.rinconcito.repository.ReservaRepository;
-import com.rinconcito.service.MeseroMesaService;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Locale;
+
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Locale;
+import com.rinconcito.dto.MeseroPisoDTO;
+import com.rinconcito.entity.Reserva;
+import com.rinconcito.entity.Reserva.EstadoReserva;
+import com.rinconcito.repository.ReservaRepository;
+import com.rinconcito.service.MeseroMesaService;
 
 @Controller
 @RequestMapping("/mesero")
@@ -84,81 +87,111 @@ public class MeseroMesaController {
      * Muestra las reservas que deben atenderse
      * durante el día actual.
      */
-    @GetMapping("/reservas")
-    public String mostrarReservasDelDia(
-            Model model
-    ) {
-        LocalDate hoy =
-                obtenerFechaActual();
+    
+@GetMapping("/reservas")
+public String mostrarReservasDelDia(
+        @RequestParam(value = "fecha", required = false)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+        LocalDate fecha,
 
-        List<Reserva> reservas =
-                reservaRepository
-                        .listarReservasOperativasDelDia(
-                                hoy,
-                                ESTADOS_RESERVA_OPERATIVOS
-                        );
+        @RequestParam(value = "codigo", required = false)
+        String codigo,
 
-        long totalConfirmadas =
-                reservas.stream()
-                        .filter(reserva ->
-                                reserva.getEstado()
-                                        == EstadoReserva.CONFIRMADA
-                        )
-                        .count();
+        Model model
+) {
+    LocalDate hoy = obtenerFechaActual();
 
-        long totalLlegaron =
-                reservas.stream()
-                        .filter(reserva ->
-                                reserva.getEstado()
-                                        == EstadoReserva.CLIENTE_LLEGO
-                        )
-                        .count();
+    LocalDate fechaSeleccionada =
+            fecha != null ? fecha : hoy;
 
-        long totalEnAtencion =
-                reservas.stream()
-                        .filter(reserva ->
-                                reserva.getEstado()
-                                        == EstadoReserva.EN_ATENCION
-                        )
-                        .count();
+    String codigoBusqueda =
+            codigo != null ? codigo.trim() : "";
 
-        model.addAttribute(
-                "titulo",
-                "Reservas del día"
-        );
+    List<Reserva> reservas;
 
-        model.addAttribute(
-                "fechaActual",
-                hoy
-        );
+    // Buscar directamente por código.
+    if (!codigoBusqueda.isBlank()) {
 
-        model.addAttribute(
-                "reservas",
-                reservas
-        );
+        reservas = reservaRepository
+                .buscarPorCodigoParaMesero(
+                        codigoBusqueda,
+                        ESTADOS_RESERVA_OPERATIVOS
+                )
+                .map(List::of)
+                .orElseGet(List::of);
 
-        model.addAttribute(
-                "totalReservas",
-                reservas.size()
-        );
+        // Si encuentra la reserva, mostrar su fecha real.
+        if (!reservas.isEmpty()) {
+            fechaSeleccionada =
+                    reservas.get(0).getFechaReserva();
+        }
 
-        model.addAttribute(
-                "totalConfirmadas",
-                totalConfirmadas
-        );
+    } else {
 
-        model.addAttribute(
-                "totalLlegaron",
-                totalLlegaron
-        );
-
-        model.addAttribute(
-                "totalEnAtencion",
-                totalEnAtencion
-        );
-
-        return "paginas/mesero/reservas";
+        // Buscar todas las reservas de la fecha elegida.
+        reservas = reservaRepository
+                .listarReservasOperativasDelDia(
+                        fechaSeleccionada,
+                        ESTADOS_RESERVA_OPERATIVOS
+                );
     }
+
+    long totalConfirmadas = reservas.stream()
+            .filter(reserva ->
+                    reserva.getEstado()
+                            == EstadoReserva.CONFIRMADA
+            )
+            .count();
+
+    long totalLlegaron = reservas.stream()
+            .filter(reserva ->
+                    reserva.getEstado()
+                            == EstadoReserva.CLIENTE_LLEGO
+            )
+            .count();
+
+    long totalEnAtencion = reservas.stream()
+            .filter(reserva ->
+                    reserva.getEstado()
+                            == EstadoReserva.EN_ATENCION
+            )
+            .count();
+
+    model.addAttribute("titulo", "Reservas");
+
+    model.addAttribute("fechaActual", hoy);
+
+    model.addAttribute(
+            "fechaSeleccionada",
+            fechaSeleccionada
+    );
+
+    model.addAttribute("codigoBusqueda", codigoBusqueda);
+
+    model.addAttribute(
+            "esHoy",
+            hoy.equals(fechaSeleccionada)
+    );
+
+    model.addAttribute("reservas", reservas);
+
+    model.addAttribute("totalReservas", reservas.size());
+
+    model.addAttribute(
+            "totalConfirmadas",
+            totalConfirmadas
+    );
+
+    model.addAttribute("totalLlegaron", totalLlegaron);
+
+    model.addAttribute(
+            "totalEnAtencion",
+            totalEnAtencion
+    );
+
+    return "paginas/mesero/reservas";
+}
+
 
     /*
      * Ocupa manualmente una mesa para clientes

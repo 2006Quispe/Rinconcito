@@ -1,34 +1,40 @@
 package com.rinconcito.controller;
 
-import com.rinconcito.dto.ReservaFormDTO;
-import com.rinconcito.service.ReservaService.MetodoDemo;
-import jakarta.servlet.http.HttpSession;
-import java.time.Instant;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.rinconcito.dto.ReservaFormDTO;
+import com.rinconcito.entity.Pago;
+import com.rinconcito.entity.Pago.MetodoPago;
 import com.rinconcito.entity.Piso.EstadoPiso;
 import com.rinconcito.entity.Reserva;
 import com.rinconcito.entity.Usuario;
 import com.rinconcito.repository.PisoRepository;
 import com.rinconcito.repository.UsuarioRepository;
+import com.rinconcito.service.PagoReservaService;
 import com.rinconcito.service.ReservaService;
+import com.rinconcito.service.ReservaService.MetodoDemo;
 import com.rinconcito.service.correo.ColaCorreoService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.time.LocalDate;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class ReservaController {
@@ -58,6 +64,9 @@ public class ReservaController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PagoReservaService pagoReservaService;
 
     @GetMapping("/reservas")
     public String mostrarFormulario(Model model, Authentication authentication) {
@@ -131,43 +140,176 @@ public class ReservaController {
             model.addAttribute("personas", borrador.formulario.getNumeroPersonas());
             model.addAttribute("importe", borrador.importe());
             model.addAttribute("metodo", borrador.metodo);
-            if (borrador.reserva != null) {
+                        if (borrador.reserva != null) {
+
+                // Recuperar el estado actual desde la base de datos.
+                borrador.reserva = pagoReservaService.buscarPorCodigo(
+                        borrador.reserva.getCodigoReserva()
+                ).orElse(borrador.reserva);
+
                 model.addAttribute("reserva", borrador.reserva);
+
                 model.addAttribute("estadoCorreo",
-                        colaCorreoService.estadoConfirmacion("RESERVA", borrador.reserva.getIdReserva()));
+                        colaCorreoService.estadoConfirmacion(
+                                "RESERVA",
+                                borrador.reserva.getIdReserva()
+                        ));
             }
         }
         return "paginas/reservas/pago-demo";
     }
 
-    @PostMapping("/reservas/pago-demo")
-    public String procesarPagoDemo(@RequestParam String intento, @RequestParam MetodoDemo metodo,
-                                    @RequestParam boolean aprobado, HttpSession sesion,
-                                    Authentication authentication, RedirectAttributes redirect) {
-        BorradorPago borrador = obtenerBorrador(intento, sesion, authentication);
-        if (borrador == null) {
-            redirect.addFlashAttribute("error", "La sesión de pago venció. Vuelve a completar tu reserva.");
-            return "redirect:/reservas";
-        }
-        synchronized (borrador) {
-            if (borrador.reserva == null) {
+    
+@PostMapping("/reservas/pago-demo")
+public String procesarPagoDemo(
+        @RequestParam String intento,
+        @RequestParam MetodoDemo metodo,
+        @RequestParam boolean aprobado,
+        @RequestParam(value = "captura", required = false)
+        MultipartFile captura,
+        HttpSession sesion,
+        Authentication authentication,
+        RedirectAttributes redirect
+) {
+    BorradorPago borrador = obtenerBorrador(
+            intento, sesion, authentication
+    );
+
+    if (borrador == null) {
+        redirect.addFlashAttribute(
+                "error",
+                "La sesión de pago venció. Vuelve a completar tu reserva."
+        );
+        return "redirect:/reservas";
+    }
+
+    synchronized (borrador) {
+        try {
+            /*
+             * TARJETA:
+             * Se conserva el comportamiento de la simulación.
+             */
+            if (metodo == MetodoDemo.TARJETA) {
+
+                if (borrador.reserva != null) {
+                    throw new IllegalStateException(
+                            "Esta reserva ya tiene un pago registrado."
+                    );
+                }
+
                 borrador.metodo = metodo;
-                if (aprobado) {
-                    try {
-                        borrador.reserva = reservaService.confirmarPagoDemo(
-                                borrador.formulario, obtenerClienteLogueado(authentication),
-                                borrador.importe(), metodo);
-                    } catch (IllegalStateException e) {
-                        redirect.addFlashAttribute("error", e.getMessage());
-                    }
+
+                if (!aprobado) {
+                    redirect.addFlashAttribute(
+                            "error",
+                            "Pago de prueba rechazado. Puedes volver a intentarlo."
+                    );
                 } else {
-                    redirect.addFlashAttribute("error", "Pago de prueba rechazado. Puedes volver a intentarlo.");
+                    borrador.reserva =
+                            reservaService.confirmarPagoDemo(
+                                    borrador.formulario,
+                                    obtenerClienteLogueado(authentication),
+                                    borrador.importe(),
+                                    MetodoDemo.TARJETA
+                            );
+
+                    redirect.addFlashAttribute(
+                            "exito",
+                            "Tu pago con tarjeta fue aprobado."
+                    );
                 }
             }
+
+            /*
+             * YAPE / PLIN:
+             * Requieren una imagen de voucher.
+             */
+            else {
+
+                if (captura == null || captura.isEmpty()) {
+                    throw new IllegalStateException(
+                            "Debes adjuntar la imagen de tu voucher."
+                    );
+                }
+
+                /*
+                 * Si ya existe una reserva, no se crea otra.
+                 * El método de pago queda asociado al intento.
+                 */
+                if (borrador.reserva != null
+                        && borrador.metodo != metodo) {
+                    throw new IllegalStateException(
+                            "Debes continuar con el método de pago "
+                            + "seleccionado para esta reserva."
+                    );
+                }
+
+                /*
+                 * Crear la reserva una sola vez.
+                 * Sin método de pago demo, ReservaService
+                 * la deja en PENDIENTE_PAGO.
+                 */
+                if (borrador.reserva == null) {
+                    borrador.reserva = reservaService.crearReserva(
+                            borrador.formulario,
+                            obtenerClienteLogueado(authentication)
+                    );
+                }
+
+                /*
+                 * Solo se registra evidencia cuando la reserva
+                 * está pendiente de pago.
+                 */
+                if (borrador.reserva.getEstado()
+                        == Reserva.EstadoReserva.PENDIENTE_PAGO) {
+
+                    borrador.metodo = metodo;
+
+                    Pago pago = pagoReservaService.registrarEvidencia(
+                            borrador.reserva.getCodigoReserva(),
+                            MetodoPago.valueOf(metodo.name()),
+                            null,
+                            captura
+                    );
+
+                    // Actualizar la referencia con la reserva
+                    // que devuelve el servicio de pagos.
+                    borrador.reserva = pago.getReserva();
+                    
+
+                    redirect.addFlashAttribute(
+                            "exito",
+                            "Voucher enviado correctamente. "
+                            + "Tu pago está pendiente de validación."
+                    );
+                }
+
+                else if (borrador.reserva.getEstado()
+                        == Reserva.EstadoReserva.PENDIENTE_VALIDACION) {
+
+                    redirect.addFlashAttribute(
+                            "exito",
+                            "Tu voucher ya fue enviado y está pendiente de revisión."
+                    );
+                }
+
+                else {
+                    throw new IllegalStateException(
+                            "La reserva ya no está disponible para recibir pagos."
+                    );
+                }
+            }
+
+        } catch (IllegalStateException e) {
+            redirect.addFlashAttribute("error", e.getMessage());
         }
-        redirect.addAttribute("intento", intento);
-        return "redirect:/reservas/pago-demo";
     }
+
+    redirect.addAttribute("intento", intento);
+
+    return "redirect:/reservas/pago-demo";
+}
+
 
     private BorradorPago obtenerBorrador(String intento, HttpSession sesion, Authentication authentication) {
         if (!pagoDemoHabilitado || !(sesion.getAttribute(PAGO_DEMO) instanceof BorradorPago borrador)

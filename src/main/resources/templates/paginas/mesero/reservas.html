@@ -49,9 +49,11 @@
 
                 <h1>Reservas del día</h1>
 
+                <h1>Reservas</h1>
+
                 <p>
-                    Registra la llegada de los clientes
-                    y controla su atención en mesa.
+                 Consulta las reservas, identifica la mesa asignada
+                y controla la atención de los clientes.
                 </p>
             </div>
 
@@ -83,24 +85,105 @@
                  th:text="${error}">
             </div>
 
-            <section class="reservas-fecha">
+            
+<section class="reservas-filtros">
 
-                <div class="reservas-fecha-icono">
-                    <i class="bi bi-calendar-check"></i>
-                </div>
+    <form th:action="@{/mesero/reservas}"
+          method="get"
+          class="reservas-filtros-form">
 
-                <div>
-                    <span>Fecha de atención</span>
+        <div class="filtro-campo">
 
-                    <strong th:text="${#temporals.format(
-                            fechaActual,
-                            'dd/MM/yyyy'
-                    )}">
-                        10/10/2026
-                    </strong>
-                </div>
+            <label for="fecha">
+                <i class="bi bi-calendar3"></i>
+                Fecha de reserva
+            </label>
 
-            </section>
+            <input type="date"
+                   id="fecha"
+                   name="fecha"
+                   th:value="${fechaSeleccionada}"
+                   class="form-control">
+
+        </div>
+
+        <div class="filtro-campo">
+
+            <label for="codigo">
+                <i class="bi bi-ticket-perforated"></i>
+                Código de reserva
+            </label>
+
+            <input type="text"
+                   id="codigo"
+                   name="codigo"
+                   th:value="${codigoBusqueda}"
+                   placeholder="Ej. RES-2026-000001"
+                   maxlength="20"
+                   autocomplete="off"
+                   class="form-control">
+
+        </div>
+
+        <div class="filtro-acciones">
+
+            <button type="submit"
+                    class="btn-buscar-reserva">
+
+                <i class="bi bi-search"></i>
+                Buscar reserva
+
+            </button>
+
+            <a th:href="@{/mesero/reservas}"
+               class="btn-limpiar-reserva">
+
+                <i class="bi bi-arrow-counterclockwise"></i>
+                Volver a hoy
+
+            </a>
+
+        </div>
+
+    </form>
+
+    <p class="filtro-ayuda">
+        Si ingresas un código, se buscará la reserva
+        independientemente de la fecha seleccionada.
+    </p>
+
+</section>
+
+<section class="reservas-fecha">
+
+    <div class="reservas-fecha-icono">
+        <i class="bi bi-calendar-check"></i>
+    </div>
+
+    <div>
+
+        <span>Fecha consultada</span>
+
+        <strong th:text="${#temporals.format(
+                fechaSeleccionada, 'dd/MM/yyyy'
+        )}">
+        </strong>
+
+    </div>
+
+</section>
+
+<div th:if="${!esHoy}"
+     class="alert alert-info">
+
+    <i class="bi bi-info-circle"></i>
+
+    Estás consultando reservas de otra fecha.
+    Las acciones de atención solo están disponibles
+    el día de la reserva.
+
+</div>
+
 
             <section class="reservas-resumen">
 
@@ -235,6 +318,18 @@
                         </span>
 
                     </header>
+
+                    <div class="reserva-fecha-detalle">
+
+    <i class="bi bi-calendar-event"></i>
+
+    <span th:text="${#temporals.format(
+            reserva.fechaReserva,
+            'dd/MM/yyyy'
+    )}">
+    </span>
+
+</div>
 
                     <div class="reserva-codigo">
 
@@ -392,7 +487,8 @@
 
                     </div>
 
-                    <footer class="reserva-acciones">
+                    <footer class="reserva-acciones"
+                        th:if="${esHoy}">
 
                         <form th:if="${reserva.estado.name()
                                 == 'CONFIRMADA'}"
@@ -489,12 +585,28 @@
                     <i class="bi bi-calendar2-check"></i>
                 </div>
 
-                <h2>No hay reservas para atender</h2>
+                <h2 th:text="${codigoBusqueda != null
+        and !codigoBusqueda.isBlank()
+        ? 'Reserva no encontrada'
+        : 'No hay reservas para esta fecha'}">
+</h2>
 
-                <p>
-                    No existen reservas confirmadas o en atención
-                    para la fecha actual.
-                </p>
+<p th:if="${codigoBusqueda != null
+        and !codigoBusqueda.isBlank()}">
+
+    No se encontró una reserva operativa
+    con el código ingresado.
+    Verifica el código o el estado de la reserva.
+
+</p>
+
+<p th:if="${codigoBusqueda == null
+        or codigoBusqueda.isBlank()}">
+
+    No existen reservas confirmadas o en atención
+    para la fecha seleccionada.
+
+</p>
 
                 <a th:href="@{/mesero/mesas}"
                    class="btn-ir-mesas">

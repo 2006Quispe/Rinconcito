@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <body>
-<form th:fragment="formulario(destino, clave, valor, concepto, resumen, importe, metodo)"
-      method="post" th:action="${destino}" class="reserva-distribucion pago-demo">
+<form th:fragment="formulario(destino, clave, valor, concepto, resumen, importe, metodo, requiereVoucher)"
+      method="post"
+      th:action="${destino}"
+      th:attr="enctype=${requiereVoucher} ? 'multipart/form-data' : null"
+      th:data-requiere-voucher="${requiereVoucher}"
+      class="reserva-distribucion pago-demo">
     <input type="hidden" th:name="${clave}" th:value="${valor}">
     <div class="reserva-panel">
         <fieldset class="pago-demo-selector">
@@ -41,21 +45,78 @@
                 </div>
             </div>
         </fieldset>
-        <section data-pago-panel="YAPE" class="pago-demo-billetera" hidden>
-            <div class="pago-demo-qr pago-demo-qr-yape" aria-hidden="true"><strong>DEMO</strong></div>
-            <p>Código de prueba Yape · Decorativo</p>
-        </section>
-        <section data-pago-panel="PLIN" class="pago-demo-billetera" hidden>
-            <div class="pago-demo-qr pago-demo-qr-plin" aria-hidden="true"><strong>DEMO</strong></div>
-            <p>Código de prueba Plin · Decorativo</p>
-        </section>
+    <section data-pago-panel="YAPE"
+         class="pago-demo-billetera"
+         hidden>
+
+    <div class="pago-demo-qr pago-demo-qr-yape"
+         aria-hidden="true">
+        <strong>DEMO</strong>
+    </div>
+
+    <p>Código de prueba Yape · Decorativo</p>
+
+    <div th:if="${requiereVoucher}" class="mt-3">
+
+        <label for="voucher-yape" class="form-label">
+            Comprobante de pago Yape
+        </label>
+
+        <input id="voucher-yape"
+               type="file"
+               name="captura"
+               class="form-control"
+               accept="image/jpeg,image/png,image/webp"
+               required>
+
+        <small class="form-text">
+            Adjunta una imagen JPG, PNG o WEBP de tu voucher.
+        </small>
+
+    </div>
+    </section>
+        <section data-pago-panel="PLIN"
+         class="pago-demo-billetera"
+         hidden>
+
+    <div class="pago-demo-qr pago-demo-qr-plin"
+         aria-hidden="true">
+        <strong>DEMO</strong>
+    </div>
+
+    <p>Código de prueba Plin · Decorativo</p>
+
+    <div th:if="${requiereVoucher}" class="mt-3">
+
+        <label for="voucher-plin" class="form-label">
+            Comprobante de pago Plin
+        </label>
+
+        <input id="voucher-plin"
+               type="file"
+               name="captura"
+               class="form-control"
+               accept="image/jpeg,image/png,image/webp"
+               required>
+
+        <small class="form-text">
+            Adjunta una imagen JPG, PNG o WEBP de tu voucher.
+        </small>
+
+    </div>
+</section>
     </div>
     <aside class="reserva-panel reserva-resumen">
         <h2 th:text="${concepto}"></h2>
         <p th:text="${resumen}"></p>
         <p class="reserva-total" th:text="|Total · S/ ${#numbers.formatDecimal(importe, 1, 'POINT', 2, 'POINT')}|"></p>
-        <button type="submit" name="aprobado" value="true" class="carta-boton carta-boton-ancho"
-                th:text="|Pagar S/ ${#numbers.formatDecimal(importe, 1, 'POINT', 2, 'POINT')}|">Pagar</button>
+                <button type="submit"
+                name="aprobado"
+                value="true"
+                data-pago-submit
+                class="carta-boton carta-boton-ancho">
+            Continuar
+        </button>
     </aside>
 </form>
 </body>

@@ -1,18 +1,19 @@
 package com.rinconcito.repository;
 
-import com.rinconcito.entity.Mesa;
-import com.rinconcito.entity.Piso;
-import com.rinconcito.entity.Reserva;
-import com.rinconcito.entity.Reserva.EstadoReserva;
-import com.rinconcito.entity.Usuario;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import com.rinconcito.entity.Mesa;
+import com.rinconcito.entity.Piso;
+import com.rinconcito.entity.Reserva;
+import com.rinconcito.entity.Reserva.EstadoReserva;
+import com.rinconcito.entity.Usuario;
 
 public interface ReservaRepository
         extends JpaRepository<Reserva, Integer> {
@@ -115,5 +116,23 @@ public interface ReservaRepository
     Optional<Reserva> buscarPorIdParaMesero(
             @Param("idReserva")
             Integer idReserva
+    );
+    @EntityGraph(attributePaths = {
+        "cliente",
+        "mesa",
+        "mesa.piso",
+        "pisoSolicitado",
+        "evento"
+        })
+        @Query("""
+        SELECT r
+        FROM Reserva r
+        WHERE UPPER(r.codigoReserva) = UPPER(:codigo)
+          AND r.mesa IS NOT NULL
+          AND r.estado IN :estados
+        """)
+        Optional<Reserva> buscarPorCodigoParaMesero(
+        @Param("codigo") String codigo,
+        @Param("estados") List<EstadoReserva> estados
     );
 }

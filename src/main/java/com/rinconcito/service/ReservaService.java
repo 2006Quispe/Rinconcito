@@ -1,6 +1,15 @@
 package com.rinconcito.service;
 
-import com.rinconcito.service.correo.ColaCorreoService;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.rinconcito.dto.ReservaFormDTO;
 import com.rinconcito.entity.Evento;
@@ -15,17 +24,7 @@ import com.rinconcito.repository.EventoRepository;
 import com.rinconcito.repository.PisoRepository;
 import com.rinconcito.repository.ReservaRepository;
 import com.rinconcito.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.annotation.Isolation;
-
-import org.apache.commons.lang3.StringUtils;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
+import com.rinconcito.service.correo.ColaCorreoService;
 
 @Service
 public class ReservaService {
@@ -70,10 +69,22 @@ public class ReservaService {
     public enum MetodoDemo { TARJETA, YAPE, PLIN }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public Reserva confirmarPagoDemo(ReservaFormDTO dto, Usuario cliente, int importe, MetodoDemo metodo) {
-        java.util.Objects.requireNonNull(metodo);
-        return crearReserva(dto, cliente, importe, metodo);
+    public Reserva confirmarPagoDemo(
+        ReservaFormDTO dto,
+        Usuario cliente,
+        int importe,
+        MetodoDemo metodo
+    ) {
+    java.util.Objects.requireNonNull(metodo);
+
+    if (metodo != MetodoDemo.TARJETA) {
+        throw new IllegalArgumentException(
+                "Yape y Plin requieren enviar un voucher para validación."
+        );
     }
+
+    return crearReserva(dto, cliente, importe, MetodoDemo.TARJETA);
+    }   
 
     private Reserva crearReserva(ReservaFormDTO dto, Usuario clienteLogueado, Integer importeDemo, MetodoDemo metodo) {
         dto.setCorreo(blankToNull(dto.getCorreo()));

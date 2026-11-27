@@ -670,3 +670,148 @@ body {
         align-self: flex-start;
     }
 }
+
+
+/* =====================================
+   FILTROS DE RESERVAS DEL MESERO
+   ===================================== */
+
+.reservas-filtros {
+    background: #ffffff;
+    border: 1px solid #e1d9cb;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.03);
+}
+
+.reservas-filtros-form {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr auto;
+    gap: 18px;
+    align-items: end;
+}
+
+.filtro-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.filtro-campo label {
+    font-size: 13px;
+    font-weight: 800;
+    color: #49352b;
+}
+
+.filtro-campo label i {
+    color: #8b301c;
+    margin-right: 5px;
+}
+
+.filtro-campo .form-control {
+    min-height: 44px;
+    border: 1px solid #ded6c9;
+    border-radius: 8px;
+    background: #fcfbf8;
+    font-size: 14px;
+}
+
+.filtro-campo .form-control:focus {
+    border-color: #8b301c;
+    box-shadow: 0 0 0 3px rgba(139, 48, 28, 0.10);
+    background: #ffffff;
+}
+
+.filtro-acciones {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-buscar-reserva,
+.btn-limpiar-reserva {
+    min-height: 44px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: background 0.2s ease;
+}
+
+.btn-buscar-reserva {
+    background: #8b301c;
+    color: #ffffff;
+    border: 1px solid #8b301c;
+}
+
+.btn-buscar-reserva:hover {
+    background: #702413;
+    color: #ffffff;
+}
+
+.btn-limpiar-reserva {
+    background: #f7f3eb;
+    color: #79523c;
+    border: 1px solid #ded6c9;
+}
+
+.btn-limpiar-reserva:hover {
+    background: #ede5d7;
+    color: #49352b;
+}
+
+.filtro-ayuda {
+    margin: 12px 0 0;
+    color: #82766a;
+    font-size: 12px;
+}
+
+.reserva-fecha-detalle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #79523c;
+    padding: 10px 16px;
+}
+
+/* Adaptación para tablets y celulares */
+
+@media (max-width: 1100px) {
+
+    .reservas-filtros-form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .filtro-acciones {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .reservas-filtros-form {
+        grid-template-columns: 1fr;
+    }
+
+    .filtro-acciones {
+        flex-direction: column;
+    }
+
+    .btn-buscar-reserva,
+    .btn-limpiar-reserva {
+        width: 100%;
+    }
+
+    .reservas-filtros {
+        padding: 16px;
+    }
+}
