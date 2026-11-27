@@ -6,8 +6,9 @@
     <title th:text="${titulo} + ' - El Rinconcito Ayacuchano'">El Rinconcito Ayacuchano</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600;700&amp;display=swap" rel="stylesheet">
     <link th:href="@{/css/estilos.css}" rel="stylesheet">
+    <link th:href="@{/css/nosotros.css}" rel="stylesheet">
 </head>
 <body>
 
@@ -15,57 +16,205 @@
 
 <main>
 
-    <section class="text-center text-light py-5" style="background-color:#8C2F1B;">
-        <div class="container py-3">
-            <h1 class="fw-title">Nuestra historia</h1>
-            <p class="lead mb-0">Tradición ayacuchana, música y sabor de campo desde hace más de dos décadas</p>
+    <!-- Portada -->
+    <section class="nos-hero">
+        <div class="nos-contenedor">
+            <p class="nos-etiqueta">Nuestra historia</p>
+            <h1>Tradición ayacuchana, música y sabor de campo</h1>
+            <p>Desde hace más de dos décadas compartimos la cocina, el folklore y las costumbres de Ayacucho con las familias de Lima.</p>
+            <div class="nos-hero-acciones">
+                <a th:href="@{/reservas}" class="nos-btn nos-btn-principal"><i class="bi bi-calendar-check"></i> Reservar mesa</a>
+                <a th:href="@{/carta}" class="nos-btn nos-btn-borde"><i class="bi bi-journal-text"></i> Ver la carta</a>
+            </div>
         </div>
     </section>
 
-    <section class="container py-5">
-        <div class="row align-items-center g-5">
-            <div class="col-md-6">
-                <img src="https://picsum.photos/seed/rinconcito1/600/400" class="img-fluid rounded shadow" alt="El Rinconcito Ayacuchano">
+    <!-- Datos rápidos -->
+    <section class="nos-datos">
+        <div class="nos-contenedor nos-datos-rejilla">
+            <div class="nos-dato"><i class="bi bi-award"></i><div><strong>Más de dos décadas</strong><span>de tradición ayacuchana</span></div></div>
+            <div class="nos-dato"><i class="bi bi-music-note-beamed"></i><div><strong>Sábado, domingo y feriado</strong><span>Almuerzo Show en vivo</span></div></div>
+            <div class="nos-dato"><i class="bi bi-geo-alt"></i><div><strong>Carapongo, Lima Este</strong><span>ambiente campestre</span></div></div>
+        </div>
+    </section>
+
+    <!-- 1. Historia y origen -->
+    <section class="nos-historia">
+        <div class="nos-contenedor nos-historia-rejilla">
+            <div class="nos-foto">
+                <img th:src="@{/img/nosotros/escenario-jardin.jpg}" alt="Jardín y escenario del Rinconcito Ayacuchano en Carapongo">
             </div>
-            <div class="col-md-6">
-                <h2 class="fw-title" style="color:#8C2F1B;">Una tradición familiar</h2>
-                <p>El Rinconcito Ayacuchano Campestre nació de la pasión de la familia Sarmiento por la cultura ayacuchana. Isaac Sarmiento Martínez, conocido como <strong>"Wallpa Waccay"</strong>, reconocido por su labor difundiendo el folklore andino, y su esposa <strong>Amanda Mitacc</strong>, dieron vida a este espacio donde la comida, la música y las costumbres de Ayacucho se viven cada fin de semana.</p>
+            <div class="nos-texto">
+                <p class="nos-etiqueta">Historia y origen</p>
+                <h2 class="nos-titulo">Nacimos de la pasión por la cultura ayacuchana</h2>
+                <p>El Rinconcito Ayacuchano Campestre nació de la pasión de la familia Sarmiento por la cultura ayacuchana. Es un espacio donde la comida, la música y las costumbres de Ayacucho se viven cada fin de semana.</p>
                 <p>Ubicados en Carapongo, Lima Este, ofrecemos un ambiente campestre pensado para compartir en familia, con capacidad para grandes celebraciones y el sabor auténtico de la sierra peruana.</p>
             </div>
         </div>
     </section>
 
-    <section class="py-5" style="background-color:#F5EFE6;">
-        <div class="container">
-            <div class="row align-items-center g-5">
-                <div class="col-md-6 order-md-2">
-                    <img src="https://picsum.photos/seed/rinconcito2/600/400" class="img-fluid rounded shadow" alt="Reconstrucción del local">
+    <!-- Fundador: Wallpa Waccay -->
+    <section class="nos-bio">
+        <div class="nos-contenedor nos-bio-rejilla">
+            <div class="nos-texto">
+                <p class="nos-etiqueta">El fundador</p>
+                <h2 class="nos-titulo">Isaac Sarmiento Martínez, “Wallpa Waccay”</h2>
+                <p>Detrás del Rinconcito está la historia de un joven de Lucanas, Ayacucho, que soñó en grande y se convirtió en uno de los promotores más reconocidos del folklore andino.</p>
+                <p>Llegó a Lima con apenas 13 años para estudiar. Con el tiempo estudió periodismo, llevó el sonido de su tierra a la radio y luego a la televisión, y organizó eventos que reunieron a grandes artistas del folklore. Esa misma pasión por compartir la música y las costumbres de Ayacucho es la que hoy se vive en el Rinconcito.</p>
+                <p class="nos-fuente">Basado en una nota periodística publicada por el XXIV aniversario de Canto Andino.</p>
+            </div>
+            <ol class="nos-cronologia">
+                <li><strong>Lucanas, Ayacucho</strong><span>Nació y creció en esta tierra de músicos y de vicuñas, a pocas horas de Nazca.</span></li>
+                <li><strong>A Lima, a los 13 años</strong><span>Viajó para continuar sus estudios, con el apoyo de sus padres.</span></li>
+                <li><strong>La radio</strong><span>Estudió periodismo en la Universidad San Martín de Porres y conducía “La hora lucanina” en Radio San Isidro desde las 5:30 de la mañana.</span></li>
+                <li><strong>El nombre “Wallpa Waccay”</strong><span>Un paisano le dijo que, de tanto despertar a su gente de madrugada, parecía el canto del gallo. Desde entonces lo conocen así.</span></li>
+                <li><strong>Los eventos</strong><span>Organizó su primer evento masivo en el local Oyolo, en Surquillo, y luego llevó una caravana de artistas del folklore a Puquio.</span></li>
+                <li><strong>Canto Andino</strong><span>Su programa pasó a llamarse Éxitos Andinos y luego Canto Andino. En 2017 cumplió 24 años en la televisión peruana (ATV).</span></li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Línea de tiempo del local -->
+    <section class="nos-camino">
+        <div class="nos-contenedor">
+            <h2 class="nos-titulo">Resurgimos del huaico</h2>
+            <p class="nos-camino-intro">Como toda historia ayacuchana, la nuestra también es de resiliencia.</p>
+            <div class="nos-pasos">
+                <div class="nos-paso"><div class="nos-paso-numero">1</div><h3>El origen</h3><p>La pasión de la familia Sarmiento por la cultura ayacuchana da vida al Rinconcito.</p></div>
+                <div class="nos-paso"><div class="nos-paso-numero">2</div><h3>2017: el huaico</h3><p>Un huaico arrasó con nuestro local.</p></div>
+                <div class="nos-paso"><div class="nos-paso-numero">3</div><h3>Hoy, más fuertes</h3><p>Reconstruimos el Rinconcito desde cero y hoy recibimos a cientos de familias cada fin de semana.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Concepto o filosofía -->
+    <section class="nos-seccion">
+        <div class="nos-contenedor">
+            <p class="nos-etiqueta nos-centro">Concepto y filosofía</p>
+            <h2 class="nos-titulo nos-centro">Cocina tradicional, hecha para compartir</h2>
+            <p class="nos-intro">Nuestro estilo es la cocina tradicional ayacuchana. Queremos que cada visita sea un encuentro familiar donde se disfruta la comida, la música y el ambiente de campo.</p>
+            <div class="nos-tres">
+                <div class="nos-tarjeta"><i class="bi bi-fire"></i><h3>Cocina tradicional</h3><p>El sabor auténtico de la sierra peruana, preparado como manda la tradición andina.</p></div>
+                <div class="nos-tarjeta"><i class="bi bi-music-note-beamed"></i><h3>Música y folklore</h3><p>Almuerzo Show con orquestas en vivo cada sábado, domingo y feriado.</p></div>
+                <div class="nos-tarjeta"><i class="bi bi-people"></i><h3>Encuentro en familia</h3><p>Un espacio pensado para compartir, con capacidad para grandes celebraciones.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Insumos y preparación -->
+    <section class="nos-prep">
+        <div class="nos-contenedor nos-prep-rejilla">
+            <div class="nos-texto">
+                <p class="nos-etiqueta">Insumos y preparación</p>
+                <h2 class="nos-titulo">Del fuego a la mesa</h2>
+                <p>Nuestras carnes se cocinan a la brasa, en parrilla y junto a ollas de barro. Y la pachamanca se prepara bajo tierra, como manda la tradición andina: carnes y tubérculos al horno de tierra, un plato que se disfruta especialmente los domingos.</p>
+                <ul class="nos-tecnicas">
+                    <li><i class="bi bi-moisture"></i><div><strong>Bajo tierra</strong><span>Pachamanca especial, con carnes y tubérculos al horno de tierra.</span></div></li>
+                    <li><i class="bi bi-fire"></i><div><strong>A la parrilla</strong><span>Parrilla mixta de res, pollo y chorizo.</span></div></li>
+                    <li><i class="bi bi-brightness-high"></i><div><strong>A la brasa</strong><span>Pollo a la brasa con papas y cremas.</span></div></li>
+                    <li><i class="bi bi-egg-fried"></i><div><strong>Chactado</strong><span>Cuy crocante con papas y ensalada.</span></div></li>
+                </ul>
+            </div>
+            <div class="nos-foto nos-foto-derecha">
+                <img th:src="@{/img/nosotros/parrilla-barro.jpg}" alt="Carnes a la brasa junto a ollas de barro" loading="lazy">
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Equipo principal -->
+    <section class="nos-equipo">
+        <div class="nos-contenedor">
+            <p class="nos-etiqueta nos-centro">Equipo principal</p>
+            <h2 class="nos-titulo nos-centro">Las personas detrás del Rinconcito</h2>
+            <p class="nos-intro">Una familia que le puso rostro y corazón a la tradición ayacuchana.</p>
+            <div class="nos-personas">
+                <article class="nos-persona">
+                    <div class="nos-avatar">IS</div>
+                    <h3>Isaac Sarmiento Martínez</h3>
+                    <p class="nos-rol">Fundador · “Wallpa Waccay”</p>
+                    <p>Promotor del folklore andino y conductor del programa Canto Andino.</p>
+                </article>
+                <article class="nos-persona">
+                    <div class="nos-avatar">AM</div>
+                    <h3>Amanda Mitacc</h3>
+                    <p class="nos-rol">Fundadora</p>
+                    <p>Junto a su esposo, dio vida a este espacio donde se viven las costumbres de Ayacucho.</p>
+                </article>
+                <article class="nos-persona">
+                    <img class="nos-persona-img" th:src="@{/img/nosotros/equipo-sala.jpg}" alt="Personal de atención del Rinconcito Ayacuchano" loading="lazy">
+                    <h3>Nuestro equipo de sala</h3>
+                    <p class="nos-rol">Atención al comensal</p>
+                    <p>Las personas que te reciben y llevan los platos a tu mesa cada fin de semana.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Ambiente y valores -->
+    <section class="nos-ambiente">
+        <div class="nos-contenedor">
+            <p class="nos-etiqueta nos-centro">Ambiente y valores</p>
+            <h2 class="nos-titulo nos-centro">Lo que vives en el Rinconcito</h2>
+            <div class="nos-cuatro">
+                <div class="nos-valor"><i class="bi bi-people"></i><h3>Familia</h3><p>Un espacio pensado para compartir y celebrar juntos.</p></div>
+                <div class="nos-valor"><i class="bi bi-stars"></i><h3>Tradición</h3><p>El sabor y las costumbres de Ayacucho, vivos cada fin de semana.</p></div>
+                <div class="nos-valor"><i class="bi bi-arrow-repeat"></i><h3>Resiliencia</h3><p>Reconstruimos el Rinconcito desde cero tras el huaico de 2017.</p></div>
+                <div class="nos-valor"><i class="bi bi-music-note-beamed"></i><h3>Música</h3><p>Orquestas en vivo cada sábado, domingo y feriado.</p></div>
+            </div>
+            <div class="nos-visita">
+                <div>
+                    <h3>Un ambiente campestre</h3>
+                    <ul class="nos-lista">
+                        <li><i class="bi bi-tree"></i> Espacio al aire libre</li>
+                        <li><i class="bi bi-balloon"></i> Juegos</li>
+                        <li><i class="bi bi-car-front"></i> Estacionamiento propio</li>
+                        <li><i class="bi bi-gift"></i> Capacidad para grandes celebraciones</li>
+                    </ul>
                 </div>
-                <div class="col-md-6 order-md-1">
-                    <h2 class="fw-title" style="color:#8C2F1B;">Resurgimos del huaico</h2>
-                    <p>En 2017, un huaico arrasó con nuestro local. Pero como toda historia ayacuchana, la nuestra también es de resiliencia: reconstruimos el Rinconcito desde cero y hoy seguimos recibiendo a cientos de familias cada fin de semana, más fuertes que antes.</p>
+                <div class="nos-horarios">
+                    <h3>Visítanos</h3>
+                    <p><i class="bi bi-geo-alt"></i> Carapongo, Lurigancho-Chosica, Lima</p>
+                    <ul class="nos-lista" th:if="${resumenHorarios != null and !#lists.isEmpty(resumenHorarios)}">
+                        <li th:each="horario : ${resumenHorarios}">
+                            <i class="bi bi-clock"></i>
+                            <span><strong th:text="${horario.dias}">Días</strong>: <span th:text="${horario.detalle}">Horario</span></span>
+                        </li>
+                    </ul>
+                    <p th:if="${resumenHorarios == null or #lists.isEmpty(resumenHorarios)}">Horarios por confirmar.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="container py-5 text-center">
-        <h2 class="fw-title mb-4" style="color:#8C2F1B;">Lo que nos hace únicos</h2>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <i class="bi bi-music-note-beamed" style="font-size:2.5rem;color:#D4A017;"></i>
-                <h4 class="fw-title mt-2">Almuerzo Show</h4>
-                <p>Orquestas en vivo cada sábado, domingo y feriado.</p>
+    <!-- Fotografías -->
+    <section class="nos-galeria">
+        <div class="nos-contenedor">
+            <p class="nos-etiqueta nos-centro">Fotografías</p>
+            <h2 class="nos-titulo nos-centro">Así se vive el Rinconcito</h2>
+            <div class="nos-galeria-rejilla">
+                <figure class="nos-plato nos-plato-grande"><img th:src="@{/img/nosotros/escenario-jardin.jpg}" alt="Jardín y escenario" loading="lazy"><figcaption>Jardín y escenario</figcaption></figure>
+                <figure class="nos-plato"><img th:src="@{/img/nosotros/cascada.jpg}" alt="Cascada con vasijas de barro" loading="lazy"><figcaption>Cascada con vasijas de barro</figcaption></figure>
+                <figure class="nos-plato"><img th:src="@{/img/nosotros/platos-casa.jpg}" alt="Platos tradicionales de la casa" loading="lazy"><figcaption>Platos de la casa</figcaption></figure>
+                <figure class="nos-plato nos-plato-ancho"><img th:src="@{/img/nosotros/juegos-infantiles.jpg}" alt="Zona de juegos infantiles" loading="lazy"><figcaption>Zona de juegos infantiles</figcaption></figure>
+                <figure class="nos-plato"><img th:src="@{/img/nosotros/platos-verdes.jpg}" alt="Sabores de la sierra" loading="lazy"><figcaption>Sabores de la sierra</figcaption></figure>
+                <figure class="nos-plato"><img th:src="@{/img/nosotros/estrado-show.jpg}" alt="Escenario del Almuerzo Show" loading="lazy"><figcaption>Escenario del show</figcaption></figure>
+                <figure class="nos-plato"><img th:src="@{/img/nosotros/salon-interior.jpg}" alt="Salón interior" loading="lazy"><figcaption>Salón interior</figcaption></figure>
+                <figure class="nos-plato"><img th:src="@{/img/nosotros/aerea-local.jpg}" alt="Vista del local desde las alturas" loading="lazy"><figcaption>El local de Carapongo</figcaption></figure>
             </div>
-            <div class="col-md-4">
-                <i class="bi bi-fire" style="font-size:2.5rem;color:#D4A017;"></i>
-                <h4 class="fw-title mt-2">Pachamanca dominical</h4>
-                <p>Cocinada bajo tierra, como manda la tradición andina.</p>
-            </div>
-            <div class="col-md-4">
-                <i class="bi bi-tree" style="font-size:2.5rem;color:#D4A017;"></i>
-                <h4 class="fw-title mt-2">Ambiente campestre</h4>
-                <p>Espacio al aire libre, juegos y estacionamiento propio.</p>
+        </div>
+    </section>
+
+    <!-- Llamado a la acción -->
+    <section class="nos-cta">
+        <div class="nos-contenedor">
+            <h2>Te esperamos en Carapongo</h2>
+            <p>Reserva tu mesa, mira nuestra carta o escríbenos, y vive con tu familia un fin de semana de música, tradición y sabor ayacuchano.</p>
+            <div class="nos-hero-acciones">
+                <a th:href="@{/carta}" class="nos-btn nos-btn-borde"><i class="bi bi-journal-text"></i> Ver la carta</a>
+                <a th:href="@{/reservas}" class="nos-btn nos-btn-principal"><i class="bi bi-calendar-check"></i> Reservar mesa</a>
+                <a th:if="${configuracion != null and configuracion.whatsapp != null}"
+                   th:href="${'https://wa.me/' + configuracion.whatsapp}"
+                   class="nos-btn nos-btn-whatsapp" target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i> Pedir por WhatsApp</a>
             </div>
         </div>
     </section>

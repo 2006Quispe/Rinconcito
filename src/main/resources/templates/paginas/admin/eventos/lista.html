@@ -30,7 +30,8 @@
     <aside th:replace="~{fragments/admin-sidebar :: sidebar('eventos')}">
     </aside>
 
-    <main class="admin-contenido">
+    <main class="admin-contenido"
+          th:with="editando=${evento != null and evento.idEvento != null}">
 
         <header class="admin-encabezado">
 
@@ -47,7 +48,19 @@
                 </p>
             </div>
 
-            <a th:href="@{/admin/eventos/nuevo}"
+            <button th:unless="${editando}"
+                    type="button"
+                    class="admin-boton-principal"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalEvento">
+
+                <i class="bi bi-plus-lg"></i>
+                Nuevo evento
+
+            </button>
+
+            <a th:if="${editando}"
+               th:href="@{/admin/eventos/nuevo}"
                class="admin-boton-principal">
 
                 <i class="bi bi-plus-lg"></i>
@@ -62,7 +75,7 @@
              th:text="${exito}">
         </div>
 
-        <div th:if="${error}"
+        <div th:if="${error != null and !panelAbierto}"
              class="alert alert-danger"
              th:text="${error}">
         </div>
@@ -96,12 +109,14 @@
                     Registra el primer evento del restaurante.
                 </p>
 
-                <a th:href="@{/admin/eventos/nuevo}"
-                   class="admin-boton-principal">
+                <button type="button"
+                        class="admin-boton-principal"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalEvento">
 
                     Crear evento
 
-                </a>
+                </button>
             </div>
 
             <div class="table-responsive"
@@ -259,6 +274,278 @@
     </main>
 
 </div>
+
+<!-- Ventana emergente para registrar y editar eventos -->
+<div class="modal fade modal-evento"
+     id="modalEvento"
+     tabindex="-1"
+     aria-labelledby="tituloModalEvento"
+     aria-hidden="true"
+     th:with="editando=${evento != null and evento.idEvento != null}"
+     th:attr="data-abrir=${panelAbierto},data-url-lista=@{/admin/eventos}">
+
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <div>
+                    <p class="modal-evento-etiqueta">PROGRAMACIÓN</p>
+                    <h2 class="modal-title" id="tituloModalEvento"
+                        th:text="${editando} ? 'Editar evento' : 'Agregar nuevo evento'">
+                        Agregar nuevo evento
+                    </h2>
+                </div>
+            </div>
+
+            <form th:action="@{/admin/eventos/guardar}"
+                  th:object="${evento}"
+                  method="post"
+                  id="formEvento">
+
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
+                <input type="hidden"
+                       th:field="*{idEvento}">
+
+                <div class="modal-body">
+
+                    <div th:if="${error != null and panelAbierto}"
+                         class="alert alert-danger"
+                         role="alert"
+                         th:text="${error}">
+                    </div>
+
+                    <div class="row g-3">
+
+                        <div class="col-12">
+
+                            <label class="form-label"
+                                   for="eventoTitulo">
+                                Título del evento <span>*</span>
+                            </label>
+
+                            <input type="text"
+                                   id="eventoTitulo"
+                                   th:field="*{titulo}"
+                                   class="form-control"
+                                   maxlength="100"
+                                   required
+                                   placeholder="Ej. Noche de música ayacuchana">
+
+                        </div>
+
+                        <div class="col-12">
+
+                            <label class="form-label"
+                                   for="eventoDescripcion">
+                                Descripción
+                            </label>
+
+                            <textarea id="eventoDescripcion"
+                                      th:field="*{descripcion}"
+                                      class="form-control"
+                                      maxlength="500"
+                                      rows="3"
+                                      placeholder="Describe la presentación y los artistas invitados"></textarea>
+
+                            <small class="form-text">Máximo 500 caracteres.</small>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label class="form-label"
+                                   for="eventoFecha">
+                                Fecha <span>*</span>
+                            </label>
+
+                            <input type="date"
+                                   id="eventoFecha"
+                                   th:field="*{fecha}"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label class="form-label"
+                                   for="eventoHoraInicio">
+                                Hora de inicio <span>*</span>
+                            </label>
+
+                            <input type="time"
+                                   id="eventoHoraInicio"
+                                   th:field="*{horaInicio}"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label class="form-label"
+                                   for="eventoHoraFin">
+                                Hora de finalización
+                            </label>
+
+                            <input type="time"
+                                   id="eventoHoraFin"
+                                   th:field="*{horaFin}"
+                                   class="form-control">
+
+                        </div>
+
+                        <div class="col-12">
+
+                            <label class="form-label"
+                                   for="eventoImagen">
+                                Ruta o enlace de la imagen
+                            </label>
+
+                            <input type="text"
+                                   id="eventoImagen"
+                                   th:field="*{imagen}"
+                                   class="form-control"
+                                   maxlength="255"
+                                   placeholder="/img/eventos/evento.jpg">
+
+                            <small class="form-text">
+                                Más adelante agregaremos la carga directa
+                                de imágenes desde la computadora.
+                            </small>
+
+                        </div>
+
+                        <div class="col-12">
+
+                            <div class="admin-opcion-pago">
+
+                                <input type="checkbox"
+                                       th:field="*{requierePago}"
+                                       id="requierePago">
+
+                                <label for="requierePago">
+                                    <strong>Evento con entrada pagada</strong>
+                                    <span>
+                                        Se cobrará por cada persona de la reserva.
+                                    </span>
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label class="form-label"
+                                   for="eventoPrecio">
+                                Precio por persona (S/)
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    S/
+                                </span>
+
+                                <input type="number"
+                                       id="eventoPrecio"
+                                       th:field="*{precioEntrada}"
+                                       class="form-control"
+                                       min="0"
+                                       step="1">
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label class="form-label"
+                                   for="eventoEstado">
+                                Estado <span>*</span>
+                            </label>
+
+                            <select id="eventoEstado"
+                                    th:field="*{estado}"
+                                    class="form-select"
+                                    required>
+
+                                <option th:each="estadoOpcion : ${estados}"
+                                        th:value="${estadoOpcion}"
+                                        th:text="${estadoOpcion}">
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn-modal-evento-cancelar"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            class="btn-modal-evento-guardar">
+                        <i class="bi bi-check2-circle"></i>
+                        <span th:text="${editando} ? 'Guardar cambios' : 'Guardar evento'">
+                            Guardar evento
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var modalElemento = document.getElementById('modalEvento');
+
+        if (!modalElemento) {
+            return;
+        }
+
+        var modal = bootstrap.Modal.getOrCreateInstance(modalElemento);
+        var formulario = document.getElementById('formEvento');
+        var abiertoDesdeServidor = modalElemento.dataset.abrir === 'true';
+
+        // Al abrir, el cursor queda en el título.
+        modalElemento.addEventListener('shown.bs.modal', function () {
+            var titulo = document.getElementById('eventoTitulo');
+
+            if (titulo) {
+                titulo.focus();
+            }
+        });
+
+        // Al cerrar: si venía de editar o de un error se vuelve a la lista limpia;
+        // si no, solo se vacía el formulario.
+        modalElemento.addEventListener('hidden.bs.modal', function () {
+            if (abiertoDesdeServidor) {
+                window.location.href = modalElemento.dataset.urlLista;
+            } else if (formulario) {
+                formulario.reset();
+            }
+        });
+
+        // Nuevo evento con error de validación, o edición desde el lápiz.
+        if (abiertoDesdeServidor) {
+            modal.show();
+        }
+    });
+</script>
 
 </body>
 </html>

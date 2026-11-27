@@ -17,6 +17,16 @@ public interface EventoRepository
             EstadoEvento estado
     );
 
+    List<Evento> findByEstadoAndFechaGreaterThanEqualOrderByFechaAsc(
+            EstadoEvento estado,
+            LocalDate fecha
+    );
+
+    List<Evento> findByEstadoAndFechaLessThanOrderByFechaDesc(
+            EstadoEvento estado,
+            LocalDate fecha
+    );
+
     List<Evento> findByFechaAndEstado(
             LocalDate fecha,
             EstadoEvento estado

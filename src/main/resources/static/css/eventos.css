@@ -1,0 +1,57 @@
+/* ===== Página pública de Eventos ===== */
+.eventos-publico { background: var(--crema, #f3e9dc); }
+
+.eventos-portada {
+    background: linear-gradient(135deg, var(--vino, #741f18), #4d1410);
+    color: #fff; text-align: center; padding: 3.5rem 0;
+}
+.eventos-portada h1 { font-family: "Playfair Display", serif; font-weight: 700; font-size: 2.6rem; margin: 0 0 .5rem; }
+.eventos-portada p:last-child { color: #e9d8c0; margin: 0; }
+.eventos-etiqueta { color: var(--dorado, #c69a35); letter-spacing: .2em; font-weight: 700; font-size: .8rem; margin-bottom: .5rem; }
+
+.eventos-seccion { padding-top: 3rem; padding-bottom: 3rem; }
+.eventos-titulo { font-family: "Playfair Display", serif; color: var(--vino, #741f18); font-size: 1.8rem; margin-bottom: 1.5rem; }
+.eventos-sub { color: var(--texto-suave, #6b5a52); margin: -1rem 0 1.5rem; }
+
+.eventos-vacio { text-align: center; background: #fff; border-radius: 16px; padding: 2.5rem 1.5rem; box-shadow: 0 6px 20px rgba(46,33,28,.08); }
+.eventos-vacio i { font-size: 2.5rem; color: var(--dorado, #c69a35); }
+.eventos-vacio p { max-width: 520px; margin: .75rem auto 1.25rem; color: var(--texto-suave, #6b5a52); }
+
+.btn-evento {
+    display: inline-block; background: var(--vino, #741f18); color: #fff; text-decoration: none;
+    padding: .55rem 1.3rem; border-radius: 999px; font-weight: 700; font-size: .9rem; transition: background .2s;
+}
+.btn-evento:hover { background: #5a1812; color: #fff; }
+
+.evento-card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 6px 20px rgba(46,33,28,.1); height: 100%; display: flex; flex-direction: column; }
+.evento-img { border: 0; padding: 0; background: var(--cafe, #2e211c); cursor: zoom-in; display: block; width: 100%; }
+.evento-img img { width: 100%; height: auto; display: block; }
+.evento-cuerpo { padding: 1.25rem; display: flex; flex-direction: column; gap: .5rem; flex: 1; align-items: flex-start; }
+.evento-cuerpo h3 { font-family: "Playfair Display", serif; font-size: 1.25rem; color: var(--cafe, #2e211c); margin: 0; }
+.evento-cuerpo p { margin: 0; color: var(--texto-suave, #6b5a52); font-size: .95rem; }
+.evento-cuerpo .evento-fecha { color: var(--vino, #741f18); font-weight: 700; text-transform: capitalize; }
+.evento-cuerpo .btn-evento { margin-top: auto; }
+.evento-precio { background: var(--dorado, #c69a35); color: #2e211c; font-weight: 700; font-size: .8rem; border-radius: 999px; padding: .2rem .7rem; }
+.evento-precio.libre { background: #e3efe0; color: #2d5a27; }
+
+.eventos-anteriores { background: #fff; }
+.eventos-masonry { column-count: 4; column-gap: 1rem; }
+.evento-mini { position: relative; display: block; width: 100%; margin: 0 0 1rem; padding: 0; border: 0; border-radius: 12px; overflow: hidden; break-inside: avoid; cursor: zoom-in; background: var(--cafe, #2e211c); }
+.evento-mini img { width: 100%; height: auto; display: block; transition: transform .3s; }
+.evento-mini:hover img { transform: scale(1.04); }
+.evento-mini span { position: absolute; inset: auto 0 0 0; padding: 1.5rem .75rem .6rem; text-align: left; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.8)); opacity: 0; transition: opacity .25s; }
+.evento-mini:hover span, .evento-mini:focus-visible span { opacity: 1; }
+.evento-mini strong, .evento-mini small { display: block; }
+.evento-mini strong { font-size: .85rem; line-height: 1.2; }
+.evento-mini small { color: #e9d8c0; }
+
+.modal-afiche .modal-title { font-family: "Playfair Display", serif; color: var(--vino, #741f18); font-size: 1.2rem; }
+.modal-afiche .modal-body { text-align: center; padding: .5rem 1rem 1rem; }
+.modal-afiche img { max-width: 100%; max-height: 78vh; border-radius: 8px; }
+
+@media (max-width: 992px) { .eventos-masonry { column-count: 3; } }
+@media (max-width: 700px) {
+    .eventos-masonry { column-count: 2; }
+    .eventos-portada h1 { font-size: 2rem; }
+    .evento-mini span { opacity: 1; padding-top: 1rem; }
+}

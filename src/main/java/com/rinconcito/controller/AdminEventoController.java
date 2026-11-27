@@ -17,6 +17,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/admin/eventos")
 public class AdminEventoController {
 
+    private static final String VISTA_LISTA =
+            "paginas/admin/eventos/lista";
+
     private final EventoService eventoService;
 
     public AdminEventoController(
@@ -30,50 +33,32 @@ public class AdminEventoController {
     public String listar(
             Model model
     ) {
-        model.addAttribute(
-                "titulo",
-                "Gestión de eventos"
+        return prepararLista(
+                model,
+                eventoNuevo(),
+                false
         );
-
-        model.addAttribute(
-                "eventos",
-                eventoService.listarTodos()
-        );
-
-        return "paginas/admin/eventos/lista";
     }
 
+    /**
+     * Abre la lista con el panel desplegable de
+     * "Información del evento" listo para un evento nuevo.
+     */
     @GetMapping("/nuevo")
     public String nuevo(
             Model model
     ) {
-        Evento evento =
-                new Evento();
-
-        evento.setEstado(
-                EstadoEvento.ACTIVO
+        return prepararLista(
+                model,
+                eventoNuevo(),
+                true
         );
-
-        evento.setPrecioEntrada(0);
-
-        model.addAttribute(
-                "titulo",
-                "Nuevo evento"
-        );
-
-        model.addAttribute(
-                "evento",
-                evento
-        );
-
-        model.addAttribute(
-                "estados",
-                EstadoEvento.values()
-        );
-
-        return "paginas/admin/eventos/formulario";
     }
 
+    /**
+     * Abre la lista con el panel desplegable cargado
+     * con los datos del evento a editar.
+     */
     @GetMapping("/{idEvento}/editar")
     public String editar(
             @PathVariable Integer idEvento,
@@ -86,22 +71,11 @@ public class AdminEventoController {
                             idEvento
                     );
 
-            model.addAttribute(
-                    "titulo",
-                    "Editar evento"
+            return prepararLista(
+                    model,
+                    evento,
+                    true
             );
-
-            model.addAttribute(
-                    "evento",
-                    evento
-            );
-
-            model.addAttribute(
-                    "estados",
-                    EstadoEvento.values()
-            );
-
-            return "paginas/admin/eventos/formulario";
 
         } catch (IllegalStateException e) {
 
@@ -117,6 +91,7 @@ public class AdminEventoController {
     @PostMapping("/guardar")
     public String guardar(
             @ModelAttribute Evento evento,
+            Model model,
             RedirectAttributes ra
     ) {
         try {
@@ -136,18 +111,18 @@ public class AdminEventoController {
 
         } catch (IllegalStateException e) {
 
-            ra.addFlashAttribute(
+            // Se vuelve a mostrar la lista con el panel abierto
+            // y con lo que el administrador ya había escrito.
+            model.addAttribute(
                     "error",
                     e.getMessage()
             );
 
-            if (evento.getIdEvento() == null) {
-                return "redirect:/admin/eventos/nuevo";
-            }
-
-            return "redirect:/admin/eventos/"
-                    + evento.getIdEvento()
-                    + "/editar";
+            return prepararLista(
+                    model,
+                    evento,
+                    true
+            );
         }
     }
 
@@ -177,5 +152,51 @@ public class AdminEventoController {
         }
 
         return "redirect:/admin/eventos";
+    }
+
+    private Evento eventoNuevo() {
+        Evento evento =
+                new Evento();
+
+        evento.setEstado(
+                EstadoEvento.ACTIVO
+        );
+
+        evento.setPrecioEntrada(0);
+
+        return evento;
+    }
+
+    private String prepararLista(
+            Model model,
+            Evento evento,
+            boolean panelAbierto
+    ) {
+        model.addAttribute(
+                "titulo",
+                "Gestión de eventos"
+        );
+
+        model.addAttribute(
+                "eventos",
+                eventoService.listarTodos()
+        );
+
+        model.addAttribute(
+                "evento",
+                evento
+        );
+
+        model.addAttribute(
+                "estados",
+                EstadoEvento.values()
+        );
+
+        model.addAttribute(
+                "panelAbierto",
+                panelAbierto
+        );
+
+        return VISTA_LISTA;
     }
 }

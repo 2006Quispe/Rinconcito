@@ -6,52 +6,112 @@
     <title th:text="${titulo} + ' - El Rinconcito Ayacuchano'">El Rinconcito Ayacuchano</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&amp;family=Nunito:wght@400;600;700;800&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
     <link th:href="@{/css/estilos.css}" rel="stylesheet">
+    <link th:href="@{/css/eventos.css}" rel="stylesheet">
 </head>
 <body>
 
 <header th:replace="~{fragments/header :: header}"></header>
 
-<main>
+<main class="eventos-publico"
+      th:with="localeEs=${T(java.util.Locale).forLanguageTag('es-PE')}">
 
-    <section class="text-center text-light py-5" style="background-color:#8C2F1B;">
-        <div class="container py-3">
-            <h1 class="fw-title">Eventos</h1>
-            <p class="lead mb-0">Almuerzo Show cada sábado, domingo y feriado</p>
+    <section class="eventos-portada">
+        <div class="container">
+            <p class="eventos-etiqueta">ALMUERZO SHOW</p>
+            <h1>Eventos</h1>
+            <p>Música en vivo, comida típica y diversión para toda la familia.</p>
         </div>
     </section>
 
-    <section class="container py-5">
+    <!-- PRÓXIMOS -->
+    <section class="container eventos-seccion">
+        <h2 class="eventos-titulo">Próximos eventos</h2>
 
-        <div th:if="${eventos.isEmpty()}" class="text-center py-5">
-            <p class="lead">No hay eventos programados por el momento.</p>
+        <div th:if="${proximos.isEmpty()}" class="eventos-vacio">
+            <i class="bi bi-calendar-heart" aria-hidden="true"></i>
+            <p>Estamos preparando la próxima fecha. Mientras tanto, te esperamos todos los sábados, domingos y feriados.</p>
+            <a th:href="@{/reservas}" class="btn-evento">Reservar una mesa</a>
         </div>
 
-        <div class="row g-4">
-            <div class="col-md-6" th:each="evento : ${eventos}">
-                <div class="card h-100 shadow-sm">
-                    <img th:if="${evento.imagen != null}" th:src="${evento.imagen}" class="card-img-top" alt="Evento">
-                    <div class="card-body">
-                        <h5 class="card-title fw-title" th:text="${evento.titulo}">Título del evento</h5>
-                        <p class="text-muted mb-1">
-                            <i class="bi bi-calendar-event"></i>
-                            <span th:text="${#temporals.format(evento.fecha, 'dd/MM/yyyy')}">Fecha</span>
-                            —
-                            <span th:text="${#temporals.format(evento.horaInicio, 'HH:mm')}">Hora</span>
+        <div class="row g-4" th:unless="${proximos.isEmpty()}">
+            <div class="col-md-6 col-lg-4" th:each="evento : ${proximos}">
+                <article class="evento-card">
+                    <button type="button" class="evento-img" th:if="${evento.imagen != null}"
+                            data-lightbox th:attr="data-src=@{${evento.imagen}},data-titulo=${evento.titulo}"
+                            aria-label="Ver afiche completo">
+                        <img th:src="@{${evento.imagen}}" th:alt="'Afiche: ' + ${evento.titulo}" loading="lazy">
+                    </button>
+                    <div class="evento-cuerpo">
+                        <p class="evento-fecha">
+                            <i class="bi bi-calendar-event" aria-hidden="true"></i>
+                            <span th:text="${#temporals.format(evento.fecha, 'EEEE d ''de'' MMMM yyyy', localeEs)}">Fecha</span>
+                            · <span th:text="${#temporals.format(evento.horaInicio, 'HH:mm')}">11:00</span>
                         </p>
-                        <p class="card-text" th:text="${evento.descripcion}">Descripción</p>
+                        <h3 th:text="${evento.titulo}">Título</h3>
+                        <p th:text="${evento.descripcion}">Descripción</p>
+                        <span class="evento-precio" th:if="${evento.requierePago}"
+                              th:text="'Entrada S/ ' + ${#numbers.formatDecimal(evento.precioEntrada, 1, 2)}">Entrada</span>
+                        <span class="evento-precio libre" th:unless="${evento.requierePago}">Entrada libre</span>
+                        <a th:href="@{/reservas}" class="btn-evento">Reservar</a>
                     </div>
-                </div>
+                </article>
             </div>
         </div>
+    </section>
 
+    <!-- ANTERIORES -->
+    <section class="eventos-seccion eventos-anteriores" th:unless="${anteriores.isEmpty()}">
+        <div class="container">
+            <h2 class="eventos-titulo">Eventos anteriores</h2>
+            <p class="eventos-sub">Así se vivieron nuestras últimas fechas. Toca un afiche para verlo completo.</p>
+            <div class="eventos-masonry">
+                <button type="button" class="evento-mini" th:each="evento : ${anteriores}"
+                        th:if="${evento.imagen != null}" data-lightbox
+                        th:attr="data-src=@{${evento.imagen}},data-titulo=${evento.titulo}">
+                    <img th:src="@{${evento.imagen}}" th:alt="'Afiche: ' + ${evento.titulo}" loading="lazy">
+                    <span>
+                        <strong th:text="${evento.titulo}">Título</strong>
+                        <small th:text="${#temporals.format(evento.fecha, 'd MMM yyyy', localeEs)}">Fecha</small>
+                    </span>
+                </button>
+            </div>
+        </div>
     </section>
 
 </main>
 
+<!-- Visor del afiche -->
+<div class="modal fade" id="modalAfiche" tabindex="-1" aria-hidden="true" aria-labelledby="modalAficheTitulo">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content modal-afiche">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalAficheTitulo"></h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body"><img id="modalAficheImg" src="" alt=""></div>
+        </div>
+    </div>
+</div>
+
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var el = document.getElementById('modalAfiche');
+    var modal = bootstrap.Modal.getOrCreateInstance(el);
+    document.querySelectorAll('[data-lightbox]').forEach(function (b) {
+        b.addEventListener('click', function () {
+            var img = document.getElementById('modalAficheImg');
+            img.src = b.dataset.src;
+            img.alt = 'Afiche: ' + b.dataset.titulo;
+            document.getElementById('modalAficheTitulo').textContent = b.dataset.titulo;
+            modal.show();
+        });
+    });
+});
+</script>
 </body>
 </html>

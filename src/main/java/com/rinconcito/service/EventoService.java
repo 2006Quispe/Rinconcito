@@ -38,6 +38,24 @@ public class EventoService {
     }
 
     @Transactional(readOnly = true)
+    public List<Evento> listarProximos() {
+        return eventoRepository
+                .findByEstadoAndFechaGreaterThanEqualOrderByFechaAsc(
+                        EstadoEvento.ACTIVO,
+                        LocalDate.now()
+                );
+    }
+
+    @Transactional(readOnly = true)
+    public List<Evento> listarAnteriores() {
+        return eventoRepository
+                .findByEstadoAndFechaLessThanOrderByFechaDesc(
+                        EstadoEvento.ACTIVO,
+                        LocalDate.now()
+                );
+    }
+
+    @Transactional(readOnly = true)
     public Evento buscarPorId(
             Integer idEvento
     ) {
