@@ -8,6 +8,7 @@ import com.rinconcito.entity.Usuario;
 import com.rinconcito.repository.PedidoRepository;
 import com.rinconcito.repository.ReservaRepository;
 import com.rinconcito.repository.UsuarioRepository;
+import com.rinconcito.service.ClubPuntosService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,15 +24,18 @@ public class MiCuentaController {
     private final UsuarioRepository usuarioRepository;
     private final PedidoRepository pedidoRepository;
     private final ReservaRepository reservaRepository;
+    private final ClubPuntosService clubPuntosService;
 
     public MiCuentaController(
             UsuarioRepository usuarioRepository,
             PedidoRepository pedidoRepository,
-            ReservaRepository reservaRepository
+            ReservaRepository reservaRepository,
+            ClubPuntosService clubPuntosService
     ) {
         this.usuarioRepository = usuarioRepository;
         this.pedidoRepository = pedidoRepository;
         this.reservaRepository = reservaRepository;
+        this.clubPuntosService = clubPuntosService;
     }
 
     @GetMapping({"", "/"})
@@ -86,6 +90,11 @@ public class MiCuentaController {
         model.addAttribute(
                 "cliente",
                 cliente
+        );
+
+        model.addAttribute(
+                "puntosClub",
+                clubPuntosService.obtenerSaldo(cliente)
         );
 
         model.addAttribute(

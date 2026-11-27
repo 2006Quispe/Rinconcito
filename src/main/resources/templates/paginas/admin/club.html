@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo} + ' - Rinconcito'">Club Rinconcito · Administración</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/admin.css}" rel="stylesheet">
+    <link th:href="@{/css/admin-club.css}" rel="stylesheet">
+</head>
+<body>
+<div class="admin-layout">
+    <aside th:replace="~{fragments/admin-sidebar :: sidebar('club')}"></aside>
+    <main class="admin-contenido admin-club">
+        <header class="club-admin-hero">
+            <div>
+                <span>FIDELIZACIÓN · RINCONCITO AYACUCHANO</span>
+                <h1>Club Rinconcito</h1>
+                <p>Administra recompensas, canjes, vigencias y campañas en un solo lugar.</p>
+            </div>
+            <a class="club-admin-link" th:href="@{/club}" target="_blank" rel="noopener">
+                Ver Club <i class="bi bi-arrow-up-right"></i>
+            </a>
+        </header>
+
+        <div th:if="${exitoClubAdmin}" class="alert alert-success" th:text="${exitoClubAdmin}"></div>
+        <div th:if="${errorClubAdmin}" class="alert alert-danger" th:text="${errorClubAdmin}"></div>
+        <div th:if="${erroresForm}" class="alert alert-danger" th:text="${erroresForm}"></div>
+
+        <section id="recompensas" class="club-admin-panel">
+            <div class="club-admin-heading">
+                <div><span>CATÁLOGO</span><h2>Recompensas</h2><p>Los productos de carta se canjean solo si siguen activos y disponibles.</p></div>
+                <a class="btn-club-outline" th:href="@{/admin/club#recompensa-form}"><i class="bi bi-plus-lg"></i> Nueva recompensa</a>
+            </div>
+            <div class="club-admin-table-wrap">
+                <table class="table club-admin-table align-middle">
+                    <thead><tr><th>Recompensa</th><th>Categoría</th><th>Tipo</th><th>Puntos</th><th>Stock</th><th>Canjes</th><th>Estado</th><th></th></tr></thead>
+                    <tbody>
+                    <tr th:each="r : ${recompensas}">
+                        <td><strong th:text="${r.nombre}">Recompensa</strong><small th:text="${r.codigo}">CODIGO</small></td>
+                        <td th:text="${#strings.replace(r.categoria, '_', ' ')}">Categoría</td>
+                        <td th:text="${#strings.replace(r.tipo, '_', ' ')}">Tipo</td>
+                        <td class="club-admin-puntos" th:text="${r.costoPuntos} + ' pts'">100 pts</td>
+                        <td th:text="${r.stock == null ? 'Sin límite' : r.stock}">—</td>
+                        <td th:text="${r.totalCanjes}">0</td>
+                        <td><span class="club-admin-state" th:classappend="${r.activo ? ' is-active' : ''}" th:text="${r.activo ? 'Activa' : 'Inactiva'}">Activa</span></td>
+                        <td><a class="btn-club-icon" th:href="@{/admin/club(editarRecompensa=${r.idRecompensa})} + '#recompensa-form'" aria-label="Editar recompensa"><i class="bi bi-pencil"></i></a></td>
+                    </tr>
+                    <tr th:if="${recompensas.isEmpty()}"><td colspan="8" class="club-admin-empty">Todavía no hay recompensas configuradas.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="recompensa-form" class="club-admin-panel">
+            <div class="club-admin-heading"><div><span>CONFIGURACIÓN DEL CATÁLOGO</span><h2 th:text="${recompensaForm.idRecompensa == null ? 'Crear recompensa' : 'Editar recompensa'}">Crear recompensa</h2></div></div>
+            <form th:action="@{/admin/club/recompensas/guardar}" th:object="${recompensaForm}" method="post" enctype="multipart/form-data" class="club-admin-form">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <input type="hidden" th:field="*{idRecompensa}">
+                <input type="hidden" th:field="*{imagen}">
+                <label>Código<input class="form-control" th:field="*{codigo}" maxlength="40" required placeholder="CHICHA-MORADA"></label>
+                <label>Nombre<input class="form-control" th:field="*{nombre}" maxlength="100" required></label>
+                <label>Tipo<select class="form-select" th:field="*{tipo}" required>
+                    <option value="DESCUENTO_FIJO">Descuento fijo</option><option value="DESCUENTO_PORCENTAJE">Descuento porcentual</option><option value="DELIVERY_GRATIS">Delivery gratis</option><option value="PRODUCTO_CARTA">Producto de carta</option><option value="PRODUCTO_MERCH">Recuerdo / merchandising</option><option value="EXPERIENCIA">Experiencia familiar</option>
+                </select></label>
+                <label>Categoría<select class="form-select" th:field="*{categoria}" required>
+                    <option value="PLATOS_TIPICOS">Platos típicos</option><option value="BEBIDAS_POSTRES">Bebidas y postres</option><option value="DESCUENTOS">Descuentos</option><option value="EXPERIENCIAS_FAMILIARES">Experiencias familiares</option><option value="MERCHANDISING">Recuerdos y merchandising</option>
+                </select></label>
+                <label>Costo en puntos<input class="form-control" type="number" min="1" max="100000" th:field="*{costoPuntos}" required></label>
+                <label>Valor (soles, porcentaje o unidades)<input class="form-control" type="number" min="1" th:field="*{valor}" required></label>
+                <label>Pedido mínimo (S/)<input class="form-control" type="number" min="0" th:field="*{compraMinima}"></label>
+                <label>Stock (vacío = sin límite)<input class="form-control" type="number" min="0" th:field="*{stock}"></label>
+                <label>Vigencia del canje (días)<input class="form-control" type="number" min="1" max="3650" th:field="*{vigenciaDias}"></label>
+                <label>Producto de carta<select class="form-select" th:field="*{idProducto}"><option value="">Sin producto vinculado</option><option th:each="p : ${productosActivos}" th:value="${p.idProducto}" th:text="${p.nombre}"></option></select><small>Requerido para “Producto de carta”.</small></label>
+                <label>Disponible desde<input class="form-control" type="date" th:field="*{disponibleDesde}"></label>
+                <label>Disponible hasta<input class="form-control" type="date" th:field="*{disponibleHasta}"></label>
+                <label class="club-admin-wide">Descripción<textarea class="form-control" th:field="*{descripcion}" rows="2" maxlength="300" required></textarea></label>
+                <label class="club-admin-wide">Condiciones del canje<textarea class="form-control" th:field="*{condiciones}" rows="2" maxlength="500" placeholder="Dónde y cómo se utiliza"></textarea></label>
+                <label>Fotografía<input class="form-control" type="file" name="imagenArchivo" accept="image/jpeg,image/png,image/webp"><small>JPG, PNG o WEBP. Máximo 3 MB.</small></label>
+                <label class="club-admin-check"><input type="checkbox" th:field="*{activo}"> Publicar en el Club</label>
+                <div class="club-admin-wide club-admin-form-actions">
+                    <button class="btn-club-primary" type="submit"><i class="bi bi-check2"></i> Guardar recompensa</button>
+                    <a class="btn-club-outline" th:href="@{/admin/club#recompensa-form}">Limpiar formulario</a>
+                </div>
+            </form>
+        </section>
+
+        <section id="canjes" class="club-admin-panel">
+            <div class="club-admin-heading"><div><span>OPERACIÓN Y AUDITORÍA</span><h2>Canjes realizados</h2><p>Consulta el estado, los códigos y quién validó cada recompensa en caja.</p></div></div>
+            <form class="club-admin-search" method="get" th:action="@{/admin/club}"><input class="form-control" name="q" th:value="${filtroCanjes}" placeholder="Buscar por código, DNI o cliente"><button class="btn-club-outline"><i class="bi bi-search"></i> Buscar</button></form>
+            <form class="club-admin-search club-admin-validar" method="post" th:action="@{/admin/club/canjes/validar}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <input class="form-control" name="codigo" maxlength="32" required placeholder="Código de recompensa para validar en caja">
+                <button class="btn-club-primary" type="submit"><i class="bi bi-shield-check"></i> Validar canje</button>
+            </form>
+            <div class="club-admin-table-wrap">
+                <table class="table club-admin-table align-middle">
+                    <thead><tr><th>Cliente</th><th>Recompensa</th><th>Código</th><th>Canje</th><th>Vence</th><th>Estado</th><th>Validó</th><th></th></tr></thead>
+                    <tbody>
+                    <tr th:each="c : ${canjes}">
+                        <td><strong th:text="${c.cliente}">Cliente</strong><small th:text="${c.dni}">DNI</small></td>
+                        <td th:text="${c.recompensa}">Recompensa</td><td class="club-admin-code" th:text="${c.codigo}">RIN-ABC</td>
+                        <td th:text="${#temporals.format(c.fechaCanje, 'dd/MM/yyyy HH:mm')}">Fecha</td>
+                        <td th:text="${#temporals.format(c.venceEn, 'dd/MM/yyyy')}">Fecha</td>
+                        <td><span class="club-admin-state" th:text="${c.estado}">DISPONIBLE</span></td>
+                        <td th:text="${#strings.isEmpty(c.validador) ? '—' : c.validador}">—</td>
+                        <td th:if="${c.estado == 'DISPONIBLE' or c.estado == 'PENDIENTE_ENTREGA'}">
+                            <form th:action="@{/admin/club/canjes/{id}/cancelar(id=${c.idCanje})}" method="post" class="club-admin-inline-form">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <input name="motivo" required minlength="8" maxlength="200" placeholder="Motivo de cancelación" aria-label="Motivo de cancelación">
+                                <button class="btn-club-danger" type="submit" title="Cancelar y devolver puntos"><i class="bi bi-arrow-counterclockwise"></i></button>
+                            </form>
+                        </td><td th:unless="${c.estado == 'DISPONIBLE' or c.estado == 'PENDIENTE_ENTREGA'}">—</td>
+                    </tr>
+                    <tr th:if="${canjes.isEmpty()}"><td colspan="8" class="club-admin-empty">No hay canjes que coincidan con la búsqueda.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="club-admin-columns">
+            <section id="configuracion" class="club-admin-panel">
+                <div class="club-admin-heading"><div><span>REGLAS DEL PROGRAMA</span><h2>Acumulación y vigencia</h2></div></div>
+                <form th:action="@{/admin/club/configuracion}" th:object="${configForm}" method="post" class="club-admin-form club-admin-form-single">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <label>Puntos por cada sol pagado<input class="form-control" type="number" min="1" max="1000" th:field="*{puntosPorSol}" required></label>
+                    <label>Vigencia de puntos (días)<input class="form-control" type="number" min="1" max="3650" th:field="*{vigenciaPuntosDias}" required></label>
+                    <label>Vigencia de canjes (días)<input class="form-control" type="number" min="1" max="3650" th:field="*{vigenciaRecompensasDias}" required></label>
+                    <button class="btn-club-primary" type="submit">Guardar reglas</button>
+                </form>
+                <p class="club-admin-note">Los puntos acumulados antes de la migración conservan su vigencia actual; esta regla se aplica a los nuevos.</p>
+            </section>
+
+            <section id="campanas" class="club-admin-panel">
+                <div class="club-admin-heading"><div><span>VISITAS Y TEMPORADAS</span><h2 th:text="${campanaForm.idCampana == null ? 'Campañas de puntos' : 'Editar campaña'}">Campañas de puntos</h2></div></div>
+                <form th:action="@{/admin/club/campanas/guardar}" th:object="${campanaForm}" method="post" class="club-admin-form club-admin-form-single">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"><input type="hidden" th:field="*{idCampana}">
+                    <label>Nombre<input class="form-control" th:field="*{nombre}" required maxlength="100" placeholder="Martes de la sierra"></label>
+                    <label>Bonificación (%)<input class="form-control" type="number" min="1" max="500" th:field="*{porcentajeBonus}" required></label>
+                    <label>Desde<input class="form-control" type="date" th:field="*{fechaInicio}" required></label>
+                    <label>Hasta<input class="form-control" type="date" th:field="*{fechaFin}" required></label>
+                    <label class="club-admin-check"><input type="checkbox" th:field="*{activa}"> Activa dentro de sus fechas</label>
+                    <button class="btn-club-primary" type="submit">Guardar campaña</button>
+                </form>
+                <div class="club-admin-campaigns">
+                    <article th:each="campana : ${campanas}"><div><strong th:text="${campana.nombre}">Campaña</strong><small th:text="'+' + ${campana.porcentajeBonus} + '% · ' + ${#temporals.format(campana.fechaInicio, 'dd/MM/yy')} + ' – ' + ${#temporals.format(campana.fechaFin, 'dd/MM/yy')}">+20%</small></div><a th:href="@{/admin/club(editarCampana=${campana.idCampana})} + '#campanas'" aria-label="Editar campaña"><i class="bi bi-pencil"></i></a></article>
+                    <p th:if="${campanas.isEmpty()}" class="club-admin-empty">No hay campañas configuradas.</p>
+                </div>
+            </section>
+        </div>
+
+        <div class="club-admin-columns">
+            <section id="ajustes" class="club-admin-panel">
+                <div class="club-admin-heading"><div><span>ATENCIÓN AL CLIENTE</span><h2>Ajustar puntos</h2><p>Las modificaciones quedan en el historial con el usuario administrador y el motivo.</p></div></div>
+                <form th:action="@{/admin/club/ajustes}" th:object="${ajusteForm}" method="post" class="club-admin-form club-admin-form-single">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <label>DNI del cliente<input class="form-control" th:field="*{dni}" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" required></label>
+                    <label>Puntos (negativo para retirar)<input class="form-control" type="number" th:field="*{puntos}" required></label>
+                    <label>Motivo<textarea class="form-control" th:field="*{motivo}" minlength="8" maxlength="200" required></textarea></label>
+                    <button class="btn-club-primary" type="submit">Registrar ajuste</button>
+                </form>
+            </section>
+            <section class="club-admin-panel">
+                <div class="club-admin-heading"><div><span>CONSULTA DE CUENTA</span><h2>Historial por cliente</h2></div></div>
+                <form method="get" th:action="@{/admin/club}" class="club-admin-search">
+                    <input class="form-control" name="dni" th:value="${filtroDni}" inputmode="numeric" maxlength="8" placeholder="DNI de 8 dígitos">
+                    <button class="btn-club-outline"><i class="bi bi-search"></i> Consultar</button>
+                </form>
+                <p th:if="${errorDni}" class="club-admin-error" th:text="${errorDni}"></p>
+                <div th:if="${clienteClub}" class="club-admin-client">
+                    <strong th:text="${clienteClub.nombres + ' ' + clienteClub.apellidos}">Cliente</strong>
+                    <span th:text="${saldoClienteClub} + ' puntos disponibles'">0 puntos</span>
+                    <div th:each="m : ${movimientosClienteClub}" class="club-admin-ledger"><span th:text="${m.descripcion}">Movimiento</span><b th:text="${m.puntos > 0 ? '+' + m.puntos : m.puntos}">+1</b></div>
+                    <p th:if="${movimientosClienteClub.isEmpty()}" class="club-admin-empty">Todavía no registra movimientos.</p>
+                </div>
+            </section>
+        </div>
+
+        <section class="club-admin-panel club-admin-reversal">
+            <div class="club-admin-heading"><div><span>ANULACIONES</span><h2>Revertir puntos de un pedido anulado</h2><p>Solo procesa pedidos que ya tienen estado CANCELADO en el sistema.</p></div></div>
+            <form method="post" th:action="@{/admin/club/pedidos/revertir}" class="club-admin-search">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <input class="form-control" name="motivo" required minlength="8" maxlength="200" placeholder="Motivo de la anulación">
+                <input class="form-control" name="idPedido" required type="number" min="1" placeholder="N.º de pedido">
+                <button class="btn-club-danger" type="submit">Revertir saldo</button>
+            </form>
+        </section>
+    </main>
+</div>
+</body>
+</html>

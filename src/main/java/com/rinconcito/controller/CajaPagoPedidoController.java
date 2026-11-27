@@ -1,5 +1,8 @@
 package com.rinconcito.controller;
 
+import com.rinconcito.dto.ClubCobroEstimacionDTO;
+import com.rinconcito.dto.ClubConsultaRecompensaDTO;
+import com.rinconcito.dto.ClubPagoResumenDTO;
 import com.rinconcito.entity.DetallePedido;
 import com.rinconcito.entity.Pago;
 import com.rinconcito.entity.Pago.MetodoPago;
@@ -7,6 +10,7 @@ import com.rinconcito.entity.Pedido;
 import com.rinconcito.entity.Usuario;
 import com.rinconcito.repository.UsuarioRepository;
 import com.rinconcito.service.EvidenciaStorageService;
+import com.rinconcito.service.ClubPuntosService;
 import com.rinconcito.service.PagoPedidoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.nio.file.Path;
@@ -45,10 +50,13 @@ public class CajaPagoPedidoController {
     private final UsuarioRepository
             usuarioRepository;
 
+    private final ClubPuntosService clubPuntosService;
+
     public CajaPagoPedidoController(
             PagoPedidoService pagoPedidoService,
             EvidenciaStorageService evidenciaStorageService,
-            UsuarioRepository usuarioRepository
+            UsuarioRepository usuarioRepository,
+            ClubPuntosService clubPuntosService
     ) {
         this.pagoPedidoService =
                 pagoPedidoService;
@@ -58,6 +66,7 @@ public class CajaPagoPedidoController {
 
         this.usuarioRepository =
                 usuarioRepository;
+        this.clubPuntosService = clubPuntosService;
     }
 
     /*
@@ -177,6 +186,59 @@ public class CajaPagoPedidoController {
         return "paginas/caja/pedidos-presenciales";
     }
 
+    @GetMapping("/pedidos-presenciales/club/estimacion")
+    @ResponseBody
+    public ClubCobroEstimacionDTO estimarPuntosClub(
+            @RequestParam Integer idPedido,
+            @RequestParam String dni,
+            Authentication authentication
+    ) {
+        try {
+            usuarioActual(authentication);
+            if (dni == null || !dni.trim().matches("[0-9]{8}")) {
+                return ClubCobroEstimacionDTO.noRegistrado();
+            }
+            Pedido pedido = pagoPedidoService.obtenerPedidoPresencialPendiente(idPedido);
+            Usuario cliente = usuarioRepository.findByDni(dni.trim()).orElse(null);
+            return clubPuntosService.previsualizarCobro(cliente, pedido);
+        } catch (IllegalStateException e) {
+            return ClubCobroEstimacionDTO.noRegistrado();
+        }
+    }
+
+    @GetMapping("/club/consultar-desde-cobro")
+    @ResponseBody
+    public ClubConsultaRecompensaDTO consultarRecompensaDesdeCobro(
+            @RequestParam String codigo,
+            @RequestParam String dni,
+            Authentication authentication
+    ) {
+        Usuario cajero = usuarioActual(authentication);
+        Usuario cliente = dni != null && dni.trim().matches("[0-9]{8}")
+                ? usuarioRepository.findByDni(dni.trim()).orElse(null) : null;
+        return clubPuntosService.consultarRecompensaEnCaja(codigo, cliente, cajero);
+    }
+
+    @PostMapping("/club/confirmar-desde-cobro")
+    @ResponseBody
+    public ClubConsultaRecompensaDTO confirmarEntregaDesdeCobro(
+            @RequestParam String codigo,
+            @RequestParam String dni,
+            Authentication authentication
+    ) {
+        Usuario cajero = usuarioActual(authentication);
+        Usuario cliente = dni != null && dni.trim().matches("[0-9]{8}")
+                ? usuarioRepository.findByDni(dni.trim()).orElse(null) : null;
+        try {
+            String nombre = clubPuntosService.confirmarEntregaEnCaja(codigo, cliente, cajero);
+            return new ClubConsultaRecompensaDTO(true,
+                    nombre + " confirmada y marcada como entregada.",
+                    codigo.trim().toUpperCase(), nombre, null);
+        } catch (IllegalStateException e) {
+            return ClubConsultaRecompensaDTO.noDisponible(codigo, e.getMessage());
+        }
+    }
+
     /*
      * Registra el pago presencial, finaliza
      * el pedido y libera la mesa.
@@ -186,6 +248,9 @@ public class CajaPagoPedidoController {
     )
     public String cobrarPedidoPresencial(
             @PathVariable Integer idPedido,
+
+            @RequestParam(value = "dniClub", required = false)
+            String dniClub,
 
             @RequestParam("metodoPago")
             MetodoPago metodoPago,
@@ -203,6 +268,14 @@ public class CajaPagoPedidoController {
             Usuario validador =
                     usuarioActual(authentication);
 
+            if (dniClub != null && !dniClub.isBlank()) {
+                Usuario clienteClub = usuarioRepository.findByDni(dniClub.trim())
+                        .orElseThrow(() -> new IllegalStateException(
+                                "No encontramos una cuenta del Club con ese DNI. Verifica los 8 dígitos."
+                        ));
+                pagoPedidoService.asociarClienteClubPresencial(idPedido, clienteClub);
+            }
+
             Pedido pedido =
                     pagoPedidoService
                             .registrarPagoPresencial(
@@ -211,6 +284,12 @@ public class CajaPagoPedidoController {
                                     numeroOperacion,
                                     validador
                             );
+
+            ClubPagoResumenDTO resumenClub = clubPuntosService.obtenerResumenPagoPorPedido(idPedido);
+            if (resumenClub != null) {
+                redirectAttributes.addFlashAttribute("resumenClub", resumenClub);
+                redirectAttributes.addFlashAttribute("importePagadoClub", pedido.getTotal());
+            }
 
             // Con el ID podemos seguir el cobro sin guardar datos del cliente en el log.
             log.info("Cobro presencial registrado para el pedido {}", idPedido);

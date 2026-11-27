@@ -147,6 +147,9 @@ public class SecurityConfig {
                         .requestMatchers("/mi-cuenta/**")
                         .hasRole("CLIENTE")
 
+                        .requestMatchers("/club/**")
+                        .hasRole("CLIENTE")
+
                         .anyRequest()
                         .permitAll()
                 )

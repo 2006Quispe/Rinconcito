@@ -39,6 +39,14 @@
 
         </a>
 
+        <a th:href="@{/admin/club}"
+           th:classappend="${seccionActiva == 'club'} ? ' activo'">
+
+            <i class="bi bi-stars"></i>
+            <span>Club y recompensas</span>
+
+        </a>
+
         <a th:href="@{/admin/categorias}"
            th:classappend="${seccionActiva == 'categorias'} ? ' activo'">
 

@@ -36,6 +36,9 @@
 
     <main class="admin-contenido pedidos-admin-contenido">
 
+        <div th:if="${exito}" class="alert alert-success" role="status" th:text="${exito}"></div>
+        <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
         <header class="pedidos-encabezado">
 
             <div>
@@ -339,6 +342,7 @@
                             <th>Fecha</th>
                             <th>Estado</th>
                             <th>Total</th>
+                            <th>Acciones</th>
                         </tr>
                         </thead>
 
@@ -550,6 +554,21 @@
 
                                 </div>
 
+                            </td>
+
+                            <td>
+                                <form th:if="${pedido.estado.name() != 'CANCELADO'
+                                    and pedido.estado.name() != 'PENDIENTE_VALIDACION'}"
+                                      th:action="@{/admin/pedidos/{id}/cancelar(id=${pedido.idPedido})}"
+                                      method="post"
+                                      class="pedido-cancelar-form"
+                                      onsubmit="return confirm('¿Cancelar este pedido? Se revertirán los puntos acreditados cuando corresponda.');">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <input name="motivo" required minlength="8" maxlength="200" placeholder="Motivo de anulación" aria-label="Motivo de anulación">
+                                    <button type="submit" title="Cancelar pedido"><i class="bi bi-x-circle"></i></button>
+                                </form>
+                                <span th:if="${pedido.estado.name() == 'PENDIENTE_VALIDACION'}" class="pedido-sin-accion">Procesar pago en Caja</span>
+                                <span th:if="${pedido.estado.name() == 'CANCELADO'}" class="pedido-sin-accion">—</span>
                             </td>
 
                         </tr>

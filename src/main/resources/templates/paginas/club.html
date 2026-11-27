@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#422b20">
+    <title th:text="${titulo} + ' - Rinconcito Ayacuchano'">Club Rinconcito</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+    <link th:href="@{/css/estilos.css}" rel="stylesheet">
+    <link th:href="@{/css/club.css}" rel="stylesheet">
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<main class="club-pagina">
+    <section class="club-hero">
+        <div class="container club-hero-contenido">
+            <div class="club-hero-copy">
+                <span class="club-etiqueta"><i class="bi bi-stars"></i> CLUB RINCONCITO</span>
+                <h1>El sabor de nuestra tierra <em>tiene su recompensa.</em></h1>
+                <p>Disfruta de nuestra tradición ayacuchana, acumula puntos con tus consumos y canjéalos por platos, beneficios y experiencias especiales.</p>
+                <div class="club-hero-actions">
+                    <a class="club-cta" href="#recompensas">Explorar recompensas <i class="bi bi-arrow-down-right"></i></a>
+                    <a class="club-cta-secundario" href="#mis-recompensas"><i class="bi bi-ticket-perforated"></i> Mis recompensas</a>
+                    <a class="club-cta-secundario" href="#historial"><i class="bi bi-clock-history"></i> Mi historial</a>
+                </div>
+                <div class="club-hero-sellos"><span><i class="bi bi-patch-check"></i> Cocina ayacuchana</span><span><i class="bi bi-heart"></i> Momentos para compartir</span></div>
+            </div>
+            <aside class="club-saldo-card" aria-label="Saldo de puntos">
+                <div class="club-saldo-marca"><img th:src="@{/img/logo-rinconcito.png}" alt=""/><span>Tu cuenta del club</span></div>
+                <small>PUNTOS DISPONIBLES</small>
+                <strong th:text="${#numbers.formatInteger(saldo, 0, 'COMMA')}">0</strong>
+                <span class="club-saldo-unidad">puntos</span>
+                <div class="club-saldo-regla">
+                    <i class="bi bi-coin"></i> Cada S/ 1 pagado = <b th:text="${puntosPorSol}">1</b> punto base
+                    <small th:if="${nivelFidelizacion != null and nivelFidelizacion.porcentajeBonus > 0}"
+                           th:text="${'+' + nivelFidelizacion.porcentajeBonus + '% por nivel'}">+10% por nivel</small>
+                </div>
+                <div class="club-saldo-nivel" th:if="${nivelFidelizacion != null}">
+                    <div class="club-saldo-nivel-titulo">
+                        <span>NIVEL DE FIDELIZACI&Oacute;N</span>
+                        <strong th:text="${nivelFidelizacion.nombre}">Visitante</strong>
+                    </div>
+                    <div class="club-saldo-nivel-barra" role="progressbar" aria-label="Progreso al siguiente nivel"
+                         th:attr="aria-valuenow=${nivelFidelizacion.progresoPorcentaje},aria-valuemin=0,aria-valuemax=100">
+                        <span th:style="|width: ${nivelFidelizacion.progresoPorcentaje}%|"></span>
+                    </div>
+                    <div class="club-saldo-nivel-meta">
+                        <small><b th:text="${nivelFidelizacion.puntosAnuales}">0</b> puntos acumulados este a&ntilde;o</small>
+                        <small th:if="${nivelFidelizacion.siguienteNivel != null}">
+                            <b th:text="${nivelFidelizacion.puntosMeta - nivelFidelizacion.puntosAnuales}">500</b>
+                            puntos para <span th:text="${nivelFidelizacion.siguienteNivel}">Amigo del Rinconcito</span>
+                        </small>
+                        <small th:if="${nivelFidelizacion.siguienteNivel == null}">Nivel m&aacute;ximo este a&ntilde;o</small>
+                    </div>
+                    <p th:text="${nivelFidelizacion.beneficio}">1 punto por cada S/ 1 consumido</p>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <div class="container club-contenido">
+        <div th:if="${clubExito}" class="club-alerta club-alerta-ok" role="status"><i class="bi bi-check-circle-fill"></i><span th:text="${clubExito}"></span></div>
+        <div th:if="${clubError}" class="club-alerta club-alerta-error" role="alert"><i class="bi bi-exclamation-circle-fill"></i><span th:text="${clubError}"></span></div>
+
+        <section class="club-progreso" th:if="${progreso.recompensa != null}">
+            <div class="club-progreso-icono"><i th:class="${progreso.puedeCanjear ? 'bi bi-gift-fill' : 'bi bi-signpost-split-fill'}"></i></div>
+            <div class="club-progreso-cuerpo">
+                <span class="club-progreso-eyebrow" th:text="${progreso.puedeCanjear ? 'YA PUEDES DISFRUTAR' : 'TU PRÓXIMA RECOMPENSA'}">TU PRÓXIMA RECOMPENSA</span>
+                <h2 th:text="${progreso.recompensa.nombre}">Jarra de chicha morada</h2>
+                <p th:text="${progreso.mensaje}">¡Sigue sumando puntos!</p>
+                <div class="club-barra" role="progressbar" th:attr="aria-valuenow=${progreso.porcentaje}, aria-valuemin=0, aria-valuemax=100">
+                    <span th:style="'width:' + ${progreso.porcentaje} + '%' "></span>
+                </div>
+                <small><b th:text="${saldo}">0</b> de <b th:text="${progreso.puntosNecesarios}">120</b> puntos</small>
+            </div>
+            <form th:if="${progreso.puedeCanjear}" th:action="@{/club/canjear/{id}(id=${progreso.recompensa.idRecompensa})}" method="post" onsubmit="return confirm('¿Canjeamos esta recompensa? Los puntos se descontarán de tu saldo.');">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="club-progreso-canjear" type="submit">Canjear ahora <i class="bi bi-arrow-right"></i></button>
+            </form>
+        </section>
+
+        <section class="club-niveles" th:if="${nivelFidelizacion != null}" aria-labelledby="club-niveles-titulo">
+            <div class="club-niveles-encabezado">
+                <span>CRECE CON NOSOTROS</span>
+                <h2 id="club-niveles-titulo">Cada visita te acerca a más beneficios.</h2>
+                <p>Descubre nuestros niveles de fidelización y disfruta las ventajas de pertenecer al Club Rinconcito.</p>
+            </div>
+            <div class="club-niveles-grid">
+                <article class="club-nivel-card club-nivel-visitante"
+                         th:classappend="${nivelFidelizacion.codigo == 'VISITANTE' ? ' actual' : (nivelFidelizacion.codigo == 'AMIGO' or nivelFidelizacion.codigo == 'FAMILIA' ? ' alcanzado' : '')}">
+                    <div class="club-nivel-icono" aria-hidden="true">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                            <circle cx="12" cy="8" r="6" />
+                            <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+                        </svg>
+                    </div>
+                    <span class="club-nivel-estado" th:if="${nivelFidelizacion.codigo == 'VISITANTE'}">Tu nivel actual</span>
+                    <span class="club-nivel-estado" th:if="${nivelFidelizacion.codigo == 'AMIGO' or nivelFidelizacion.codigo == 'FAMILIA'}">Nivel alcanzado</span>
+                    <h3>Visitante</h3>
+                    <p class="club-nivel-umbral">Desde <b>0</b> puntos anuales</p>
+                    <div class="club-nivel-beneficio"><strong>1×</strong><span>Acumulación regular de puntos</span></div>
+                    <p class="club-nivel-detalle">Acceso al catálogo de recompensas.</p>
+                    <small class="club-nivel-faltan" th:if="${nivelFidelizacion.codigo == 'VISITANTE' and nivelFidelizacion.siguienteNivel != null}">
+                        Te faltan <b th:text="${#numbers.formatInteger(nivelFidelizacion.puntosMeta - nivelFidelizacion.puntosAnuales, 0, 'COMMA')}">500</b> puntos anuales para Amigo.
+                    </small>
+                </article>
+
+                <article class="club-nivel-card club-nivel-amigo"
+                         th:classappend="${nivelFidelizacion.codigo == 'AMIGO' ? ' actual' : (nivelFidelizacion.codigo == 'FAMILIA' ? ' alcanzado' : '')}">
+                    <div class="club-nivel-icono" aria-hidden="true">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                            <path d="M7.21 15 2.66 7.14a2 2 0 0 1 .94-2.75l3.3-1.33a2 2 0 0 1 2.6 1.06L12 8" />
+                            <path d="M12 8v13" />
+                            <path d="m12 8 5.5-3.9a2 2 0 0 1 2.6 1.06l3.3 1.33a2 2 0 0 1 .94 2.75L19.79 15" />
+                            <circle cx="12" cy="15" r="6" />
+                        </svg>
+                    </div>
+                    <span class="club-nivel-estado" th:if="${nivelFidelizacion.codigo == 'AMIGO'}">Tu nivel actual</span>
+                    <span class="club-nivel-estado" th:if="${nivelFidelizacion.codigo == 'VISITANTE'}">Por desbloquear</span>
+                    <span class="club-nivel-estado" th:if="${nivelFidelizacion.codigo == 'FAMILIA'}">Nivel alcanzado</span>
+                    <h3>Amigo del Rinconcito</h3>
+                    <p class="club-nivel-umbral">Desde <b>500</b> puntos anuales</p>
+                    <div class="club-nivel-beneficio"><strong>+10%</strong><span>Adicional de puntos en tus consumos</span></div>
+                    <small class="club-nivel-faltan" th:if="${nivelFidelizacion.codigo == 'AMIGO' and nivelFidelizacion.siguienteNivel != null}">
+                        Te faltan <b th:text="${#numbers.formatInteger(nivelFidelizacion.puntosMeta - nivelFidelizacion.puntosAnuales, 0, 'COMMA')}">1,000</b> puntos anuales para Familia.
+                    </small>
+                </article>
+
+                <article class="club-nivel-card club-nivel-familia"
+                         th:classappend="${nivelFidelizacion.codigo == 'FAMILIA' ? ' actual' : ''}">
+                    <div class="club-nivel-icono" aria-hidden="true">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                            <path d="m2 4 3 12h14l3-12-7 7-5-7-5 7z" />
+                            <path d="M5 20h14" />
+                        </svg>
+                    </div>
+                    <span class="club-nivel-estado" th:if="${nivelFidelizacion.codigo == 'FAMILIA'}">Tu nivel actual</span>
+                    <span class="club-nivel-estado" th:if="${nivelFidelizacion.codigo != 'FAMILIA'}">Por desbloquear</span>
+                    <h3>Familia Rinconcito</h3>
+                    <p class="club-nivel-umbral">Desde <b>1,500</b> puntos anuales</p>
+                    <div class="club-nivel-beneficio"><strong>+20%</strong><span>Adicional de puntos en tus consumos</span></div>
+                </article>
+            </div>
+            <p class="club-niveles-nota"><i class="bi bi-info-circle"></i> Los niveles se calculan por año calendario. Canjear recompensas no reduce tu nivel de fidelización.</p>
+        </section>
+
+        <section id="recompensas" class="club-catalogo">
+            <div class="club-seccion-encabezado">
+                <div><span>HECHO CON SABOR A NUESTRA TIERRA</span><h2>Recompensas para disfrutar</h2><p>Elige algo rico para tu próxima visita o un beneficio para tu pedido.</p></div>
+                <div class="club-puntos-mini"><i class="bi bi-stars"></i><strong th:text="${saldo}">0</strong> puntos</div>
+            </div>
+            <nav class="club-categorias" aria-label="Categorías de recompensas">
+                <a th:href="@{/club(categoria='TODAS')}" th:classappend="${categoriaActual == 'TODAS' ? ' activa' : ''}">Todas</a>
+                <a th:href="@{/club(categoria='PLATOS_TIPICOS')}" th:classappend="${categoriaActual == 'PLATOS_TIPICOS' ? ' activa' : ''}">Platos típicos</a>
+                <a th:href="@{/club(categoria='BEBIDAS_POSTRES')}" th:classappend="${categoriaActual == 'BEBIDAS_POSTRES' ? ' activa' : ''}">Bebidas y postres</a>
+                <a th:href="@{/club(categoria='DESCUENTOS')}" th:classappend="${categoriaActual == 'DESCUENTOS' ? ' activa' : ''}">Descuentos</a>
+                <a th:href="@{/club(categoria='EXPERIENCIAS_FAMILIARES')}" th:classappend="${categoriaActual == 'EXPERIENCIAS_FAMILIARES' ? ' activa' : ''}">Experiencias familiares</a>
+                <a th:href="@{/club(categoria='MERCHANDISING')}" th:classappend="${categoriaActual == 'MERCHANDISING' ? ' activa' : ''}">Recuerdos</a>
+            </nav>
+
+            <div class="club-recompensas" th:if="${!recompensas.isEmpty()}">
+                <article class="club-recompensa" th:each="recompensa : ${recompensas}"
+                         th:classappend="${recompensa.estadoDisponibilidad == 'AGOTADA' or recompensa.estadoDisponibilidad == 'NO_DISPONIBLE_EN_CARTA' or recompensa.estadoDisponibilidad == 'VENCIDA' or recompensa.estadoDisponibilidad == 'CONFIGURACION_PENDIENTE' ? ' agotada' : (recompensa.puntosFaltantes > 0 ? ' bloqueada' : '')}">
+                    <div class="club-recompensa-foto">
+                        <img th:if="${recompensa.imagen != null and !recompensa.imagen.isBlank()}" th:src="${recompensa.imagen}" th:alt="${recompensa.nombre}" loading="lazy">
+                        <img th:if="${recompensa.imagen == null or recompensa.imagen.isBlank()}" th:src="@{/img/pachamanca.png}" alt="Cocina tradicional ayacuchana" loading="lazy">
+                        <span class="club-categoria-chip" th:text="${#strings.replace(recompensa.categoria, '_', ' ')}">PLATOS TÍPICOS</span>
+                        <span class="club-disponibilidad" th:if="${recompensa.estadoDisponibilidad == 'AGOTADA'}">Agotada</span>
+                        <span class="club-disponibilidad" th:if="${recompensa.estadoDisponibilidad == 'PROXIMAMENTE'}">Próximamente</span>
+                        <span class="club-disponibilidad" th:if="${recompensa.estadoDisponibilidad == 'CONFIGURACION_PENDIENTE'}">Pendiente de configurar</span>
+                    </div>
+                    <div class="club-recompensa-contenido">
+                        <div class="club-recompensa-titulo"><h3 th:text="${recompensa.nombre}">Recompensa</h3><b><span th:text="${recompensa.costoPuntos}">100</span><small> pts</small></b></div>
+                        <p th:text="${recompensa.descripcion}">Descripción de la recompensa.</p>
+                        <p class="club-condiciones" th:if="${recompensa.condiciones != null and !recompensa.condiciones.isBlank()}" th:text="${recompensa.condiciones}">Condiciones</p>
+                        <p class="club-condiciones" th:if="${recompensa.compraMinima > 0}" th:text="'Pedido mínimo S/ ' + ${recompensa.compraMinima}">Pedido mínimo</p>
+                        <div class="club-recompensa-accion">
+                            <small th:if="${recompensa.puntosFaltantes > 0 and recompensa.estadoDisponibilidad == 'DISPONIBLE'}" th:text="'Te faltan ' + ${recompensa.puntosFaltantes} + ' puntos'">Te faltan 20 puntos</small>
+                            <small th:if="${recompensa.estadoDisponibilidad != 'DISPONIBLE' and (recompensa.codigo != 'DELIVERY-GRATIS' or recompensa.estadoDisponibilidad != 'CONFIGURACION_PENDIENTE')}" th:text="${recompensa.estadoDisponibilidad == 'NO_DISPONIBLE_EN_CARTA' ? 'No disponible actualmente en la carta' : (recompensa.estadoDisponibilidad == 'AGOTADA' ? 'Sin unidades disponibles' : (recompensa.estadoDisponibilidad == 'PROXIMAMENTE' ? 'Disponible próximamente' : (recompensa.estadoDisponibilidad == 'CONFIGURACION_PENDIENTE' ? 'Beneficio temporalmente no disponible' : 'Vigencia finalizada')))}">Disponibilidad</small>
+                            <form class="club-form-canje" th:action="@{/club/canjear/{id}(id=${recompensa.idRecompensa})}" method="post">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button class="club-canjear" type="submit" th:disabled="${!recompensa.canjeable}"
+                                        th:attr="aria-label=${'Canjear ' + recompensa.nombre},data-nombre=${recompensa.nombre},data-descripcion=${recompensa.descripcion},data-condiciones=${recompensa.condiciones},data-compra-minima=${recompensa.compraMinima},data-vigencia-dias=${recompensa.vigenciaDias},data-tipo=${recompensa.tipo},data-imagen=${recompensa.imagen},data-saldo=${saldo},data-costo=${recompensa.costoPuntos}">
+                                    <span th:text="${recompensa.canjeable ? 'Canjear recompensa' : 'Seguir acumulando'}">Canjear recompensa</span><i class="bi bi-arrow-right"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="club-stock" th:if="${recompensa.stock != null}" th:text="${recompensa.stock > 0 ? recompensa.stock + ' disponibles' : 'Sin stock'}">10 disponibles</div>
+                    </div>
+                </article>
+            </div>
+            <div class="club-vacio" th:if="${recompensas.isEmpty()}"><i class="bi bi-basket2"></i><div><strong>Estamos preparando el menú del Club.</strong><span>Pronto habrá nuevas recompensas para compartir.</span></div></div>
+        </section>
+
+        <section id="mis-recompensas" class="club-seccion club-mis-recompensas">
+            <div class="club-seccion-encabezado"><div><span>GUARDA TU CÓDIGO</span><h2>Mis recompensas</h2><p>Presenta el código en caja para productos y experiencias. Los beneficios online se aplican desde tu pedido.</p></div></div>
+            <div th:if="${cupones.isEmpty()}" class="club-vacio"><i class="bi bi-ticket-perforated"></i><div><strong>Tus próximos premios empiezan aquí.</strong><span>Cuando canjees puntos, tus códigos aparecerán en esta sección.</span></div></div>
+            <div class="club-cupones" th:if="${!cupones.isEmpty()}">
+                <article class="club-cupon" th:each="cupon : ${cupones}">
+                    <div class="club-cupon-sello"><i th:class="${cupon.tipo == 'PRODUCTO_CARTA' or cupon.tipo == 'PRODUCTO_MERCH' or cupon.tipo == 'EXPERIENCIA' ? 'bi bi-gift-fill' : 'bi bi-ticket-perforated-fill'}"></i></div>
+                    <div class="club-cupon-datos"><span class="club-cupon-categoria" th:text="${#strings.replace(cupon.categoria, '_', ' ')}">BENEFICIO</span><strong th:text="${cupon.nombreRecompensa}">Cupón</strong><code th:text="${cupon.codigoCupon}">RIN-ABC123</code><small th:text="'Emitida ' + ${#temporals.format(cupon.fechaCanje, 'dd/MM/yyyy')} + ' · vence ' + ${#temporals.format(cupon.venceEn, 'dd/MM/yyyy')}">Fecha</small><small th:if="${cupon.condiciones != null and !cupon.condiciones.isBlank()}" th:text="${cupon.condiciones}">Condiciones</small></div>
+                    <span class="club-estado" th:classappend="${' estado-' + #strings.toLowerCase(cupon.estado)}" th:text="${cupon.estado == 'USADO' ? 'Utilizada' : (cupon.estado == 'RESERVADO' ? 'En pedido' : (cupon.estado == 'PENDIENTE_ENTREGA' ? 'Pendiente de recojo' : (cupon.estado == 'VENCIDO' ? 'Vencida' : (cupon.estado == 'CANCELADO' ? 'Cancelada' : 'Disponible'))))}">Disponible</span>
+                </article>
+            </div>
+        </section>
+
+        <section id="historial" class="club-seccion club-historial">
+            <div class="club-seccion-encabezado"><div><span>TRANSPARENCIA EN CADA PUNTO</span><h2>Historial de puntos</h2><p>Tus compras aprobadas, canjes, bonos, vencimientos y ajustes.</p></div></div>
+            <div th:if="${movimientos.isEmpty()}" class="club-vacio"><i class="bi bi-clock-history"></i><div><strong>Aún no tienes movimientos.</strong><span>Los puntos aparecerán después de pagar un consumo elegible.</span></div></div>
+            <div class="club-movimientos" th:if="${!movimientos.isEmpty()}">
+                <article class="club-movimiento" th:each="movimiento : ${movimientos}">
+                    <div class="club-movimiento-icono"><i th:class="${movimiento.tipo == 'ACUMULACION' ? 'bi bi-bag-check' : (movimiento.tipo == 'CANJE' ? 'bi bi-gift' : (movimiento.tipo == 'VENCIMIENTO' ? 'bi bi-hourglass-bottom' : (movimiento.tipo == 'BONIFICACION' ? 'bi bi-stars' : 'bi bi-arrow-left-right')))}"></i></div>
+                    <div class="club-movimiento-descripcion"><strong th:text="${movimiento.descripcion}">Pedido</strong><small th:text="${#temporals.format(movimiento.creadoEn, 'dd/MM/yyyy HH:mm') + (movimiento.referencia != null ? ' · ' + movimiento.referencia : '')}">Fecha · Referencia</small><small th:if="${movimiento.venceEn != null and movimiento.puntos > 0}" th:text="'Puntos válidos hasta ' + ${#temporals.format(movimiento.venceEn, 'dd/MM/yyyy')}">Vigencia</small></div>
+                    <b th:classappend="${movimiento.puntos > 0 ? ' suma' : ' resta'}" th:text="${movimiento.puntos > 0 ? '+' + movimiento.puntos : movimiento.puntos} + ' pts'">+10 pts</b>
+                </article>
+                <nav class="club-paginacion" aria-label="Páginas del historial" th:if="${paginaMovimientos > 0 or hayMasMovimientos}">
+                    <a th:if="${paginaMovimientos > 0}" th:href="@{/club(movimientos=1, pagina=${paginaMovimientos - 1})}#historial"><i class="bi bi-arrow-left"></i> Anteriores</a>
+                    <a th:if="${hayMasMovimientos}" th:href="@{/club(movimientos=1, pagina=${paginaMovimientos + 1})}#historial">Más movimientos <i class="bi bi-arrow-right"></i></a>
+                </nav>
+            </div>
+        </section>
+
+        <p class="club-nota"><i class="bi bi-info-circle"></i><span>Los puntos se acreditan cuando Caja confirma el pago. Se calculan según el valor neto elegible y se pueden aplicar campañas vigentes. Los canjes tienen su propia fecha de vencimiento.</span></p>
+    </div>
+    <dialog id="club-modal-canje" class="club-modal-canje" aria-labelledby="club-modal-canje-titulo" aria-describedby="club-modal-canje-descripcion">
+        <div class="club-modal-canje-contenido">
+            <button type="button" class="club-modal-canje-cerrar" data-club-modal-cerrar aria-label="Cerrar">&times;</button>
+            <img id="club-modal-canje-imagen" class="club-modal-canje-imagen" alt="" hidden>
+            <span class="club-modal-canje-etiqueta">CONFIRMACI&Oacute;N DE CANJE</span>
+            <h2 id="club-modal-canje-titulo">&iquest;Deseas canjear esta recompensa?</h2>
+            <h3 id="club-modal-canje-nombre">Recompensa</h3>
+            <p id="club-modal-canje-descripcion"></p>
+            <div class="club-modal-canje-puntos">
+                <div><small>Tu saldo actual</small><strong><span id="club-modal-saldo">0</span><small>puntos</small></strong></div>
+                <div><small>Costo del canje</small><strong class="club-modal-canje-costo"><span id="club-modal-costo">0</span><small>puntos</small></strong></div>
+                <div><small>Saldo restante</small><strong><span id="club-modal-restante">0</span><small>puntos</small></strong></div>
+            </div>
+            <ul id="club-modal-canje-condiciones" class="club-modal-canje-condiciones"></ul>
+            <p class="club-modal-canje-nota">Los puntos se descontar&aacute;n cuando confirmes el canje.</p>
+            <div class="club-modal-canje-acciones">
+                <button type="button" class="club-modal-canje-volver" data-club-modal-cerrar>Seguir acumulando</button>
+                <button type="button" class="club-modal-canje-confirmar" id="club-modal-canje-confirmar">Confirmar canje</button>
+            </div>
+        </div>
+    </dialog>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/club-canje.js}" defer></script>
+</body>
+</html>

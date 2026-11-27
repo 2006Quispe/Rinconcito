@@ -783,6 +783,11 @@
 
                         </div>
 
+                        <div class="resumen-linea" th:if="${pedido.descuentoClub != null and pedido.descuentoClub > 0}">
+                            <span>Cupón Club Rinconcito</span>
+                            <strong class="text-success" th:text="'- S/ ' + ${pedido.descuentoClub}">- S/ 0</strong>
+                        </div>
+
                         <!-- MODALIDAD -->
 
                         <div class="resumen-linea">
@@ -817,7 +822,7 @@
 
                         <div class="resumen-total">
 
-                            <span>Total de productos</span>
+                            <span>Total del pedido</span>
 
                             <strong th:text="'S/ '
                                 + ${pedido.total}">

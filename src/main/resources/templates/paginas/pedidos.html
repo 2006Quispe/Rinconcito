@@ -87,7 +87,7 @@
                   method="post"
                   class="col-lg-7 pedido-formulario"
                   id="formularioPedido"
-                  th:attr="data-cliente-logueado=${clienteLogueado}">
+                  th:attr="data-cliente-logueado=${clienteLogueado},data-subtotal=${subtotal},data-costo-delivery=${costoDelivery}">
 
                 <input type="hidden"
                        th:name="${_csrf.parameterName}"
@@ -133,8 +133,9 @@
 
                                     <strong>Delivery</strong>
 
-                                    <small>
-                                        Envío mediante InDrive u otro servicio externo.
+                                    <small th:text="'Tarifa S/ ' + ${costoDelivery}
+                                        + ' · envío mediante servicio externo.'">
+                                        Tarifa de delivery
                                     </small>
                                 </span>
 
@@ -415,6 +416,30 @@
                     </div>
                 </div>
 
+                <!-- CUPÓN DEL CLUB -->
+                <div class="pedido-formulario-seccion">
+                    <div class="pedido-seccion-encabezado">
+                        <div class="pedido-seccion-icono"><i class="bi bi-stars"></i></div>
+                        <div>
+                            <h2>¿Tienes un cupón?</h2>
+                            <p>Canjea tus puntos en el Club Rinconcito y pega aquí el código.</p>
+                        </div>
+                    </div>
+                    <div th:if="${clienteLogueado}">
+                        <label for="codigoCupon" class="pedido-label">Código del cupón <small>(opcional)</small></label>
+                        <div class="pedido-input-contenedor">
+                            <i class="bi bi-ticket-perforated"></i>
+                            <input type="text" id="codigoCupon" class="pedido-input"
+                                   th:field="*{codigoCupon}" maxlength="32"
+                                   placeholder="RIN-XXXXXXXXXX" autocomplete="off">
+                        </div>
+                        <small class="text-muted">Los cupones disponibles aparecen en <a th:href="@{/club}" target="_blank" rel="noopener">mi Club</a>.</small>
+                    </div>
+                    <div th:unless="${clienteLogueado}" class="pedido-cuenta-aviso">
+                        Inicia sesión con tu cuenta de cliente para aplicar un cupón del club.
+                    </div>
+                </div>
+
                 <!-- OBSERVACIONES -->
                 <div class="pedido-formulario-seccion">
 
@@ -594,8 +619,8 @@
 
                         <span>Servicio de delivery</span>
 
-                        <strong class="pedido-por-coordinar">
-                            Por coordinar
+                        <strong id="resumenCostoDelivery">
+                            S/ 0
                         </strong>
                     </div>
 
@@ -603,12 +628,13 @@
 
                     <div class="pedido-resumen-total">
 
-                        <span>Total de productos</span>
+                        <span>Total estimado</span>
 
-                        <strong th:text="'S/ ' + ${subtotal}">
+                        <strong id="resumenTotalPedido" th:text="'S/ ' + ${subtotal}">
                             S/ 0
                         </strong>
                     </div>
+                    <small class="pedido-total-nota">El cupón se descuenta al confirmar el pedido.</small>
 
                     <div class="pedido-metodos-pago">
 
@@ -678,6 +704,15 @@
         const filaServicio =
             document.getElementById("filaServicio");
 
+        const subtotal = Number(formularioPedido?.dataset.subtotal || 0);
+        const costoDelivery = Number(
+            formularioPedido?.dataset.costoDelivery || 0
+        );
+        const resumenCostoDelivery =
+            document.getElementById("resumenCostoDelivery");
+        const resumenTotalPedido =
+            document.getElementById("resumenTotalPedido");
+
         if (seccionDireccion) {
             seccionDireccion.hidden = !esDelivery;
             seccionDireccion.style.display =
@@ -728,6 +763,18 @@
             filaServicio.hidden = !esDelivery;
             filaServicio.style.display =
                 esDelivery ? "flex" : "none";
+        }
+
+        if (resumenCostoDelivery) {
+            resumenCostoDelivery.textContent =
+                esDelivery ? "S/ " + costoDelivery : "S/ 0";
+        }
+
+        if (resumenTotalPedido) {
+            const totalEstimado = esDelivery
+                ? subtotal + costoDelivery
+                : subtotal;
+            resumenTotalPedido.textContent = "S/ " + totalEstimado;
         }
     }
 

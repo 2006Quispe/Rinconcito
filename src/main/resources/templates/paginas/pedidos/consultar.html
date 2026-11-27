@@ -40,6 +40,9 @@
                 <h5 class="card-title">Resultado</h5>
                 <p class="mb-1">Codigo: <strong th:text="${pedido.codigoPedido}"></strong></p>
                 <p class="mb-1">Estado pedido: <strong th:text="${pedido.estado}"></strong></p>
+                <p class="mb-1 text-success" th:if="${pedido.descuentoClub != null and pedido.descuentoClub > 0}">
+                    Cupón del Club: <strong th:text="'- S/ ' + ${pedido.descuentoClub}"></strong>
+                </p>
                 <p class="mb-1">Total: <strong th:text="'S/ ' + ${pedido.total}"></strong></p>
                 <p class="mb-1" th:if="${pago != null}">
                     Estado pago: <strong th:text="${pago.estado}"></strong>

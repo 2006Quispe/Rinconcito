@@ -122,6 +122,12 @@
                             <span>Reservas</span>
                         </div>
                     </div>
+
+                    <a th:href="@{/club}" class="cuenta-club-enlace">
+                        <span class="cuenta-club-icono"><i class="bi bi-stars"></i></span>
+                        <span><small>CLUB RINCONCITO</small><strong th:text="${puntosClub} + ' puntos'">0 puntos</strong></span>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
                 </aside>
             </div>
 

@@ -583,3 +583,38 @@
         grid-column: 2;
     }
 }
+.campo-club-dni{padding:12px;border:1px solid #e3d6c5;border-radius:9px;background:#faf5eb}
+.campo-club-dni label{display:block;margin-bottom:6px;font-weight:800}
+.campo-club-dni label small,.campo-club-dni>small{color:#796f64;font-size:11px;font-weight:500}
+.campo-club-dni .form-control{max-width:100%;border-color:#d9c9b4}
+.caja-club-estimacion,.caja-club-recompensa{margin-top:10px;padding:12px;border:1px solid #e3d6c5;border-radius:10px;background:#fffdf9}
+.caja-club-estimacion-titulo{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.caja-club-estimacion-titulo>div{display:grid;gap:2px}
+.caja-club-estimacion-titulo small,.caja-club-pago-etiqueta{font-size:9px;font-weight:900;letter-spacing:.08em;color:#8d6338}
+.caja-club-estimacion-titulo strong{font-size:14px;color:#3d2b20}
+.caja-club-estimacion-titulo span:last-child{font-size:11px;color:#75675b}
+.caja-club-insignia{width:38px;height:38px;display:grid;place-items:center;border-radius:50%;color:#fff;background:#966442;box-shadow:0 3px 9px #49302130;font-size:18px}
+.caja-club-insignia.nivel-amigo{background:#52623b}.caja-club-insignia.nivel-familia{background:#ad7c25}
+.caja-club-mensaje{margin:6px 0;color:#66584c;font-size:11px}
+.caja-club-estimacion-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}
+.caja-club-estimacion-grid>div,.caja-club-pago-grid>div{display:grid;gap:2px;padding:7px;border-radius:7px;background:#f7f1e8}
+.caja-club-estimacion-grid small,.caja-club-pago-grid small{font-size:9px;color:#766b60}
+.caja-club-estimacion-grid strong{font-size:12px;color:#3d2b20}
+.caja-club-estimacion-grid>div:nth-last-child(2){background:#eef1e8}.caja-club-estimacion-grid>div:nth-last-child(2) strong{color:#52623b}
+.caja-club-estimacion-aviso{display:block;margin-top:8px;color:#655b4f;font-size:10px}
+.caja-club-recompensa label{display:block;margin-bottom:6px;font-size:12px;font-weight:800;color:#3d2b20}
+.caja-club-recompensa-controles{display:flex;gap:7px}
+.caja-club-recompensa-controles .form-control{min-width:0;font-size:12px}
+.btn-club-consultar,.btn-club-confirmar-entrega{border:0;border-radius:7px;padding:8px 10px;background:#52623b;color:white;font-size:11px;font-weight:800;white-space:nowrap}
+.btn-club-confirmar-entrega{margin-top:8px;background:#a6442b}
+.btn-club-consultar:disabled,.btn-club-confirmar-entrega:disabled{opacity:.55}
+.caja-club-recompensa>small{display:block;margin-top:7px;color:#766b60;font-size:10px}
+.caja-club-recompensa-resultado{margin-top:8px;padding:8px;border-radius:7px;background:#eef1e8;color:#425334;font-size:11px;font-weight:700}
+.caja-club-recompensa-resultado.error{background:#fbefec;color:#963e2b}
+.caja-club-pago-final{display:flex;gap:12px;margin:0 0 18px;padding:15px;border:1px solid #c8d2b7;border-radius:12px;background:#f3f6ed;box-shadow:0 4px 14px #39291b12}
+.caja-club-pago-icono{flex:0 0 38px;width:38px;height:38px;display:grid;place-items:center;border-radius:50%;background:#52623b;color:#fff;font-size:19px}
+.caja-club-pago-contenido{flex:1;min-width:0}.caja-club-pago-contenido h2{margin:2px 0;font-size:17px;color:#3b4c30}.caja-club-pago-contenido>p{margin:0 0 9px;font-size:11px;color:#655b4f}
+.caja-club-pago-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.caja-club-pago-grid strong{font-size:12px;color:#3d2b20;overflow-wrap:anywhere}
+@media(max-width:720px){.caja-club-pago-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.caja-club-recompensa-controles{flex-direction:column}.btn-club-consultar{width:100%}.caja-club-pago-final{padding:10px}.caja-club-estimacion-grid{gap:5px}}

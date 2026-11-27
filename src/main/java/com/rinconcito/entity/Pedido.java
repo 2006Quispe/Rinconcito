@@ -45,6 +45,9 @@ public class Pedido {
     @Column(name = "costo_delivery", nullable = false)
     private Integer costoDelivery = 0;
 
+    @Column(name = "descuento_club", nullable = false)
+    private Integer descuentoClub = 0;
+
     @Column(name = "total", nullable = false)
     private Integer total = 0;
 
@@ -165,6 +168,16 @@ public class Pedido {
 
     public void setCostoDelivery(Integer costoDelivery) {
         this.costoDelivery = costoDelivery;
+    }
+
+    public Integer getDescuentoClub() {
+        return descuentoClub;
+    }
+
+    public void setDescuentoClub(Integer descuentoClub) {
+        this.descuentoClub = descuentoClub != null
+                ? descuentoClub
+                : 0;
     }
 
     public Integer getTotal() {

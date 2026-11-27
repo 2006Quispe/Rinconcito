@@ -31,6 +31,7 @@ public class PagoPedidoService {
     private final EvidenciaStorageService evidenciaStorageService;
     private final NotaVentaService notaVentaService;
     private final MesaRepository mesaRepository;
+    private final ClubPuntosService clubPuntosService;
 
     public PagoPedidoService(
             PedidoRepository pedidoRepository,
@@ -38,7 +39,8 @@ public class PagoPedidoService {
             DetallePedidoRepository detallePedidoRepository,
             EvidenciaStorageService evidenciaStorageService,
             NotaVentaService notaVentaService,
-            MesaRepository mesaRepository
+            MesaRepository mesaRepository,
+            ClubPuntosService clubPuntosService
     ) {
         this.pedidoRepository =
                 pedidoRepository;
@@ -57,6 +59,9 @@ public class PagoPedidoService {
 
         this.mesaRepository =
                 mesaRepository;
+
+        this.clubPuntosService =
+                clubPuntosService;
     }
 
     @Transactional(readOnly = true)
@@ -411,6 +416,8 @@ public class PagoPedidoService {
 
         mesaRepository.save(mesa);
 
+        clubPuntosService.acreditarPorPago(pago);
+
         notaVentaService.emitir(
                 pago,
                 validador
@@ -419,6 +426,20 @@ public class PagoPedidoService {
         inicializarPedido(pedido);
 
         return pedido;
+    }
+
+    @Transactional
+    public void asociarClienteClubPresencial(Integer idPedido, Usuario cliente) {
+        if (cliente == null || cliente.getIdUsuario() == null
+                || cliente.getEstado() != Usuario.EstadoUsuario.ACTIVO
+                || cliente.getTipoRegistro() != Usuario.TipoRegistro.CUENTA
+                || cliente.getRol() == null
+                || !"CLIENTE".equals(cliente.getRol().getNombre())) {
+            throw new IllegalStateException("El DNI debe pertenecer a una cuenta activa de cliente.");
+        }
+        Pedido pedido = obtenerPedidoPresencialPendiente(idPedido);
+        pedido.setCliente(cliente);
+        pedidoRepository.save(pedido);
     }
 
     @Transactional
@@ -505,6 +526,8 @@ public class PagoPedidoService {
 
         pedido =
                 pedidoRepository.save(pedido);
+
+        clubPuntosService.acreditarPorPago(pago);
 
         notaVentaService.emitir(
                 pago,
