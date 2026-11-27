@@ -750,9 +750,10 @@
 
                                 <div>
 
-                                    <strong th:text="${detalle.producto.nombre}">
+                                    <strong th:text="${detalle.nombreMostrado}">
                                         Producto
                                     </strong>
+                                    <small th:if="${detalle.recompensaClub}">Recompensa Club · precio habitual S/ <span th:text="${detalle.precioUnitario}">0</span> · gratis</small>
 
                                     <span th:text="'Cantidad: '
                                         + ${detalle.cantidad}
@@ -764,7 +765,7 @@
                                 </div>
 
                                 <strong th:text="'S/ '
-                                    + ${detalle.subtotal}">
+                                    + ${detalle.subtotalNeto}">
                                     S/ 0
                                 </strong>
 

@@ -377,7 +377,7 @@ public class AdminReporteService {
 
             acumulado.monto +=
                     valorSeguro(
-                            detalle.getSubtotal()
+                            detalle.getSubtotalNeto()
                     );
         }
 

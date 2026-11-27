@@ -223,6 +223,7 @@ CREATE TABLE `club_recompensas` (
   `condiciones` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `vigencia_dias` int NOT NULL DEFAULT '90',
   `id_producto` int DEFAULT NULL,
+  `precio_referencia` int DEFAULT NULL,
   `disponible_desde` datetime DEFAULT NULL,
   `disponible_hasta` datetime DEFAULT NULL,
   `activo` tinyint(1) NOT NULL DEFAULT '1',
@@ -341,10 +342,13 @@ CREATE TABLE `correo_salida` (
 CREATE TABLE `detalle_pedido` (
   `id_detalle` int NOT NULL AUTO_INCREMENT,
   `id_pedido` int NOT NULL,
-  `id_producto` int NOT NULL,
+  `id_producto` int DEFAULT NULL,
   `cantidad` int NOT NULL,
   `precio_unitario` int NOT NULL,
   `subtotal` int NOT NULL,
+  `nombre_producto` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `es_recompensa_club` tinyint(1) NOT NULL DEFAULT '0',
+  `descuento_club` int NOT NULL DEFAULT '0',
   `observaciones` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id_detalle`),
   KEY `fk_detalle_pedido` (`id_pedido`),
@@ -806,9 +810,9 @@ INSERT INTO `club_recompensas` (`id_recompensa`, `codigo`, `nombre`, `descripcio
 INSERT INTO `club_recompensas` (`id_recompensa`, `codigo`, `nombre`, `descripcion`, `costo_puntos`, `tipo`, `valor`, `compra_minima`, `imagen`, `categoria`, `condiciones`, `vigencia_dias`, `id_producto`, `disponible_desde`, `disponible_hasta`, `activo`, `stock`, `creado_en`) VALUES (2,'DESCUENTO-10','10% de descuento','Ahorra 10% en un pedido online desde S/ 50.',180,'DESCUENTO_PORCENTAJE',10,50,'/img/club/descuento-10.webp','DESCUENTOS',NULL,90,NULL,NULL,NULL,1,NULL,'2026-11-25 16:16:30');
 INSERT INTO `club_recompensas` (`id_recompensa`, `codigo`, `nombre`, `descripcion`, `costo_puntos`, `tipo`, `valor`, `compra_minima`, `imagen`, `categoria`, `condiciones`, `vigencia_dias`, `id_producto`, `disponible_desde`, `disponible_hasta`, `activo`, `stock`, `creado_en`) VALUES (3,'DESCUENTO-20','S/ 20 de descuento','Descuenta S/ 20 en un pedido online desde S/ 100.',350,'DESCUENTO_FIJO',20,100,'/img/club/descuento-20.webp','DESCUENTOS',NULL,90,NULL,NULL,NULL,1,NULL,'2026-11-25 16:16:30');
 INSERT INTO `club_recompensas` (`id_recompensa`, `codigo`, `nombre`, `descripcion`, `costo_puntos`, `tipo`, `valor`, `compra_minima`, `imagen`, `categoria`, `condiciones`, `vigencia_dias`, `id_producto`, `disponible_desde`, `disponible_hasta`, `activo`, `stock`, `creado_en`) VALUES (4,'DELIVERY-GRATIS','Delivery gratis','Canjea este cupÃ³n para cubrir la tarifa de delivery de un pedido online.',100,'DELIVERY_GRATIS',1,0,'/img/club/delivery-gratis.webp','DESCUENTOS',NULL,90,NULL,NULL,NULL,1,NULL,'2026-11-25 16:49:34');
-INSERT INTO `club_recompensas` (`id_recompensa`, `codigo`, `nombre`, `descripcion`, `costo_puntos`, `tipo`, `valor`, `compra_minima`, `imagen`, `categoria`, `condiciones`, `vigencia_dias`, `id_producto`, `disponible_desde`, `disponible_hasta`, `activo`, `stock`, `creado_en`) VALUES (5,'TAZA-LOGO','Taza con logo Rinconcito','Recompensa fÃ­sica para recoger en caja. Presenta tu cÃ³digo de canje.',500,'PRODUCTO_MERCH',1,0,'/img/club/taza-logo.webp','MERCHANDISING','VÃ¡lido para recojo en el restaurante. Presenta tu cÃ³digo en caja.',90,NULL,NULL,NULL,1,10,'2026-11-25 16:49:34');
-INSERT INTO `club_recompensas` (`id_recompensa`, `codigo`, `nombre`, `descripcion`, `costo_puntos`, `tipo`, `valor`, `compra_minima`, `imagen`, `categoria`, `condiciones`, `vigencia_dias`, `id_producto`, `disponible_desde`, `disponible_hasta`, `activo`, `stock`, `creado_en`) VALUES (6,'GORRA-LOGO','Gorra con logo Rinconcito','Recompensa fÃ­sica para recoger en caja. Presenta tu cÃ³digo de canje.',700,'PRODUCTO_MERCH',1,0,'/img/club/gorra-logo.webp','MERCHANDISING','VÃ¡lido para recojo en el restaurante. Presenta tu cÃ³digo en caja.',90,NULL,NULL,NULL,1,6,'2026-11-25 16:49:34');
-INSERT INTO `club_recompensas` (`id_recompensa`, `codigo`, `nombre`, `descripcion`, `costo_puntos`, `tipo`, `valor`, `compra_minima`, `imagen`, `categoria`, `condiciones`, `vigencia_dias`, `id_producto`, `disponible_desde`, `disponible_hasta`, `activo`, `stock`, `creado_en`) VALUES (7,'POLO-LOGO','Polo con logo Rinconcito','Recompensa fÃ­sica para recoger en caja. Presenta tu cÃ³digo de canje.',900,'PRODUCTO_MERCH',1,0,'/img/club/polo-logo.webp','MERCHANDISING','VÃ¡lido para recojo en el restaurante. Presenta tu cÃ³digo en caja.',90,NULL,NULL,NULL,1,5,'2026-11-25 16:49:34');
+INSERT INTO `club_recompensas` (`id_recompensa`, `codigo`, `nombre`, `descripcion`, `costo_puntos`, `tipo`, `valor`, `compra_minima`, `imagen`, `categoria`, `condiciones`, `vigencia_dias`, `id_producto`, `precio_referencia`, `disponible_desde`, `disponible_hasta`, `activo`, `stock`, `creado_en`) VALUES (5,'TAZA-LOGO','Taza con logo Rinconcito','Recompensa fÃ­sica para recoger en caja. Presenta tu cÃ³digo de canje.',500,'PRODUCTO_MERCH',1,0,'/img/club/taza-logo.webp','MERCHANDISING','VÃ¡lido para recojo en el restaurante. Presenta tu cÃ³digo en caja.',90,NULL,25,NULL,NULL,1,10,'2026-11-25 16:49:34');
+INSERT INTO `club_recompensas` (`id_recompensa`, `codigo`, `nombre`, `descripcion`, `costo_puntos`, `tipo`, `valor`, `compra_minima`, `imagen`, `categoria`, `condiciones`, `vigencia_dias`, `id_producto`, `precio_referencia`, `disponible_desde`, `disponible_hasta`, `activo`, `stock`, `creado_en`) VALUES (6,'GORRA-LOGO','Gorra con logo Rinconcito','Recompensa fÃ­sica para recoger en caja. Presenta tu cÃ³digo de canje.',700,'PRODUCTO_MERCH',1,0,'/img/club/gorra-logo.webp','MERCHANDISING','VÃ¡lido para recojo en el restaurante. Presenta tu cÃ³digo en caja.',90,NULL,35,NULL,NULL,1,6,'2026-11-25 16:49:34');
+INSERT INTO `club_recompensas` (`id_recompensa`, `codigo`, `nombre`, `descripcion`, `costo_puntos`, `tipo`, `valor`, `compra_minima`, `imagen`, `categoria`, `condiciones`, `vigencia_dias`, `id_producto`, `precio_referencia`, `disponible_desde`, `disponible_hasta`, `activo`, `stock`, `creado_en`) VALUES (7,'POLO-LOGO','Polo con logo Rinconcito','Recompensa fÃ­sica para recoger en caja. Presenta tu cÃ³digo de canje.',900,'PRODUCTO_MERCH',1,0,'/img/club/polo-logo.webp','MERCHANDISING','VÃ¡lido para recojo en el restaurante. Presenta tu cÃ³digo en caja.',90,NULL,45,NULL,NULL,1,5,'2026-11-25 16:49:34');
 INSERT INTO `club_recompensas` (`id_recompensa`, `codigo`, `nombre`, `descripcion`, `costo_puntos`, `tipo`, `valor`, `compra_minima`, `imagen`, `categoria`, `condiciones`, `vigencia_dias`, `id_producto`, `disponible_desde`, `disponible_hasta`, `activo`, `stock`, `creado_en`) VALUES (26,'CHICHA-MORADA','Chicha morada','Recompensa de la carta: Chicha morada.',120,'PRODUCTO_CARTA',1,0,'/img/club/chicha-morada.webp','BEBIDAS_POSTRES','Canje por una unidad del producto indicado. Sujeto a disponibilidad de la carta.',90,6,NULL,NULL,1,NULL,'2026-11-25 23:01:08');
 INSERT INTO `club_recompensas` (`id_recompensa`, `codigo`, `nombre`, `descripcion`, `costo_puntos`, `tipo`, `valor`, `compra_minima`, `imagen`, `categoria`, `condiciones`, `vigencia_dias`, `id_producto`, `disponible_desde`, `disponible_hasta`, `activo`, `stock`, `creado_en`) VALUES (27,'MAZAMORRA-MORADA','Mazamorra morada','Recompensa de la carta: Mazamorra morada.',150,'PRODUCTO_CARTA',1,0,'/img/club/mazamorra-morada.webp','BEBIDAS_POSTRES','Canje por una unidad del producto indicado. Sujeto a disponibilidad de la carta.',90,7,NULL,NULL,1,NULL,'2026-11-25 23:01:08');
 INSERT INTO `club_recompensas` (`id_recompensa`, `codigo`, `nombre`, `descripcion`, `costo_puntos`, `tipo`, `valor`, `compra_minima`, `imagen`, `categoria`, `condiciones`, `vigencia_dias`, `id_producto`, `disponible_desde`, `disponible_hasta`, `activo`, `stock`, `creado_en`) VALUES (28,'OCOPA-AYACUCHANA','Ocopa ayacuchana','Recompensa de la carta: Ocopa ayacuchana.',200,'PRODUCTO_CARTA',1,0,'/img/club/ocopa-ayacuchana.webp','PLATOS_TIPICOS','Canje por una unidad del producto indicado. Sujeto a disponibilidad de la carta.',90,8,NULL,NULL,1,NULL,'2026-11-25 23:01:08');
@@ -830,4 +834,125 @@ INSERT INTO usuarios (id_usuario, id_rol, nombres, apellidos, dni, telefono, cor
 (4, 4, 'Cliente', 'Demo', '90000004', '900000004', 'cliente@rinconcito.test', '$2a$10$.4f.0mr/.cUVJ5GflLYKfeRhOd4xIQBbHLfnbzMwxKlmlygKrd4rm', 'CUENTA', 'ACTIVO', '2026-01-01 12:00:00');
 
 INSERT INTO club_saldos (id_usuario, puntos, puntos_deuda) VALUES (4, 0, 0);
+
+
+-- Eventos ficticios/demostrativos para mostrar la cartelera actual y próximos afiches.
+SET NAMES utf8mb4;
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Feliz Año 2026', 'Celebra el Año Nuevo con Jade Perú, Alan Vásquez, Madeleine Quinto, Diamante Andino y Mario Gómez. Animación: Wallpa Waccay. Entrada libre. Comidas típicas, pollos a la brasa, juegos inflables y estacionamiento.', '2026-01-01', '11:00:00', NULL, '/img/eventos/evento-2026-01-01.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Feliz Año 2026' AND e.fecha = '2026-01-01');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Carnaval Ayacuchano: El Gigante Chuta Chutay 2026', 'Almuerzo show con Diosdado Gaitán Castro, Los Runas y más artistas en el local más carnavalero. Animación: Wallpa Waccay.', '2026-02-01', '11:00:00', NULL, '/img/eventos/evento-2026-02-01.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Carnaval Ayacuchano: El Gigante Chuta Chutay 2026' AND e.fecha = '2026-02-01');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT '33 Aniversario de Canto Andino', 'Gran celebración con Surandino, Max Castro, Porfirio Ayvar y muchos artistas más. Venta de entradas por VAOPE.', '2026-04-19', '11:00:00', NULL, '/img/eventos/evento-2026-04-19.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = '33 Aniversario de Canto Andino' AND e.fecha = '2026-04-19');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Día del Trabajo', 'Show en vivo con Aycampito, Madeleine Quinto, Pío Quispe y Mario Gómez. Animación: Wallpa Waccay. Entrada libre.', '2026-05-01', '11:00:00', NULL, '/img/eventos/evento-2026-05-01.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Día del Trabajo' AND e.fecha = '2026-05-01');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Homenaje a Mamá', 'Celebra el Día de la Madre con Max Castro, Surandino, Diamante Andino, Mario Gómez y Alan Vásquez. Animación: Wallpa Waccay. Entrada libre.', '2026-05-10', '11:00:00', NULL, '/img/eventos/evento-2026-05-10.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Homenaje a Mamá' AND e.fecha = '2026-05-10');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Show con Alan Vásquez y Chinita Oshiro', 'Domingo de música con Alan Vásquez, Chinita Oshiro y Madeleine Quinto. Animación: Wallpa Waccay. Entrada libre.', '2026-05-31', '11:00:00', NULL, '/img/eventos/evento-2026-05-31.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Show con Alan Vásquez y Chinita Oshiro' AND e.fecha = '2026-05-31');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Feliz Día del Padre', 'Festejamos a papá con un almuerzo show lleno de música y sabor ayacuchano. Animación: Wallpa Waccay.', '2026-06-21', '11:00:00', NULL, '/img/eventos/evento-2026-06-21.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Feliz Día del Padre' AND e.fecha = '2026-06-21');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Show en vivo con Kenny Hidalgo', 'El fenomenal Kenny Hidalgo, Liz Campos, Madeleine Quinto, Mario Gómez y Diamante Andino. Animación: Wallpa Waccay. Entrada libre.', '2026-08-02', '11:00:00', NULL, '/img/eventos/evento-2026-08-02.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Show en vivo con Kenny Hidalgo' AND e.fecha = '2026-08-02');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Show en vivo con Alan Vásquez', 'Alan Vásquez, Angélica María y Liz Campos en un domingo de música en vivo. Animación: Wallpa Waccay. Entrada libre.', '2026-10-18', '11:00:00', NULL, '/img/eventos/evento-2026-10-18.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Show en vivo con Alan Vásquez' AND e.fecha = '2026-10-18');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT '38 Aniversario de El Rinconcito Ayacuchano', 'Celebramos 38 años con Surandino, Dúo Ayacucho, Los Runas, Marifor Gómez, Super Brillantes y Huacchas. Animación: Wallpa Waccay. Venta de entradas por VAOPE.', '2026-10-25', '13:00:00', NULL, '/img/eventos/evento-2026-10-25.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = '38 Aniversario de El Rinconcito Ayacuchano' AND e.fecha = '2026-10-25');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Show con Dina Paucar', 'Dina Paucar, Angélica María y Chinita Oshiro. Animación: Wallpa Waccay. Entrada libre.', '2026-11-08', '11:00:00', NULL, '/img/eventos/evento-2026-11-08.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Show con Dina Paucar' AND e.fecha = '2026-11-08');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Show con Jade Perú y Hnos. Ayvar', 'Jade Perú, Hnos. Ayvar y Dianita del Perú. Animación: Wallpa Waccay. Entrada libre.', '2026-11-15', '11:00:00', NULL, '/img/eventos/evento-2026-11-15.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Show con Jade Perú y Hnos. Ayvar' AND e.fecha = '2026-11-15');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Show con Ayrampito, el Rey de los Carnavales', 'Ayrampito y María López en un gran show de domingo. Animación: Wallpa Waccay. Entrada libre.', '2026-11-22', '11:00:00', NULL, '/img/eventos/evento-2026-11-22.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Show con Ayrampito, el Rey de los Carnavales' AND e.fecha = '2026-11-22');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Show con Dina Paucar', 'Dina Paucar, Angélica María y Chinita Oshiro. Animación: Wallpa Waccay. Entrada libre. Comidas típicas, pollos a la brasa, juegos inflables y estacionamiento.', '2026-12-13', '11:00:00', NULL, '/img/eventos/show-dina-paucar-2026-12-13.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Show con Dina Paucar' AND e.fecha = '2026-12-13');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Show con Jade Perú y Hnos. Ayvar', 'Jade Perú, Hnos. Ayvar y Dianita del Perú. Animación: Wallpa Waccay. Entrada libre. Comidas típicas, pollos a la brasa, juegos inflables y estacionamiento.', '2026-12-20', '11:00:00', NULL, '/img/eventos/show-jade-peru-hnos-ayvar-2026-12-20.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Show con Jade Perú y Hnos. Ayvar' AND e.fecha = '2026-12-20');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Feliz Navidad con Alan Vásquez', 'Celebra la Navidad con Alan Vásquez, Angélica María y Liz Campos. Animación: Wallpa Waccay. Entrada libre. Comidas típicas, pollos a la brasa, juegos inflables y estacionamiento.', '2026-12-25', '11:00:00', NULL, '/img/eventos/navidad-alan-vasquez-2026-12-25.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Feliz Navidad con Alan Vásquez' AND e.fecha = '2026-12-25');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Show con Ayrampito, el Rey de los Carnavales', 'Ayrampito, María López y Johanna del Mantaro. Animación: Wallpa Waccay. Entrada libre. Comidas típicas, pollos a la brasa, juegos inflables y estacionamiento.', '2026-12-27', '11:00:00', NULL, '/img/eventos/show-ayrampito-2026-12-27.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Show con Ayrampito, el Rey de los Carnavales' AND e.fecha = '2026-12-27');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Feliz Año 2027', 'Recibe el 2027 con Jade Perú, Alan Vásquez, Madeleine Quinto, Diamante Andino y Mario Gómez. Animación: Wallpa Waccay. Entrada libre. Comidas típicas, pollos a la brasa, juegos inflables y estacionamiento.', '2027-01-01', '11:00:00', NULL, '/img/eventos/feliz-ano-2027.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Feliz Año 2027' AND e.fecha = '2027-01-01');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Carnaval Ayacuchano: El Gigante Chuta Chutay 2027', 'Almuerzo show a las 11 a.m. con Diosdado Gaitán Castro, Los Runas del Perú, Dúo Ayacucho, Celaje de Andahuaylas, K''prichos, Ayrampito y Entre Manos. Animación: Wallpa Waccay. En el local más carnavalero.', '2027-02-07', '11:00:00', NULL, '/img/eventos/carnaval-chuta-chutay-2027-02-07.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Carnaval Ayacuchano: El Gigante Chuta Chutay 2027' AND e.fecha = '2027-02-07');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Homenaje a Mamá', 'Celebra el Día de la Madre con Max Castro, Surandino, Flor Sinqueña, Alan Vásquez, Diamante Andino y Mario Gómez. Animación: Wallpa Waccay. Comidas típicas, pollos a la brasa, juegos inflables y estacionamiento.', '2027-05-09', '11:00:00', NULL, '/img/eventos/homenaje-a-mama-2027-05-09.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Homenaje a Mamá' AND e.fecha = '2027-05-09');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Feliz Día del Padre', 'Festeja a papá con Diosdado Gaitán Castro, Janeth Salinas, Los Runas del Perú, Ruby Palomino, Percy Arana y Orquesta, Huacchas del Perú, Diamante Andino y Mario Gómez. Animación: Wallpa Waccay.', '2027-06-20', '11:00:00', NULL, '/img/eventos/dia-del-padre-2027-06-20.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Feliz Día del Padre' AND e.fecha = '2027-06-20');
+
+INSERT INTO eventos (titulo, descripcion, fecha, hora_inicio, hora_fin, imagen, requiere_pago, precio_entrada, estado)
+SELECT 'Fiestas Patrias', 'Celebra las Fiestas Patrias con Ayrampito, Madeleine Quinto, Pío Quispe, Mario Gómez, Percy Arana y Orquesta y Joel Eusebio. Animación: Wallpa Waccay. Entrada libre. Comidas típicas, pollos a la brasa, juegos inflables y estacionamiento.', '2027-07-28', '11:00:00', NULL, '/img/eventos/fiestas-patrias-2027-07-28.jpg', 0, 0, 'ACTIVO'
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM eventos e WHERE e.titulo = 'Fiestas Patrias' AND e.fecha = '2027-07-28');
+
 SET FOREIGN_KEY_CHECKS=1;
+
+-- Modalidades de merchandising para la instalaci?n de demostraci?n.
+UPDATE club_recompensas
+SET descripcion = 'Recompensa exclusiva del Club: presencial, delivery o recojo en local.',
+    condiciones = 'Disponible presencialmente, en delivery o recojo en local.'
+WHERE codigo IN ('TAZA-LOGO', 'GORRA-LOGO', 'POLO-LOGO');

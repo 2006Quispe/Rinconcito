@@ -61,7 +61,7 @@ public class AdminClubService {
         return jdbc.query("""
                 SELECT id_recompensa, codigo, nombre, descripcion, tipo, categoria,
                        costo_puntos, valor, compra_minima, condiciones, imagen, stock,
-                       vigencia_dias, id_producto, disponible_desde, disponible_hasta, activo
+                       vigencia_dias, id_producto, precio_referencia, disponible_desde, disponible_hasta, activo
                 FROM club_recompensas WHERE id_recompensa = ?
                 """, rs -> {
             if (!rs.next()) throw new IllegalStateException("No encontramos esa recompensa.");
@@ -80,6 +80,7 @@ public class AdminClubService {
             form.setStock(rs.getObject("stock", Integer.class));
             form.setVigenciaDias(rs.getInt("vigencia_dias"));
             form.setIdProducto(rs.getObject("id_producto", Integer.class));
+            form.setPrecioReferencia(rs.getObject("precio_referencia", Integer.class));
             Timestamp desde = rs.getTimestamp("disponible_desde");
             Timestamp hasta = rs.getTimestamp("disponible_hasta");
             form.setDisponibleDesde(desde == null ? null : desde.toLocalDateTime().toLocalDate());
@@ -104,23 +105,23 @@ public class AdminClubService {
                         INSERT INTO club_recompensas
                             (codigo, nombre, descripcion, costo_puntos, tipo, valor,
                              compra_minima, imagen, categoria, condiciones, vigencia_dias,
-                             id_producto, disponible_desde, disponible_hasta, activo, stock)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                             id_producto, precio_referencia, disponible_desde, disponible_hasta, activo, stock)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         """, codigo, form.getNombre().trim(), form.getDescripcion().trim(),
                         form.getCostoPuntos(), form.getTipo(), form.getValor(), form.getCompraMinima(),
                         normalizar(form.getImagen()), form.getCategoria(), normalizar(form.getCondiciones()),
-                        form.getVigenciaDias(), producto, desde, hasta, form.isActivo(), form.getStock());
+                        form.getVigenciaDias(), producto, precioReferencia(form), desde, hasta, form.isActivo(), form.getStock());
             } else {
                 int filas = jdbc.update("""
                         UPDATE club_recompensas SET codigo = ?, nombre = ?, descripcion = ?,
                             costo_puntos = ?, tipo = ?, valor = ?, compra_minima = ?, imagen = ?,
                             categoria = ?, condiciones = ?, vigencia_dias = ?, id_producto = ?,
-                            disponible_desde = ?, disponible_hasta = ?, activo = ?, stock = ?
+                            precio_referencia = ?, disponible_desde = ?, disponible_hasta = ?, activo = ?, stock = ?
                         WHERE id_recompensa = ?
                         """, codigo, form.getNombre().trim(), form.getDescripcion().trim(),
                         form.getCostoPuntos(), form.getTipo(), form.getValor(), form.getCompraMinima(),
                         normalizar(form.getImagen()), form.getCategoria(), normalizar(form.getCondiciones()),
-                        form.getVigenciaDias(), producto, desde, hasta, form.isActivo(), form.getStock(),
+                        form.getVigenciaDias(), producto, precioReferencia(form), desde, hasta, form.isActivo(), form.getStock(),
                         form.getIdRecompensa());
                 if (filas != 1) throw new IllegalStateException("No encontramos esa recompensa para editar.");
             }
@@ -239,7 +240,15 @@ public class AdminClubService {
         ));
     }
 
+    private Integer precioReferencia(ClubRecompensaFormDTO form) {
+        return "PRODUCTO_MERCH".equals(form.getTipo()) ? form.getPrecioReferencia() : null;
+    }
+
     private void validarRecompensa(ClubRecompensaFormDTO form) {
+        if ("PRODUCTO_MERCH".equals(form.getTipo())
+                && (form.getPrecioReferencia() == null || form.getPrecioReferencia() <= 0)) {
+            throw new IllegalStateException("Indica el precio habitual referencial del merchandising.");
+        }
         if (!TIPOS.contains(form.getTipo())) throw new IllegalStateException("Selecciona un tipo de recompensa válido.");
         if (!CATEGORIAS.contains(form.getCategoria())) throw new IllegalStateException("Selecciona una categoría válida.");
         if (form.getValor() == null || form.getValor() <= 0) throw new IllegalStateException("El valor de la recompensa debe ser mayor a cero.");

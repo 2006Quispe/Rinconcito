@@ -230,16 +230,17 @@
                                 <li th:each="detalle : ${detallesPorPago[pago.idPago]}">
 
                                     <span class="producto-nombre"
-                                          th:text="${detalle.producto.nombre}">
+                                          th:text="${detalle.nombreMostrado}">
                                         Producto
                                     </span>
+                                    <small th:if="${detalle.recompensaClub}" class="text-success">RECOMPENSA CLUB · GRATIS (S/ <span th:text="${detalle.precioUnitario}">0</span>)</small>
 
                                     <span class="producto-cantidad"
                                           th:text="'x' + ${detalle.cantidad}">
                                         x1
                                     </span>
 
-                                    <strong th:text="'S/ ' + ${detalle.subtotal}">
+                                    <strong th:text="'S/ ' + ${detalle.subtotalNeto}">
                                         S/ 0
                                     </strong>
                                 </li>

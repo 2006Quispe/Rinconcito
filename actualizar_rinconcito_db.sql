@@ -411,3 +411,77 @@ WHERE codigo IN (
     'DELIVERY-GRATIS', 'DESCUENTO-5', 'DESCUENTO-10', 'DESCUENTO-20',
     'TAZA-LOGO', 'GORRA-LOGO', 'POLO-LOGO'
 );
+
+-- Valor de referencia para merchandising y detalle de recompensas en pedidos.
+SET @club_precio_ref_existe = (
+    SELECT COUNT(*) FROM information_schema.columns
+    WHERE table_schema = DATABASE()
+      AND table_name = 'club_recompensas'
+      AND column_name = 'precio_referencia'
+);
+SET @club_alter_precio_ref = IF(
+    @club_precio_ref_existe = 0,
+    'ALTER TABLE club_recompensas ADD COLUMN precio_referencia INT NULL AFTER id_producto',
+    'SELECT ''club_recompensas.precio_referencia ya existe'' AS mensaje'
+);
+PREPARE club_stmt FROM @club_alter_precio_ref;
+EXECUTE club_stmt;
+DEALLOCATE PREPARE club_stmt;
+
+ALTER TABLE detalle_pedido MODIFY COLUMN id_producto INT NULL;
+
+SET @club_detalle_nombre_existe = (
+    SELECT COUNT(*) FROM information_schema.columns
+    WHERE table_schema = DATABASE()
+      AND table_name = 'detalle_pedido'
+      AND column_name = 'nombre_producto'
+);
+SET @club_alter_detalle_nombre = IF(
+    @club_detalle_nombre_existe = 0,
+    'ALTER TABLE detalle_pedido ADD COLUMN nombre_producto VARCHAR(100) NULL AFTER subtotal',
+    'SELECT ''detalle_pedido.nombre_producto ya existe'' AS mensaje'
+);
+PREPARE club_stmt FROM @club_alter_detalle_nombre;
+EXECUTE club_stmt;
+DEALLOCATE PREPARE club_stmt;
+
+SET @club_detalle_recompensa_existe = (
+    SELECT COUNT(*) FROM information_schema.columns
+    WHERE table_schema = DATABASE()
+      AND table_name = 'detalle_pedido'
+      AND column_name = 'es_recompensa_club'
+);
+SET @club_alter_detalle_recompensa = IF(
+    @club_detalle_recompensa_existe = 0,
+    'ALTER TABLE detalle_pedido ADD COLUMN es_recompensa_club TINYINT(1) NOT NULL DEFAULT 0 AFTER nombre_producto',
+    'SELECT ''detalle_pedido.es_recompensa_club ya existe'' AS mensaje'
+);
+PREPARE club_stmt FROM @club_alter_detalle_recompensa;
+EXECUTE club_stmt;
+DEALLOCATE PREPARE club_stmt;
+
+SET @club_detalle_descuento_existe = (
+    SELECT COUNT(*) FROM information_schema.columns
+    WHERE table_schema = DATABASE()
+      AND table_name = 'detalle_pedido'
+      AND column_name = 'descuento_club'
+);
+SET @club_alter_detalle_descuento = IF(
+    @club_detalle_descuento_existe = 0,
+    'ALTER TABLE detalle_pedido ADD COLUMN descuento_club INT NOT NULL DEFAULT 0 AFTER es_recompensa_club',
+    'SELECT ''detalle_pedido.descuento_club ya existe'' AS mensaje'
+);
+PREPARE club_stmt FROM @club_alter_detalle_descuento;
+EXECUTE club_stmt;
+DEALLOCATE PREPARE club_stmt;
+
+UPDATE club_recompensas
+SET descripcion = 'Recompensa exclusiva del Club: presencial, delivery o recojo en local.',
+    condiciones = 'Disponible presencialmente, en delivery o recojo en local.'
+WHERE codigo IN ('TAZA-LOGO', 'GORRA-LOGO', 'POLO-LOGO');
+UPDATE club_recompensas SET precio_referencia = 25
+WHERE codigo = 'TAZA-LOGO' AND precio_referencia IS NULL;
+UPDATE club_recompensas SET precio_referencia = 35
+WHERE codigo = 'GORRA-LOGO' AND precio_referencia IS NULL;
+UPDATE club_recompensas SET precio_referencia = 45
+WHERE codigo = 'POLO-LOGO' AND precio_referencia IS NULL;

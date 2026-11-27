@@ -278,15 +278,13 @@
                                 </span>
 
                                 <span class="producto-nombre-lista"
-                                      th:text="${detalle.producto != null
-                                        ? detalle.producto.nombre
-                                        : 'Producto'}">
+                                      th:text="${detalle.nombreMostrado}">
                                     Producto
                                 </span>
 
                                 <span class="producto-precio-lista"
                                       th:text="'S/ '
-                                        + ${detalle.subtotal}">
+                                        + ${detalle.subtotalNeto}">
                                     S/ 0
                                 </span>
 

@@ -39,7 +39,7 @@ public class ClubPuntosService {
                    r.costo_puntos, r.tipo, r.categoria, r.valor,
                    r.compra_minima, r.condiciones,
                    COALESCE(NULLIF(r.imagen, ''), p.imagen) AS imagen,
-                   r.stock, r.vigencia_dias, r.id_producto,
+                   r.stock, r.vigencia_dias, r.id_producto, r.precio_referencia,
                    r.disponible_desde, r.disponible_hasta, r.activo,
                    p.estado AS estado_producto,
                    p.disponible AS producto_disponible
@@ -261,69 +261,90 @@ public class ClubPuntosService {
     }
 
     @Transactional
-    public int reservarCuponParaPedido(
-            String codigoCupon,
-            Usuario cliente,
-            int subtotal,
-            TipoPedido tipoPedido,
-            int costoDelivery
+    public AplicacionCuponPedido reservarCuponParaPedido(
+            String codigoCupon, Usuario cliente, int subtotal, TipoPedido tipoPedido, int costoDelivery
     ) {
-        if (codigoCupon == null || codigoCupon.isBlank()) {
-            return 0;
-        }
+        if (codigoCupon == null || codigoCupon.isBlank()) return AplicacionCuponPedido.vacia();
         validarCliente(cliente);
-
         List<ClubCuponDTO> encontrados = jdbcTemplate.query("""
                 SELECT id_canje, nombre_recompensa, codigo_cupon, estado,
                        puntos_usados, fecha_canje, vence_en, tipo, categoria,
                        valor, compra_minima, condiciones
-                FROM club_canjes
-                WHERE codigo_cupon = ? AND id_usuario = ?
-                FOR UPDATE
-                """, this::mapearCanje,
-                codigoCupon.trim().toUpperCase(Locale.ROOT), cliente.getIdUsuario());
-
+                FROM club_canjes WHERE codigo_cupon = ? AND id_usuario = ? FOR UPDATE
+                """, this::mapearCanje, codigoCupon.trim().toUpperCase(Locale.ROOT), cliente.getIdUsuario());
         ClubCuponDTO cupon = encontrados.stream().findFirst()
                 .orElseThrow(() -> new IllegalStateException("No encontramos ese cupón en tu cuenta."));
-        if (!"DISPONIBLE".equals(cupon.estado()) || cupon.venceEn() == null
-                || !cupon.venceEn().isAfter(LocalDateTime.now())) {
+        boolean productoClub = List.of("PRODUCTO_CARTA", "PRODUCTO_MERCH").contains(cupon.tipo());
+        boolean estadoValido = "DISPONIBLE".equals(cupon.estado())
+                || productoClub && "PENDIENTE_ENTREGA".equals(cupon.estado());
+        if (!estadoValido || cupon.venceEn() == null || !cupon.venceEn().isAfter(LocalDateTime.now()))
             throw new IllegalStateException("Ese cupón ya fue usado, venció o está aplicado a otro pedido.");
-        }
-        if (subtotal < cupon.compraMinima()) {
-            throw new IllegalStateException(
-                    "Este cupón requiere un pedido mínimo de S/ " + cupon.compraMinima() + "."
-            );
-        }
+        if ("EXPERIENCIA".equals(cupon.tipo()))
+            throw new IllegalStateException("Las experiencias familiares se validan exclusivamente en Caja.");
+        if (subtotal < cupon.compraMinima())
+            throw new IllegalStateException("Este cupón requiere un pedido mínimo de S/ " + cupon.compraMinima() + ".");
 
-        int descuento = switch (cupon.tipo()) {
-            case "DESCUENTO_FIJO" -> Math.min(subtotal, cupon.valor());
-            case "DESCUENTO_PORCENTAJE" -> (int) ((long) subtotal * cupon.valor() / 100);
-            case "DELIVERY_GRATIS" -> {
-                if (tipoPedido != TipoPedido.DELIVERY) {
-                    throw new IllegalStateException("El cupón de delivery gratis solo aplica a pedidos delivery.");
+        int descuento;
+        RecompensaProductoPedido productoGratis = null;
+        if (productoClub) {
+            List<RewardConfig> configs = jdbcTemplate.query("""
+                    SELECT r.id_producto, r.precio_referencia, r.activo, r.stock,
+                           p.nombre AS producto_nombre, p.precio AS producto_precio,
+                           p.estado AS producto_estado, p.disponible AS producto_disponible
+                    FROM club_canjes c JOIN club_recompensas r ON r.id_recompensa = c.id_recompensa
+                    LEFT JOIN productos p ON p.id_producto = r.id_producto
+                    WHERE c.id_canje = ? FOR UPDATE
+                    """, (rs, fila) -> new RewardConfig(rs.getObject("id_producto", Integer.class),
+                    rs.getObject("precio_referencia", Integer.class), rs.getBoolean("activo"),
+                    rs.getObject("stock", Integer.class), rs.getString("producto_nombre"),
+                    rs.getObject("producto_precio", Integer.class), rs.getString("producto_estado"),
+                    rs.getObject("producto_disponible", Boolean.class)), cupon.idCanje());
+            if (configs.isEmpty() || !configs.getFirst().activo())
+                throw new IllegalStateException("La recompensa ya no está disponible.");
+            RewardConfig config = configs.getFirst();
+            Integer idProducto = config.idProducto();
+            String nombre = cupon.nombreRecompensa();
+            Integer precio = config.precioReferencia();
+            if ("PRODUCTO_CARTA".equals(cupon.tipo())) {
+                if (idProducto == null || !"ACTIVO".equals(config.productoEstado())
+                        || !Boolean.TRUE.equals(config.productoDisponible())
+                        || config.productoPrecio() == null || config.productoPrecio() <= 0)
+                    throw new IllegalStateException("El producto de esta recompensa ya no está disponible en la carta.");
+                nombre = config.productoNombre(); precio = config.productoPrecio();
+            } else idProducto = null;
+            if (precio == null || precio <= 0)
+                throw new IllegalStateException("El precio habitual de la recompensa no está configurado.");
+            descuento = precio;
+            productoGratis = new RecompensaProductoPedido(idProducto, nombre, precio);
+        } else {
+            descuento = switch (cupon.tipo()) {
+                case "DESCUENTO_FIJO" -> Math.min(subtotal, cupon.valor());
+                case "DESCUENTO_PORCENTAJE" -> (int) ((long) subtotal * cupon.valor() / 100);
+                case "DELIVERY_GRATIS" -> {
+                    if (tipoPedido != TipoPedido.DELIVERY)
+                        throw new IllegalStateException("El cupón de delivery gratis solo aplica a pedidos delivery.");
+                    if (costoDelivery <= 0) throw new IllegalStateException("La tarifa de delivery aún no está configurada.");
+                    yield costoDelivery;
                 }
-                if (costoDelivery <= 0) {
-                    throw new IllegalStateException("La tarifa de delivery aún no está configurada.");
-                }
-                yield costoDelivery;
-            }
-            default -> throw new IllegalStateException(
-                    "Este canje no se aplica como descuento en pedidos online."
-            );
-        };
-        if (descuento <= 0) {
-            throw new IllegalStateException("El cupón no genera un descuento válido.");
+                default -> throw new IllegalStateException("Este canje no se aplica a esta modalidad de pedido.");
+            };
         }
-
+        if (descuento <= 0) throw new IllegalStateException("El cupón no genera un descuento válido.");
         int actualizado = jdbcTemplate.update("""
                 UPDATE club_canjes SET estado = 'RESERVADO'
-                WHERE id_canje = ? AND estado = 'DISPONIBLE'
-                """, cupon.idCanje());
-        if (actualizado != 1) {
-            throw new IllegalStateException("Ese cupón ya fue utilizado.");
-        }
-        return descuento;
+                WHERE id_canje = ? AND estado = ?
+                """, cupon.idCanje(), cupon.estado());
+        if (actualizado != 1) throw new IllegalStateException("Ese cupón ya fue utilizado.");
+        return new AplicacionCuponPedido(descuento, productoGratis);
     }
+
+    public record AplicacionCuponPedido(int descuento, RecompensaProductoPedido recompensa) {
+        static AplicacionCuponPedido vacia() { return new AplicacionCuponPedido(0, null); }
+    }
+    public record RecompensaProductoPedido(Integer idProducto, String nombre, int precio) {}
+    private record RewardConfig(Integer idProducto, Integer precioReferencia, boolean activo, Integer stock,
+                                String productoNombre, Integer productoPrecio, String productoEstado,
+                                Boolean productoDisponible) {}
 
     @Transactional
     public void vincularCuponAPedido(String codigoCupon, Integer idUsuario, Integer idPedido) {
@@ -352,7 +373,7 @@ public class ClubPuntosService {
         if (idPedido == null) return;
         jdbcTemplate.update("""
                 UPDATE club_canjes
-                SET estado = IF(vence_en > NOW(), 'DISPONIBLE', 'VENCIDO'),
+                SET estado = IF(vence_en > NOW(), IF(tipo IN ('PRODUCTO_CARTA', 'PRODUCTO_MERCH'), 'PENDIENTE_ENTREGA', 'DISPONIBLE'), 'VENCIDO'),
                     id_pedido = NULL
                 WHERE id_pedido = ? AND estado = 'RESERVADO'
                 """, idPedido);
@@ -881,7 +902,7 @@ public class ClubPuntosService {
     private void liberarCuponUsadoDelPedido(Integer idPedido) {
         jdbcTemplate.update("""
                 UPDATE club_canjes
-                SET estado = IF(vence_en > NOW(), 'DISPONIBLE', 'VENCIDO'),
+                SET estado = IF(vence_en > NOW(), IF(tipo IN ('PRODUCTO_CARTA', 'PRODUCTO_MERCH'), 'PENDIENTE_ENTREGA', 'DISPONIBLE'), 'VENCIDO'),
                     id_pedido = NULL, usado_en = NULL
                 WHERE id_pedido = ? AND estado = 'USADO'
                 """, idPedido);
@@ -1207,7 +1228,7 @@ public class ClubPuntosService {
                 rs.getString("tipo"), rs.getString("categoria"), rs.getInt("valor"),
                 rs.getInt("compra_minima"), rs.getString("condiciones"),
                 rs.getString("imagen"), stock, rs.getInt("vigencia_dias"),
-                idProducto, desde, hasta, canjeable, estado, faltantes, porcentaje
+                idProducto, rs.getObject("precio_referencia", Integer.class), desde, hasta, canjeable, estado, faltantes, porcentaje
         );
     }
 

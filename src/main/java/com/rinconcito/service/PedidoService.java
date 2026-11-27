@@ -128,21 +128,12 @@ public class PedidoService {
                 tipoPedido
         );
 
-        if (itemsCarrito == null
-                || itemsCarrito.isEmpty()) {
-
-            throw new IllegalStateException(
-                    "Tu carrito está vacío. "
-                    + "Agrega productos desde la carta."
-            );
-        }
-
         List<LineaValidada> lineas =
                 validarProductosDelCarrito(
-                        itemsCarrito
+                        itemsCarrito == null ? List.of() : itemsCarrito
                 );
 
-        int subtotal =
+        int subtotalCarrito =
                 lineas.stream()
                         .mapToInt(linea -> linea.subtotal)
                         .sum();
@@ -157,14 +148,14 @@ public class PedidoService {
                         clienteLogueado
                 );
 
-        int descuentoClub =
+        ClubPuntosService.AplicacionCuponPedido aplicacion =
                 clubPuntosService.reservarCuponParaPedido(
-                        dto.getCodigoCupon(),
-                        cliente,
-                        subtotal,
-                        tipoPedido,
-                        costoDelivery
-                );
+                        dto.getCodigoCupon(), cliente, subtotalCarrito, tipoPedido, costoDelivery);
+        if (lineas.isEmpty() && aplicacion.recompensa() == null) {
+            throw new IllegalStateException("Tu carrito está vacío. Agrega productos desde la carta o usa una recompensa de producto.");
+        }
+        int subtotal = subtotalCarrito + (aplicacion.recompensa() == null ? 0 : aplicacion.recompensa().precio());
+        int descuentoClub = aplicacion.descuento();
 
         int total =
                 Math.max(0, subtotal + costoDelivery - descuentoClub);
@@ -219,6 +210,7 @@ public class PedidoService {
                 pedido,
                 lineas
         );
+        if (aplicacion.recompensa() != null) registrarDetalleRecompensa(pedido, aplicacion.recompensa());
 
         pedido.getCliente().getNombres();
 
@@ -622,13 +614,6 @@ public class PedidoService {
             );
         }
 
-        if (lineas.isEmpty()) {
-
-            throw new IllegalStateException(
-                    "Debes elegir al menos un producto."
-            );
-        }
-
         return lineas;
     }
 
@@ -693,6 +678,23 @@ public class PedidoService {
                     detalle
             );
         }
+    }
+
+    private void registrarDetalleRecompensa(Pedido pedido, ClubPuntosService.RecompensaProductoPedido recompensa) {
+        DetallePedido detalle = new DetallePedido();
+        detalle.setPedido(pedido);
+        if (recompensa.idProducto() != null) {
+            detalle.setProducto(productoRepository.findById(recompensa.idProducto())
+                    .orElseThrow(() -> new IllegalStateException("El producto de la recompensa ya no existe.")));
+        }
+        detalle.setNombreProducto(recompensa.nombre());
+        detalle.setRecompensaClub(true);
+        detalle.setDescuentoClub(recompensa.precio());
+        detalle.setCantidad(1);
+        detalle.setPrecioUnitario(recompensa.precio());
+        detalle.setSubtotal(recompensa.precio());
+        detalle.setObservaciones("RECOMPENSA DEL CLUB RINCONCITO · GRATIS");
+        detallePedidoRepository.save(detalle);
     }
 
     private String generarCodigoPedido() {

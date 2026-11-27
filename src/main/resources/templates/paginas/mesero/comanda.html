@@ -125,9 +125,10 @@
                 </div>
 
                 <div class="producto-nombre"
-                     th:text="${detalle.producto != null ? detalle.producto.nombre : 'Producto'}">
+                     th:text="${detalle.nombreMostrado}">
                     Producto
                 </div>
+                <strong th:if="${detalle.recompensaClub}" class="badge bg-success">RECOMPENSA CLUB · GRATIS</strong>
 
             </div>
 

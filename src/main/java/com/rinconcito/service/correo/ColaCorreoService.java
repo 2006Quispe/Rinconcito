@@ -29,8 +29,9 @@ public class ColaCorreoService {
                 .append(pedido.getCodigoPedido()).append(".\nEstado: ").append(pedido.getEstado())
                 .append("\nModalidad: ").append(pedido.getTipoPedido()).append("\n\nProductos:\n");
         for (DetallePedido detalle : detalles.findByPedido(pedido)) {
-            texto.append(detalle.getCantidad()).append(" x ").append(detalle.getProducto().getNombre())
-                    .append(" - S/ ").append(detalle.getSubtotal()).append("\n");
+            texto.append(detalle.getCantidad()).append(" x ").append(detalle.getNombreMostrado());
+            if (detalle.isRecompensaClub()) texto.append(" [RECOMPENSA CLUB GRATIS; precio habitual S/ ").append(detalle.getPrecioUnitario()).append("]");
+            texto.append(" - S/ ").append(detalle.getSubtotalNeto()).append("\n");
         }
         texto.append("\nTotal: S/ ").append(pedido.getTotal())
                 .append(pedido.getEstado() == Pedido.EstadoPedido.PENDIENTE_PAGO

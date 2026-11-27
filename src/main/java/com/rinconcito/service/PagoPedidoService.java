@@ -319,6 +319,7 @@ public class PagoPedidoService {
             Integer idPedido,
             MetodoPago metodoPago,
             String numeroOperacion,
+            String codigoCuponClub,
             Usuario validador
     ) {
         validarValidador(validador);
@@ -330,6 +331,21 @@ public class PagoPedidoService {
                 );
 
         validarTotalPedido(pedido);
+
+        if (codigoCuponClub != null && !codigoCuponClub.isBlank()) {
+            if (pedido.getCliente() == null) {
+                throw new IllegalStateException("Ingresa el DNI de una cuenta del Club para usar el cupón.");
+            }
+            ClubPuntosService.AplicacionCuponPedido aplicacion = clubPuntosService.reservarCuponParaPedido(
+                    codigoCuponClub, pedido.getCliente(), pedido.getSubtotal(), TipoPedido.PRESENCIAL, 0);
+            if (aplicacion.recompensa() != null) {
+                throw new IllegalStateException("Para recompensas de producto o experiencias, consulta y confirma su código en la sección de recompensas de Caja.");
+            }
+            pedido.setDescuentoClub(aplicacion.descuento());
+            pedido.setTotal(Math.max(0, pedido.getSubtotal() + pedido.getCostoDelivery() - aplicacion.descuento()));
+            pedido = pedidoRepository.save(pedido);
+            clubPuntosService.vincularCuponAPedido(codigoCuponClub, pedido.getCliente().getIdUsuario(), pedido.getIdPedido());
+        }
 
         if (pedido.getMesa() == null) {
             throw new IllegalStateException(

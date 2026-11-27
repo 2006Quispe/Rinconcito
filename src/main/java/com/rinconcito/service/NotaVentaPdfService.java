@@ -556,10 +556,8 @@ public class NotaVentaPdfService {
                 lienzo.paginaNueva = false;
             }
 
-            String producto =
-                    detalle.getProducto() != null
-                            ? detalle.getProducto().getNombre()
-                            : "Producto";
+            String producto = detalle.getNombreMostrado();
+            if (detalle.isRecompensaClub()) producto += " · RECOMPENSA CLUB GRATIS";
 
             producto =
                     recortar(producto, 38);
@@ -574,10 +572,7 @@ public class NotaVentaPdfService {
                             ? detalle.getPrecioUnitario()
                             : 0;
 
-            int subtotal =
-                    detalle.getSubtotal() != null
-                            ? detalle.getSubtotal()
-                            : 0;
+            int subtotal = detalle.getSubtotalNeto();
 
             lienzo.texto(
                     producto,

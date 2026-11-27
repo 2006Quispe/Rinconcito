@@ -252,6 +252,9 @@ public class CajaPagoPedidoController {
             @RequestParam(value = "dniClub", required = false)
             String dniClub,
 
+            @RequestParam(value = "codigoCuponClub", required = false)
+            String codigoCuponClub,
+
             @RequestParam("metodoPago")
             MetodoPago metodoPago,
 
@@ -282,6 +285,7 @@ public class CajaPagoPedidoController {
                                     idPedido,
                                     metodoPago,
                                     numeroOperacion,
+                                    codigoCuponClub,
                                     validador
                             );
 

@@ -17,6 +17,7 @@ public record ClubRecompensaDTO(
         Integer stock,
         Integer vigenciaDias,
         Integer idProducto,
+        Integer precioReferencia,
         LocalDateTime disponibleDesde,
         LocalDateTime disponibleHasta,
         boolean canjeable,
@@ -24,4 +25,11 @@ public record ClubRecompensaDTO(
         int puntosFaltantes,
         int progresoPorcentaje
 ) {
+    public String getModalidades() {
+        return switch (tipo) {
+            case "DELIVERY_GRATIS" -> "Delivery";
+            case "EXPERIENCIA" -> "Presencial";
+            default -> "Presencial · Delivery · Recojo en local";
+        };
+    }
 }

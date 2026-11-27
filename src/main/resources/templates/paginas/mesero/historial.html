@@ -270,9 +270,7 @@
 
                             <div class="producto-informacion">
 
-                                <strong th:text="${detalle.producto != null
-                                    ? detalle.producto.nombre
-                                    : 'Producto'}">
+                                <strong th:text="${detalle.nombreMostrado}">
 
                                     Producto
                                 </strong>
@@ -287,7 +285,7 @@
                             </div>
 
                             <span class="producto-subtotal"
-                                  th:text="'S/ ' + ${detalle.subtotal}">
+                                  th:text="'S/ ' + ${detalle.subtotalNeto}">
                                 S/ 0
                             </span>
 

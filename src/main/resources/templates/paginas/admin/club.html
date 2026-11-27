@@ -69,6 +69,7 @@
                 </select></label>
                 <label>Costo en puntos<input class="form-control" type="number" min="1" max="100000" th:field="*{costoPuntos}" required></label>
                 <label>Valor (soles, porcentaje o unidades)<input class="form-control" type="number" min="1" th:field="*{valor}" required></label>
+                <label>Precio habitual referencial (S/)<input class="form-control" type="number" min="1" th:field="*{precioReferencia}"><small>Para productos de merchandising del Club; no los agrega a la carta.</small></label>
                 <label>Pedido mínimo (S/)<input class="form-control" type="number" min="0" th:field="*{compraMinima}"></label>
                 <label>Stock (vacío = sin límite)<input class="form-control" type="number" min="0" th:field="*{stock}"></label>
                 <label>Vigencia del canje (días)<input class="form-control" type="number" min="1" max="3650" th:field="*{vigenciaDias}"></label>

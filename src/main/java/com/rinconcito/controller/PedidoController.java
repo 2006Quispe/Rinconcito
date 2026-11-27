@@ -131,7 +131,8 @@ public class PedidoController {
                 pedidoForm
         );
 
-        if (carritoService.estaVacio(session)) {
+        if (carritoService.estaVacio(session)
+                && (pedidoForm.getCodigoCupon() == null || pedidoForm.getCodigoCupon().isBlank())) {
             model.addAttribute(
                     "carritoVacio",
                     true

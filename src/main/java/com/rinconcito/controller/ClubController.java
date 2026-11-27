@@ -74,8 +74,8 @@ public class ClubController {
             redirectAttributes.addFlashAttribute(
                     "clubExito",
                     "¡Canje realizado! Guarda tu código " + codigo
-                            + ". Preséntalo en caja si es un producto o experiencia; "
-                            + "los descuentos y beneficios online se aplican desde tu pedido."
+                            + ". Usa el código de producto en tu pedido online o preséntalo en Caja; "
+                            + "las experiencias familiares se validan presencialmente."
             );
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("clubError", e.getMessage());

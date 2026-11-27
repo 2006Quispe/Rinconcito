@@ -176,6 +176,8 @@
                         <div class="club-recompensa-titulo"><h3 th:text="${recompensa.nombre}">Recompensa</h3><b><span th:text="${recompensa.costoPuntos}">100</span><small> pts</small></b></div>
                         <p th:text="${recompensa.descripcion}">Descripción de la recompensa.</p>
                         <p class="club-condiciones" th:if="${recompensa.condiciones != null and !recompensa.condiciones.isBlank()}" th:text="${recompensa.condiciones}">Condiciones</p>
+                        <p class="club-condiciones" th:if="${recompensa.precioReferencia != null}" th:text="'Precio habitual referencial: S/ ' + ${recompensa.precioReferencia}">Precio habitual referencial</p>
+                        <p class="club-condiciones"><strong>Modalidades:</strong> <span th:text="${recompensa.modalidades}">Presencial · Delivery · Recojo en local</span></p>
                         <p class="club-condiciones" th:if="${recompensa.compraMinima > 0}" th:text="'Pedido mínimo S/ ' + ${recompensa.compraMinima}">Pedido mínimo</p>
                         <div class="club-recompensa-accion">
                             <small th:if="${recompensa.puntosFaltantes > 0 and recompensa.estadoDisponibilidad == 'DISPONIBLE'}" th:text="'Te faltan ' + ${recompensa.puntosFaltantes} + ' puntos'">Te faltan 20 puntos</small>
@@ -196,7 +198,7 @@
         </section>
 
         <section id="mis-recompensas" class="club-seccion club-mis-recompensas">
-            <div class="club-seccion-encabezado"><div><span>GUARDA TU CÓDIGO</span><h2>Mis recompensas</h2><p>Presenta el código en caja para productos y experiencias. Los beneficios online se aplican desde tu pedido.</p></div></div>
+            <div class="club-seccion-encabezado"><div><span>GUARDA TU CÓDIGO</span><h2>Mis recompensas</h2><p>Pega el código de producto en tu pedido online o preséntalo en Caja. Las experiencias familiares se validan presencialmente.</p></div></div>
             <div th:if="${cupones.isEmpty()}" class="club-vacio"><i class="bi bi-ticket-perforated"></i><div><strong>Tus próximos premios empiezan aquí.</strong><span>Cuando canjees puntos, tus códigos aparecerán en esta sección.</span></div></div>
             <div class="club-cupones" th:if="${!cupones.isEmpty()}">
                 <article class="club-cupon" th:each="cupon : ${cupones}">

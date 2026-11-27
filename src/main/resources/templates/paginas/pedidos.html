@@ -433,7 +433,7 @@
                                    th:field="*{codigoCupon}" maxlength="32"
                                    placeholder="RIN-XXXXXXXXXX" autocomplete="off">
                         </div>
-                        <small class="text-muted">Los cupones disponibles aparecen en <a th:href="@{/club}" target="_blank" rel="noopener">mi Club</a>.</small>
+                        <small class="text-muted">Los descuentos y productos del Club pueden aplicarse en Delivery o Recojo en local. Las experiencias se validan en Caja. Consulta tus cupones en <a th:href="@{/club}" target="_blank" rel="noopener">mi Club</a>.</small>
                     </div>
                     <div th:unless="${clienteLogueado}" class="pedido-cuenta-aviso">
                         Inicia sesión con tu cuenta de cliente para aplicar un cupón del club.

@@ -60,6 +60,8 @@ public class ClubRecompensaFormDTO {
     private Integer vigenciaDias = 90;
 
     private Integer idProducto;
+    @Min(1)
+    private Integer precioReferencia;
     private LocalDate disponibleDesde;
     private LocalDate disponibleHasta;
     private boolean activo = true;
@@ -92,6 +94,8 @@ public class ClubRecompensaFormDTO {
     public void setVigenciaDias(Integer vigenciaDias) { this.vigenciaDias = vigenciaDias; }
     public Integer getIdProducto() { return idProducto; }
     public void setIdProducto(Integer idProducto) { this.idProducto = idProducto; }
+    public Integer getPrecioReferencia() { return precioReferencia; }
+    public void setPrecioReferencia(Integer precioReferencia) { this.precioReferencia = precioReferencia; }
     public LocalDate getDisponibleDesde() { return disponibleDesde; }
     public void setDisponibleDesde(LocalDate disponibleDesde) { this.disponibleDesde = disponibleDesde; }
     public LocalDate getDisponibleHasta() { return disponibleHasta; }

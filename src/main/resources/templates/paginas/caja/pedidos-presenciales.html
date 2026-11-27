@@ -266,9 +266,7 @@
 
                                 <div class="producto-informacion">
 
-                                    <strong th:text="${detalle.producto != null
-                                        ? detalle.producto.nombre
-                                        : 'Producto'}">
+                                    <strong th:text="${detalle.nombreMostrado}">
                                         Producto
                                     </strong>
 
@@ -281,7 +279,7 @@
                                 </div>
 
                                 <span class="producto-subtotal"
-                                      th:text="'S/ ' + ${detalle.subtotal}">
+                                      th:text="'S/ ' + ${detalle.subtotalNeto}">
                                     S/ 0
                                 </span>
 
@@ -343,6 +341,12 @@
                         <small>Ingresa el DNI de una cuenta activa del Club antes de confirmar el pago.</small>
                     </div>
 
+                    <div class="campo-cobro campo-club-dni">
+                        <label th:for="'codigoCuponClub-' + ${pedido.idPedido}">Cupón de descuento del Club <small>(opcional)</small></label>
+                        <input type="text" th:id="'codigoCuponClub-' + ${pedido.idPedido}" name="codigoCuponClub" class="form-control" maxlength="32" autocomplete="off" placeholder="RIN-XXXXXXXXXX">
+                        <small>Los descuentos del Club aplican en pedidos presenciales. Delivery gratis solo aplica a pedidos Delivery.</small>
+                    </div>
+
                     <section class="caja-club-estimacion" data-club-estimacion hidden aria-live="polite">
                         <div class="caja-club-estimacion-titulo">
                             <span class="caja-club-insignia" data-club-insignia><i class="bi bi-award-fill"></i></span>
@@ -372,7 +376,7 @@
                         </div>
                         <div class="caja-club-recompensa-resultado" data-club-recompensa-resultado hidden aria-live="polite"></div>
                         <button type="button" class="btn-club-confirmar-entrega" data-club-confirmar hidden>Confirmar entrega de recompensa</button>
-                        <small>La consulta no consume el codigo. La entrega requiere confirmacion y no aplica descuentos online a este pedido presencial.</small>
+                        <small>La consulta no consume el código. La entrega requiere confirmación; las experiencias familiares se validan presencialmente.</small>
                     </section>
 
                     <div class="campo-cobro">
