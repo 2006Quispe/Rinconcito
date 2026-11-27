@@ -17,6 +17,10 @@ import java.util.Optional;
 public interface ReservaRepository
         extends JpaRepository<Reserva, Integer> {
 
+    boolean existsByEvento_IdEvento(
+            Integer idEvento
+    );
+
     List<Reserva> findByCliente(
             Usuario cliente
     );

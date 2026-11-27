@@ -258,6 +258,17 @@
                                     </button>
                                 </form>
 
+                                <button type="button"
+                                        class="admin-boton-icono peligro"
+                                        title="Eliminar"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalEliminarEvento"
+                                        th:attr="data-titulo=${evento.titulo},data-url=@{/admin/eventos/{id}/eliminar(id=${evento.idEvento})}">
+
+                                    <i class="bi bi-trash"></i>
+
+                                </button>
+
                             </div>
                         </td>
 
@@ -300,6 +311,7 @@
             <form th:action="@{/admin/eventos/guardar}"
                   th:object="${evento}"
                   method="post"
+                  enctype="multipart/form-data"
                   id="formEvento">
 
                 <input type="hidden"
@@ -401,20 +413,40 @@
                         <div class="col-12">
 
                             <label class="form-label"
-                                   for="eventoImagen">
-                                Ruta o enlace de la imagen
+                                   for="eventoArchivoImagen">
+                                Imagen o afiche del evento
                             </label>
 
-                            <input type="text"
-                                   id="eventoImagen"
-                                   th:field="*{imagen}"
+                            <input type="hidden"
+                                   th:field="*{imagen}">
+
+                            <div class="evento-imagen-actual"
+                                 th:if="${evento.imagen != null and !evento.imagen.isBlank()}">
+                                <img th:src="@{${evento.imagen}}"
+                                     alt="Imagen actual del evento"
+                                     id="eventoImagenActual">
+                                <label class="evento-quitar-imagen">
+                                    <input type="checkbox"
+                                           name="quitarImagen"
+                                           value="true">
+                                    Quitar imagen actual
+                                </label>
+                            </div>
+
+                            <input type="file"
+                                   id="eventoArchivoImagen"
+                                   name="archivoImagen"
                                    class="form-control"
-                                   maxlength="255"
-                                   placeholder="/img/eventos/evento.jpg">
+                                   accept="image/jpeg,image/png,image/webp">
+
+                            <img id="eventoImagenPrevia"
+                                 class="evento-imagen-previa"
+                                 alt="Vista previa de la imagen seleccionada"
+                                 hidden>
 
                             <small class="form-text">
-                                Más adelante agregaremos la carga directa
-                                de imágenes desde la computadora.
+                                JPG, PNG o WEBP, de hasta 3 MB.
+                                Si ya hay una imagen y eliges otra, se reemplaza.
                             </small>
 
                         </div>
@@ -507,6 +539,61 @@
     </div>
 </div>
 
+<!-- Confirmación para eliminar un evento -->
+<div class="modal fade modal-evento"
+     id="modalEliminarEvento"
+     tabindex="-1"
+     aria-labelledby="tituloEliminarEvento"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <div>
+                    <p class="modal-evento-etiqueta">PROGRAMACIÓN</p>
+                    <h2 class="modal-title" id="tituloEliminarEvento">
+                        Eliminar evento
+                    </h2>
+                </div>
+            </div>
+
+            <form method="post"
+                  id="formEliminarEvento">
+
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
+                <div class="modal-body">
+                    <p class="mb-2">
+                        ¿Seguro que deseas eliminar el evento
+                        <strong id="eliminarEventoTitulo"></strong>?
+                    </p>
+                    <p class="mb-0 text-muted small">
+                        Esta acción no se puede deshacer. Si solo quieres
+                        ocultarlo de la página pública, usa el botón de pausa.
+                    </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn-modal-evento-cancelar"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            class="btn-modal-evento-guardar btn-modal-evento-eliminar">
+                        <i class="bi bi-trash"></i>
+                        Eliminar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
@@ -547,5 +634,38 @@
     });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var input = document.getElementById('eventoArchivoImagen');
+    var previa = document.getElementById('eventoImagenPrevia');
+    if (!input || !previa) { return; }
+    var f = document.getElementById('formEvento');
+    if (f) { f.addEventListener('reset', function () { previa.hidden = true; }); }
+    input.addEventListener('change', function () {
+        var archivo = input.files && input.files[0];
+        if (!archivo) { previa.hidden = true; return; }
+        if (archivo.size > 3 * 1024 * 1024) {
+            alert('La imagen no puede superar los 3 MB.');
+            input.value = '';
+            previa.hidden = true;
+            return;
+        }
+        previa.src = URL.createObjectURL(archivo);
+        previa.hidden = false;
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var modal = document.getElementById('modalEliminarEvento');
+    if (!modal) { return; }
+    modal.addEventListener('show.bs.modal', function (e) {
+        var b = e.relatedTarget;
+        if (!b) { return; }
+        document.getElementById('eliminarEventoTitulo').textContent = b.dataset.titulo || '';
+        document.getElementById('formEliminarEvento').action = b.dataset.url;
+    });
+});
+</script>
 </body>
 </html>

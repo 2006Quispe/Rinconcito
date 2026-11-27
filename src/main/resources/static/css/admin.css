@@ -1057,8 +1057,6 @@ textarea.form-control {
     }
 }
 
-
-
 /* =========================================================
    VENTANA EMERGENTE (MODAL) DE EVENTO
    ========================================================= */
@@ -1247,3 +1245,19 @@ textarea.form-control {
         width: 100%;
     }
 }
+
+
+/* Imagen del evento (subida desde la computadora) */
+.modal-evento .evento-imagen-actual { display: flex; align-items: center; gap: 1rem; margin-bottom: .75rem; flex-wrap: wrap; }
+.modal-evento .evento-imagen-actual img,
+.modal-evento .evento-imagen-previa { max-height: 140px; max-width: 100%; border-radius: 8px; border: 1px solid var(--borde, #e3d6c4); object-fit: contain; }
+.modal-evento .evento-imagen-previa { display: block; margin-top: .75rem; }
+.modal-evento .evento-imagen-previa[hidden] { display: none; }
+.modal-evento .evento-quitar-imagen { font-size: .9rem; display: flex; align-items: center; gap: .4rem; cursor: pointer; }
+
+
+/* Eliminar evento */
+.admin-boton-icono.peligro { color: #b3261e; }
+.admin-boton-icono.peligro:hover { color: var(--blanco); background: #b3261e; border-color: #b3261e; }
+.modal-evento .btn-modal-evento-eliminar { background: #b3261e; border-color: #b3261e; }
+.modal-evento .btn-modal-evento-eliminar:hover { background: #8f1d17; border-color: #8f1d17; }

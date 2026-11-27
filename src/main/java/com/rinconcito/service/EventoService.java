@@ -3,6 +3,7 @@ package com.rinconcito.service;
 import com.rinconcito.entity.Evento;
 import com.rinconcito.entity.Evento.EstadoEvento;
 import com.rinconcito.repository.EventoRepository;
+import com.rinconcito.repository.ReservaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,12 +16,16 @@ import java.util.Optional;
 public class EventoService {
 
     private final EventoRepository eventoRepository;
+    private final ReservaRepository reservaRepository;
 
     public EventoService(
-            EventoRepository eventoRepository
+            EventoRepository eventoRepository,
+            ReservaRepository reservaRepository
     ) {
         this.eventoRepository =
                 eventoRepository;
+        this.reservaRepository =
+                reservaRepository;
     }
 
     @Transactional(readOnly = true)
@@ -111,6 +116,36 @@ public class EventoService {
         evento.setEstado(estado);
 
         return eventoRepository.save(evento);
+    }
+
+    /**
+     * Elimina un evento que no tenga reservas asociadas.
+     * Devuelve la ruta de su imagen para que quien llama
+     * pueda borrar el archivo si fue subido desde el sistema.
+     */
+    @Transactional
+    public String eliminar(
+            Integer idEvento
+    ) {
+        Evento evento =
+                buscarPorId(idEvento);
+
+        if (reservaRepository
+                .existsByEvento_IdEvento(idEvento)) {
+            throw new IllegalStateException(
+                    "No se puede eliminar el evento porque "
+                            + "tiene reservas registradas. "
+                            + "Puedes desactivarlo para ocultarlo "
+                            + "de la página pública."
+            );
+        }
+
+        String imagen =
+                evento.getImagen();
+
+        eventoRepository.delete(evento);
+
+        return imagen;
     }
 
     private void validar(

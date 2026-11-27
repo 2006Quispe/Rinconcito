@@ -106,6 +106,7 @@ public class SecurityConfig {
                 		        "/carta",
                                 "/carta/*",
                 		        "/eventos",
+                                        "/eventos/imagenes/**",
                 		        "/reservas",
                 		        "/reservas/**",
                 		        "/pedidos",
