@@ -1,4 +1,30 @@
 (() => {
+    const formularioReserva = document.querySelector('input[name="dni"]')?.form;
+    if (formularioReserva) {
+        const filtros = {
+            nombres: /[^\p{L}\p{M} '’-]/gu,
+            apellidos: /[^\p{L}\p{M} '’-]/gu,
+            telefono: /[^0-9]/g
+        };
+        for (const [campo, filtro] of Object.entries(filtros)) {
+            const input = formularioReserva.elements[campo];
+            if (!input || input.readOnly) continue;
+            const limpiar = () => {
+                const valor = input.value;
+                const limpio = valor.replace(filtro, '');
+                if (valor === limpio) return;
+                const inicio = valor.slice(0, input.selectionStart).replace(filtro, '').length;
+                const fin = valor.slice(0, input.selectionEnd).replace(filtro, '').length;
+                input.value = limpio;
+                input.setSelectionRange(inicio, fin);
+            };
+            input.addEventListener('input', evento => {
+                if (!evento.isComposing) limpiar();
+            });
+            input.addEventListener('compositionend', limpiar);
+        }
+    }
+
     const dni = document.querySelector('[data-dni-url]');
     if (!dni || dni.readOnly) return;
 

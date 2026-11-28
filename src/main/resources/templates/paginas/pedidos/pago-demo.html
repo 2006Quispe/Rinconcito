@@ -13,16 +13,10 @@
 <body class="carta-publica">
 <header th:replace="~{fragments/header :: header}"></header>
 <main>
-    <section class="carta-portada reserva-portada">
-        <div class="container">
-            <h1>Pago del pedido</h1>
-            <p>Modo de prueba · Sin cobro real</p>
-        </div>
-    </section>
     <div class="container reserva-contenido">
         <p th:if="${error}" class="alert alert-warning" role="alert" th:text="${error}"></p>
         <div th:if="${puedePagar}">
-            <div th:replace="~{fragments/pago-demo :: formulario(@{/pedidos/pago-demo}, 'codigo', ${pedido.codigoPedido}, |Pedido ${pedido.codigoPedido}|, ${pedido.tipoPedido.name() == 'DELIVERY' ? 'Delivery · S/ ' + pedido.costoDelivery : 'Recojo en el local'}, ${pedido.total}, null)}"></div>
+            <div th:replace="~{fragments/pago-demo :: formulario(@{/pedidos/pago-demo}, 'codigo', ${pedido.codigoPedido}, |Pedido ${pedido.codigoPedido}|, 'Recojo en el local', ${pedido.total}, null)}"></div>
         </div>
         <p th:unless="${puedePagar}">Esta sesión no tiene un pedido pendiente de pago.</p>
         <a th:if="${pedido != null and !puedePagar}" class="btn reserva-metodo" th:href="@{/pedidos/consultar(codigo=${pedido.codigoPedido})}">Consultar pedido</a>

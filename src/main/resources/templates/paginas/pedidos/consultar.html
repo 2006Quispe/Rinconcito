@@ -9,30 +9,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&amp;family=Nunito:wght@400;600;800&amp;display=swap" rel="stylesheet">
     <link th:href="@{/css/estilos.css}" rel="stylesheet">
     <link th:href="@{/css/reserva-publica.css}" rel="stylesheet">
+    <link th:href="@{/css/pedidos-ui.css}" rel="stylesheet">
 </head>
 <body class="carta-publica">
 <header th:replace="~{fragments/header :: header}"></header>
 <main th:with="confirmado=${pedido != null and pedido.estado.name() == 'CONFIRMADO'}">
-    <section class="carta-portada reserva-portada">
-        <div class="container">
-            <h1 th:text="${confirmado ? 'Pedido confirmado' : 'Consultar pedido'}"></h1>
-            <p th:if="${pedido != null}" th:text="|Código · ${pedido.codigoPedido}|"></p>
-            <p th:unless="${pedido != null}">Ingresa tu código para consultar el estado de tu pedido.</p>
-        </div>
-    </section>
     <div class="container reserva-contenido">
         <p th:if="${error}" class="alert alert-warning" role="alert" th:text="${error}"></p>
         <section th:if="${pedido != null and pedido.tipoPedido.name() != 'PRESENCIAL' and (confirmado or pedido.estado.name() == 'FINALIZADO')}"
                  class="reserva-panel mb-4" aria-label="Seguimiento del pedido"
                  th:with="avance=${pedido.avanceEntrega},paso=${avance == 'RECIBIDO' ? 1 : (avance == 'EN_PREPARACION' ? 2 : (avance == 'ENTREGADO' ? 4 : 3))}">
-            <h2>Seguimiento del pedido</h2>
+            <div class="seguimiento-cabecera">
+                <h1>Seguimiento del pedido</h1>
+                <span class="seguimiento-codigo" th:text="${pedido.codigoPedido}"></span>
+            </div>
             <p th:text="|Última actualización · ${#temporals.format(pedido.fechaActualizacion, 'dd/MM/yyyy HH:mm')}|"></p>
-            <progress class="w-100" th:value="${paso}" max="4" aria-label="Etapa actual"></progress>
-            <ol class="d-flex flex-wrap justify-content-between gap-3 ps-3 mb-0">
-                <li th:attr="aria-current=${paso == 1 ? 'step' : null}">Recibido</li>
-                <li th:attr="aria-current=${paso == 2 ? 'step' : null}">En preparación</li>
-                <li th:attr="aria-current=${paso == 3 ? 'step' : null}" th:text="${pedido.tipoPedido.name() == 'DELIVERY' ? 'En camino' : 'Listo para recoger'}"></li>
-                <li th:attr="aria-current=${paso == 4 ? 'step' : null}">Entregado</li>
+            <ol class="seguimiento-etapas">
+                <li th:each="icono, etapa : ${ {'bi-receipt', 'bi-fire', pedido.tipoPedido.name() == 'DELIVERY' ? 'bi-bicycle' : 'bi-bag-check', 'bi-check2-circle'} }"
+                    th:classappend="${etapa.count <= paso ? 'alcanzada' : ''}"
+                    th:attr="aria-current=${etapa.count == paso ? 'step' : null}">
+                    <span class="seguimiento-icono"><i class="bi" th:classappend="${icono}" aria-hidden="true"></i></span>
+                    <strong th:text="${etapa.count == 1 ? 'Recibido' : (etapa.count == 2 ? 'En preparación' : (etapa.count == 3 ? (pedido.tipoPedido.name() == 'DELIVERY' ? 'En camino' : 'Listo para recoger') : 'Entregado'))}"></strong>
+                </li>
             </ol>
             <a th:if="${tokenSeguimiento}" th:href="@{/pedidos/seguimiento/{token}(token=${tokenSeguimiento})}" class="d-inline-block mt-3">Abrir enlace privado</a>
         </section>
@@ -67,8 +65,8 @@
                    th:href="@{/carta}">Volver a la carta</a>
             </aside>
         </div>
-        <details th:unless="${seguimientoPrivado}" class="reserva-panel mt-4" th:open="${pedido == null}">
-            <summary th:text="${pedido == null ? 'Buscar por código' : 'Consultar otro pedido'}"></summary>
+        <section th:if="${pedido == null and !seguimientoPrivado}" class="reserva-panel mt-4">
+            <h1>Consultar pedido</h1>
             <form th:action="@{/pedidos/consultar}" method="get" class="mt-3">
                 <label class="form-label" for="codigo-pedido">Código de pedido</label>
                 <div class="input-group">
@@ -77,7 +75,7 @@
                     <button type="submit" class="carta-boton">Buscar</button>
                 </div>
             </form>
-        </details>
+        </section>
     </div>
 </main>
 <footer th:replace="~{fragments/footer :: footer}"></footer>

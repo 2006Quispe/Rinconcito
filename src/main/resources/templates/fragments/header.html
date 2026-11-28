@@ -147,6 +147,19 @@
 
     </a>
 
+    <th:block th:if="${mostrarCarritoFlotante == null or mostrarCarritoFlotante}">
+        <link th:href="@{/css/pedidos-ui.css}" rel="stylesheet">
+<aside class="offcanvas offcanvas-end carrito-lateral" tabindex="-1" id="carrito-lateral"
+       aria-labelledby="carrito-lateral-titulo" th:attr="data-carrito-url=@{/carrito(lateral=true)}">
+    <div class="offcanvas-header">
+        <h2 id="carrito-lateral-titulo" class="offcanvas-title">Tu carrito</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar carrito"></button>
+    </div>
+    <div class="offcanvas-body" data-carrito-contenido></div>
+</aside>
+        <script th:src="@{/js/carrito-lateral.js}" defer></script>
+    </th:block>
+
 </th:block>
 
 </body>

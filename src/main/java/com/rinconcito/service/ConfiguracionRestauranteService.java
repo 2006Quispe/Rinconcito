@@ -517,9 +517,9 @@ public class ConfiguracionRestauranteService {
 
         String valor = correo.trim();
 
-        if (valor.length() > 120) {
+        if (valor.length() > 250) {
             throw new IllegalStateException(
-                    "El correo no puede superar 120 caracteres."
+                    "El correo no puede superar 250 caracteres."
             );
         }
 

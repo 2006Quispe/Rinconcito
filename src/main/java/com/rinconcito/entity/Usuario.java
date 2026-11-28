@@ -28,7 +28,7 @@ public class Usuario {
     @Column(name = "telefono", length = 9)
     private String telefono;
 
-    @Column(name = "correo", unique = true, length = 120)
+    @Column(name = "correo", unique = true, length = 250)
     private String correo;
 
     @Column(name = "contrasena", length = 150)

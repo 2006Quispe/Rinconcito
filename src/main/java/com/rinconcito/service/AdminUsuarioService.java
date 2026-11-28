@@ -501,7 +501,7 @@ public class AdminUsuarioService {
             );
         }
 
-        if (formulario.getCorreo().length() > 120) {
+        if (formulario.getCorreo().length() > 250) {
 
             throw new IllegalStateException(
                     "El correo no puede superar "

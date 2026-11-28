@@ -189,12 +189,8 @@ public class ReservaService {
         if (dto.getDni() == null || !dto.getDni().matches("\\d{8}")) {
             throw new IllegalStateException("El DNI debe tener 8 dígitos.");
         }
-        if (StringUtils.isBlank(dto.getNombres())) {
-        throw new IllegalStateException("Los nombres son obligatorios.");
-        }
-        if (StringUtils.isBlank(dto.getApellidos())) {
-        throw new IllegalStateException("Los apellidos son obligatorios.");
-        }
+        validarNombreReserva(dto.getNombres(), "nombres");
+        validarNombreReserva(dto.getApellidos(), "apellidos");
         if (dto.getTelefono() == null || !dto.getTelefono().matches("\\d{9}")) {
             throw new IllegalStateException("El teléfono debe tener 9 dígitos.");
         }
@@ -210,8 +206,21 @@ public class ReservaService {
         if (dto.getIdPiso() == null) {
             throw new IllegalStateException("Debes elegir un piso.");
         }
-        if (!ColaCorreoService.correoValido(dto.getCorreo())) {
+        if (StringUtils.length(dto.getOcasionEspecial()) > 120) {
+            throw new IllegalStateException("La ocasión especial admite hasta 120 caracteres.");
+        }
+        if (StringUtils.length(dto.getComentarios()) > 300) {
+            throw new IllegalStateException("Los comentarios admiten hasta 300 caracteres.");
+        }
+        if (StringUtils.length(dto.getCorreo()) > 250 || !ColaCorreoService.correoValido(dto.getCorreo())) {
             throw new IllegalStateException("Ingresa un correo electrónico válido para recibir tu confirmación.");
+        }
+    }
+
+    private void validarNombreReserva(String valor, String campo) {
+        if (StringUtils.isBlank(valor) || valor.length() > 50
+                || !valor.strip().matches("\\p{L}[\\p{L}\\p{M}]*(?:[ '’-]+\\p{L}[\\p{L}\\p{M}]*)*")) {
+            throw new IllegalStateException("Ingresa " + campo + " válidos, con letras y hasta 50 caracteres.");
         }
     }
 

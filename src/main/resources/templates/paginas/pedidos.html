@@ -266,7 +266,7 @@
                         <div class="col-md-6">
                             <label for="correo" class="pedido-label">Correo electrónico</label>
                             <input type="email" id="correo" class="pedido-input" th:field="*{correo}"
-                                   maxlength="120" placeholder="cliente@ejemplo.com" autocomplete="email" required>
+                                   maxlength="250" placeholder="cliente@ejemplo.com" autocomplete="email" required>
                             <small th:if="${correoHabilitado}" class="d-block text-muted mt-1">
                                 Te enviaremos la confirmación y el código al correo indicado.
                             </small>

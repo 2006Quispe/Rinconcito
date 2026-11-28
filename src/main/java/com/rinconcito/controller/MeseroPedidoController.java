@@ -291,7 +291,21 @@ public class MeseroPedidoController {
         } catch (IllegalStateException error) {
             redirect.addFlashAttribute("error", error.getMessage());
         }
-        return "redirect:/mesero/pedidos";
+        return "redirect:/mesero/pedidos/en-linea";
+    }
+
+    @GetMapping("/pedidos/en-linea")
+    public String listarPedidosEnLinea(Model model) {
+        model.addAttribute("titulo", "Pedidos en línea");
+        Map<Integer, List<DetallePedido>> detallesPorPedido = new LinkedHashMap<>();
+        var enLinea = pedidosEnLinea.findByTipoPedidoNotAndEstadoOrderByFechaRegistroAsc(
+                Pedido.TipoPedido.PRESENCIAL, Pedido.EstadoPedido.CONFIRMADO);
+        model.addAttribute("pedidosEnLinea", enLinea);
+        for (Pedido pedido : enLinea) {
+            detallesPorPedido.put(pedido.getIdPedido(), despacho.detallesDe(pedido));
+        }
+        model.addAttribute("detallesPorPedido", detallesPorPedido);
+        return "paginas/mesero/pedidos-en-linea";
     }
 
     @GetMapping("/pedidos")
@@ -334,12 +348,6 @@ public class MeseroPedidoController {
                 detallesPorPedido
         );
 
-        var enLinea = pedidosEnLinea.findByTipoPedidoNotAndEstadoOrderByFechaRegistroAsc(
-                Pedido.TipoPedido.PRESENCIAL, Pedido.EstadoPedido.CONFIRMADO);
-        model.addAttribute("pedidosEnLinea", enLinea);
-        for (Pedido pedido : enLinea) {
-            detallesPorPedido.put(pedido.getIdPedido(), despacho.detallesDe(pedido));
-        }
         return "paginas/mesero/pedidos";
     }
 

@@ -31,25 +31,6 @@
     </aside>
 
     <div class="mesero-pagina">
-        <section class="card card-body mb-4">
-            <h2>Pedidos en línea</h2>
-            <p th:if="${error}" class="alert alert-warning" th:text="${error}"></p>
-            <p th:if="${#lists.isEmpty(pedidosEnLinea)}">No hay pedidos en línea por atender.</p>
-            <article class="border-top py-3" th:each="orden : ${pedidosEnLinea}" th:with="avance=${orden.avanceEntrega}">
-                <h3 class="h5" th:text="|${orden.codigoPedido} · ${orden.tipoPedido.name() == 'DELIVERY' ? 'Delivery' : 'Recojo'}|"></h3>
-                <p th:if="${orden.direccion != null}" th:text="|${orden.direccion.direccion}, ${orden.direccion.distrito}|"></p>
-                <p th:if="${orden.observaciones}" th:text="${orden.observaciones}"></p>
-                <ul><li th:each="linea : ${detallesPorPedido.get(orden.idPedido)}"
-                        th:text="|${linea.cantidad} × ${linea.producto.nombre}|"></li></ul>
-                <p th:text="${#strings.replace(avance, '_', ' ')}"></p>
-                <form method="post" th:action="@{/mesero/pedidos/{codigo}/avance(codigo=${orden.codigoPedido})}">
-                    <input type="hidden" name="desde" th:value="${avance}">
-                    <button class="btn btn-dark" type="submit"
-                            th:text="${avance == 'RECIBIDO' ? 'Iniciar preparación' : (avance == 'EN_PREPARACION' ? (orden.tipoPedido.name() == 'DELIVERY' ? 'Marcar en camino' : 'Marcar listo para recoger') : 'Marcar entregado')}"></button>
-                </form>
-            </article>
-        </section>
-
         <header class="pedidos-encabezado">
 
             <div>

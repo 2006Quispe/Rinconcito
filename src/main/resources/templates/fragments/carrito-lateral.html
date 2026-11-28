@@ -1,0 +1,37 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="contenido" th:attr="data-unidades=${unidades}">
+    <p th:if="${exito}" class="alert alert-success" role="status" th:text="${exito}"></p>
+    <p th:if="${error}" class="alert alert-warning" role="alert" th:text="${error}"></p>
+    <p th:if="${#lists.isEmpty(items)}" class="carrito-vacio-lateral">Tu carrito está vacío.</p>
+    <ul class="list-unstyled" th:unless="${#lists.isEmpty(items)}">
+        <li th:each="item : ${items}" class="carrito-lateral-item">
+            <img th:if="${!#strings.isEmpty(item.imagen)}" th:src="${item.imagen}" alt="" loading="lazy">
+            <span th:if="${#strings.isEmpty(item.imagen)}" class="carrito-lateral-imagen"><i class="bi bi-image" aria-hidden="true"></i></span>
+            <div>
+                <strong th:text="${item.nombre}"></strong>
+                <div class="carrito-lateral-cantidad">
+                    <form method="post" th:action="${item.cantidad == 1} ? @{/carrito/eliminar(lateral=${lateral})} : @{/carrito/actualizar(lateral=${lateral})}">
+                        <input type="hidden" name="idProducto" th:value="${item.idProducto}">
+                        <input type="hidden" name="cantidad" th:value="${item.cantidad - 1}">
+                        <button type="submit" th:attr="aria-label=|${item.cantidad == 1 ? 'Quitar' : 'Reducir cantidad de'} ${item.nombre}|">
+                            <i class="bi" th:classappend="${item.cantidad == 1 ? 'bi-trash' : 'bi-dash-lg'}" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                    <span th:text="${item.cantidad}"></span>
+                    <form method="post" th:action="@{/carrito/actualizar(lateral=${lateral})}">
+                        <input type="hidden" name="idProducto" th:value="${item.idProducto}">
+                        <input type="hidden" name="cantidad" th:value="${item.cantidad + 1}">
+                        <button type="submit" th:disabled="${item.cantidad >= 30}" th:attr="aria-label=|Aumentar cantidad de ${item.nombre}|">
+                            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <strong class="text-nowrap" th:text="|S/ ${#numbers.formatDecimal(item.subtotal, 1, 'POINT', 2, 'POINT')}|"></strong>
+        </li>
+    </ul>
+    <div class="d-flex justify-content-between gap-3 mb-3" th:unless="${#lists.isEmpty(items)}">
+        <strong>Subtotal</strong>
+        <strong th:text="|S/ ${#numbers.formatDecimal(subtotal, 1, 'POINT', 2, 'POINT')}|"></strong>
+    </div>
+    <a class="btn carrito-continuar w-100" th:unless="${#lists.isEmpty(items)}" th:href="@{/pedidos}">Continuar pedido</a>
+</div>

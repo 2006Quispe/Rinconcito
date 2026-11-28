@@ -1,0 +1,82 @@
+.pedidos-web { padding: clamp(1rem, 3vw, 2.5rem); }
+.pedidos-web-header, .pedido-web-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .75rem;
+}
+.pedidos-web-header { justify-content: space-between; margin-bottom: 1.5rem; }
+.pedidos-web-header h1 {
+    font: 700 clamp(1.55rem, 3vw, 2.25rem) Merriweather, serif;
+    color: #38261d;
+}
+.pedidos-web-header p, .pedido-web-header p { margin: 0; color: #68554a; }
+.pedidos-web-contador, .pedido-web-estado {
+    border-radius: 999px;
+    padding: .35rem .75rem;
+    background: #f5e8c3;
+    color: #654800;
+    font-size: .8rem;
+    font-weight: 800;
+}
+.pedidos-web-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 23rem), 1fr));
+    gap: 1rem;
+    align-items: stretch;
+}
+.pedido-web, .pedidos-web-vacio {
+    padding: 1.15rem;
+    border: 1px solid #e7d7c7;
+    border-radius: 1rem;
+    background: #fffdfa;
+    box-shadow: 0 5px 16px #5737210a;
+}
+.pedido-web { display: flex; flex-direction: column; min-width: 0; }
+.pedido-web h2 { font-size: 1rem; font-weight: 800; margin: 0; overflow-wrap: anywhere; }
+.pedido-web-icono {
+    display: grid;
+    place-items: center;
+    width: 2.65rem;
+    height: 2.65rem;
+    font-size: 1.2rem;
+    border-radius: .7rem;
+    background: #f5e4d9;
+    color: #85331e;
+}
+.pedido-web-estado { margin-inline-start: auto; }
+.pedido-web-estado[data-avance="EN_PREPARACION"] { background: #f8e0d4; color: #83381f; }
+.pedido-web-estado:not([data-avance="RECIBIDO"]):not([data-avance="EN_PREPARACION"]) { background: #e5eddf; color: #354d2c; }
+.pedido-web-direccion, .pedido-web-nota {
+    margin: .85rem 0 0;
+    color: #68554a;
+    overflow-wrap: anywhere;
+}
+.pedido-web-direccion { display: flex; gap: .45rem; }
+.pedido-web-productos { list-style: none; padding: 0; margin: 1rem 0; }
+.pedido-web-productos li {
+    display: flex;
+    gap: .55rem;
+    padding: .4rem 0;
+    border-bottom: 1px solid #eee3d8;
+}
+.pedido-web-productos strong { flex-shrink: 0; color: #85331e; }
+.pedido-web-footer { margin-top: auto; padding-top: .75rem; }
+.pedido-web-accion {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: .5rem;
+    padding: .65rem .85rem;
+    border: 0;
+    border-radius: .6rem;
+    background: #85331e;
+    color: white;
+    font-weight: 800;
+    text-align: left;
+}
+.pedido-web-accion:hover { background: #6b2516; }
+.pedido-web-accion:focus-visible { outline: 3px solid #9b6500; outline-offset: 3px; }
+.pedidos-web-vacio { text-align: center; padding: 2.5rem 1rem; }
+.pedidos-web-vacio i { font-size: 1.7rem; color: #85331e; }
+.pedidos-web-vacio h2 { font-size: 1.05rem; margin: .65rem 0 0; }

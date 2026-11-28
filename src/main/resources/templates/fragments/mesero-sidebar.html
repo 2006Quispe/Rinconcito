@@ -90,10 +90,22 @@
             </span>
 
             <span class="mesero-sidebar-enlace-texto">
-                <strong>Pedidos activos</strong>
+                <strong>Pedidos en mesa</strong>
                 <small>Pedidos de las mesas</small>
             </span>
 
+        </a>
+
+        <a th:href="@{/mesero/pedidos/en-linea}"
+           class="mesero-sidebar-enlace"
+           th:classappend="${seccionActiva == 'pedidos-en-linea'} ? ' activo' : ''">
+            <span class="mesero-sidebar-enlace-icono">
+                <i class="bi bi-bag-check" aria-hidden="true"></i>
+            </span>
+            <span class="mesero-sidebar-enlace-texto">
+                <strong>Pedidos en línea</strong>
+                <small>Delivery y recojo</small>
+            </span>
         </a>
 
         <a th:href="@{/mesero/carta}"

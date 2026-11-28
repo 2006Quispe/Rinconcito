@@ -211,6 +211,8 @@ public class PedidoController {
             pagoPedidoService.buscarPorCodigo(checkout.codigo()).ifPresent(pedido -> {
                 modelo.addAttribute("pedido", pedido);
                 modelo.addAttribute("puedePagar", pedido.getEstado() == EstadoPedido.PENDIENTE_PAGO);
+            modelo.addAttribute("pedidoPagoDemo", pedido);
+            modelo.addAttribute("detallesPagoDemo", pagoPedidoService.detallesDe(pedido));
             });
         }
         return "paginas/pedidos/pago-demo";

@@ -78,6 +78,9 @@
 
                            class="form-control"
                            th:field="*{nombres}"
+                           autocomplete="given-name" maxlength="50"
+                           pattern=" *\p{L}[\p{L}\p{M}]*(?:[ '’\-]+\p{L}[\p{L}\p{M}]*)* *"
+                           title="Usa letras, espacios, guiones o apóstrofos."
                            th:readonly="${clienteLogueado}"
                            required>
                 </div>
@@ -87,6 +90,9 @@
 
                            class="form-control"
                            th:field="*{apellidos}"
+                           autocomplete="family-name" maxlength="50"
+                           pattern=" *\p{L}[\p{L}\p{M}]*(?:[ '’\-]+\p{L}[\p{L}\p{M}]*)* *"
+                           title="Usa letras, espacios, guiones o apóstrofos."
                            th:readonly="${clienteLogueado}"
                            required>
                 </div>
@@ -101,13 +107,10 @@
                            inputmode="numeric"
                            minlength="8"
                            pattern="[0-9]{8}"
-                           th:attr="data-dni-url=${clienteLogueado} ? null : @{/reservas/consultar-dni},aria-describedby=${clienteLogueado} ? null : 'dni-ayuda dni-estado'"
+                           th:attr="data-dni-url=${clienteLogueado} ? null : @{/reservas/consultar-dni},aria-describedby=${clienteLogueado} ? null : 'dni-estado'"
                            maxlength="8"
                            th:readonly="${clienteLogueado}"
                            required>
-                    <small id="dni-ayuda" th:unless="${clienteLogueado}" class="form-text">
-                        Al completar 8 dígitos, consultaremos el DNI en Factiliza para rellenar tus nombres y apellidos.
-                    </small>
                     <p id="dni-estado" th:unless="${clienteLogueado}" class="form-text mb-0" role="status"></p>
                 </div>
                 <div class="col-md-6 mb-3">
@@ -115,6 +118,8 @@
                     <input type="text"
                            class="form-control"
                            th:field="*{telefono}"
+                           autocomplete="tel-national" inputmode="numeric"
+                           pattern="[0-9]{9}" minlength="9" title="Ingresa 9 dígitos."
                            maxlength="9"
                            required>
                 </div>
@@ -124,7 +129,7 @@
                 <label class="form-label">Correo electrónico</label>
                 <input type="email"
                        class="form-control"
-                       th:field="*{correo}" autocomplete="email" maxlength="120" required>
+                       th:field="*{correo}" autocomplete="email" maxlength="250" required>
                 <small class="form-text text-muted">Te enviaremos la confirmación y tu código a este correo.</small>
             </div>
 
@@ -173,14 +178,6 @@
                        maxlength="120">
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Comentarios <span class="text-muted">(opcional)</span></label>
-                <textarea class="form-control"
-                          th:field="*{comentarios}"
-                          rows="3"
-                          maxlength="300"></textarea>
-            </div>
-
             <p class="small text-muted mb-3">
                 Horario: lunes cerrado · mar–sáb 11:00–18:00 · domingo 11:00–22:00.
                 Cada reserva dura 2 horas.
@@ -209,6 +206,6 @@
 
 
 <script th:src="@{/js/reserva-resumen.js}"></script>
-<script th:src="@{/js/reserva-dni.js}"></script>
+<script th:src="@{/js/reserva-dni.js(v=2)}"></script>
 </body>
 </html>

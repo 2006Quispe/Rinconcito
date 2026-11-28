@@ -52,7 +52,25 @@
     </div>
     <aside class="reserva-panel reserva-resumen">
         <h2 th:text="${concepto}"></h2>
-        <p th:text="${resumen}"></p>
+        <p th:if="${pedidoPagoDemo == null or pedidoPagoDemo.tipoPedido.name() != 'DELIVERY'}" th:text="${resumen}"></p>
+        <div th:if="${pedidoPagoDemo != null}">
+            <ul class="list-unstyled mb-3">
+                <li th:each="detalle : ${detallesPagoDemo}" class="d-flex justify-content-between gap-3 py-2 border-bottom">
+                    <span th:text="|${detalle.cantidad} × ${detalle.producto.nombre}|"></span>
+                    <strong class="text-nowrap" th:text="|S/ ${#numbers.formatDecimal(detalle.subtotal, 1, 'POINT', 2, 'POINT')}|"></strong>
+                </li>
+            </ul>
+            <dl class="mb-0">
+                <div class="d-flex justify-content-between gap-3">
+                    <dt>Subtotal de productos</dt>
+                    <dd th:text="|S/ ${#numbers.formatDecimal(pedidoPagoDemo.subtotal, 1, 'POINT', 2, 'POINT')}|"></dd>
+                </div>
+                <div th:if="${pedidoPagoDemo.tipoPedido.name() == 'DELIVERY'}" class="d-flex justify-content-between gap-3">
+                    <dt>Delivery</dt>
+                    <dd th:text="|S/ ${#numbers.formatDecimal(pedidoPagoDemo.costoDelivery, 1, 'POINT', 2, 'POINT')}|"></dd>
+                </div>
+            </dl>
+        </div>
         <p class="reserva-total" th:text="|Total · S/ ${#numbers.formatDecimal(importe, 1, 'POINT', 2, 'POINT')}|"></p>
         <button type="submit" name="aprobado" value="true" class="carta-boton carta-boton-ancho"
                 th:text="|Pagar S/ ${#numbers.formatDecimal(importe, 1, 'POINT', 2, 'POINT')}|">Pagar</button>

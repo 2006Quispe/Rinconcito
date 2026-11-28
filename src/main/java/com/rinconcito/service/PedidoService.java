@@ -334,7 +334,7 @@ public class PedidoService {
         }
 
         if (dto.getCorreo() != null && !dto.getCorreo().isBlank()
-                && (dto.getCorreo().length() > 120 || !ColaCorreoService.correoValido(dto.getCorreo()))) {
+                && (dto.getCorreo().length() > 250 || !ColaCorreoService.correoValido(dto.getCorreo()))) {
             throw new IllegalStateException("El correo no tiene un formato valido.");
         }
         if (tipoPedido == TipoPedido.DELIVERY) {

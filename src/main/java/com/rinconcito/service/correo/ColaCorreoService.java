@@ -133,7 +133,7 @@ public class ColaCorreoService {
     }
 
     public static boolean correoValido(String correo) {
-        if (correo == null || correo.isBlank() || correo.length() > 120 || correo.contains("\r") || correo.contains("\n")) return false;
+        if (correo == null || correo.isBlank() || correo.length() > 250 || correo.contains("\r") || correo.contains("\n")) return false;
         String normal = correo.toLowerCase(java.util.Locale.ROOT);
         if (normal.endsWith("@invitado.rinconcito.pe") || normal.endsWith(".local")) return false;
         try {

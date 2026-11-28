@@ -28,7 +28,7 @@ public class ConfiguracionRestaurante {
     @Column(name = "whatsapp", length = 20)
     private String whatsapp;
 
-    @Column(name = "correo", length = 120)
+    @Column(name = "correo", length = 250)
     private String correo;
 
     @Column(name = "url_facebook", length = 255)

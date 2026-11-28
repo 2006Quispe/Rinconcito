@@ -1,7 +1,6 @@
 package com.rinconcito.controller;
 
 import com.rinconcito.service.CarritoService;
-import com.rinconcito.service.PedidoService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,16 +29,19 @@ public class CarritoController {
      * Muestra todos los productos agregados al carrito.
      */
     @GetMapping
-    public String verCarrito(Model model, HttpSession session) {
+    public String verCarrito(Model model, HttpSession session,
+                             @RequestParam(defaultValue = "false") boolean lateral) {
 
         model.addAttribute("titulo", "Mi carrito");
         model.addAttribute("items", carritoService.obtenerItems(session));
         model.addAttribute("subtotal", carritoService.subtotal(session));
-        model.addAttribute(
-                "mensajeTraslado",
-                PedidoService.MENSAJE_TRASLADO
-        );
+        model.addAttribute("unidades", carritoService.contarUnidades(session));
+        model.addAttribute("lateral", lateral);
+        model.addAttribute("mostrarCarritoFlotante", false);
 
+        if (lateral) {
+            return "fragments/carrito-lateral :: contenido";
+        }
         return "paginas/carrito";
     }
 
@@ -145,6 +147,7 @@ public class CarritoController {
     public String actualizarCantidad(
             @RequestParam("idProducto") Integer idProducto,
             @RequestParam("cantidad") Integer cantidad,
+            @RequestParam(defaultValue = "false") boolean lateral,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
 
@@ -162,7 +165,7 @@ public class CarritoController {
             );
         }
 
-        return "redirect:/carrito";
+        return lateral ? "redirect:/carrito?lateral=true" : "redirect:/carrito";
     }
 
     /*
@@ -171,6 +174,7 @@ public class CarritoController {
     @PostMapping("/eliminar")
     public String eliminarProducto(
             @RequestParam("idProducto") Integer idProducto,
+            @RequestParam(defaultValue = "false") boolean lateral,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
 
@@ -181,7 +185,7 @@ public class CarritoController {
                 "Producto eliminado del carrito."
         );
 
-        return "redirect:/carrito";
+        return lateral ? "redirect:/carrito?lateral=true" : "redirect:/carrito";
     }
 
     /*
